@@ -35,13 +35,9 @@ export default function TabOneScreen() {
 
       {userList.map((user) => 
         <Text style={styles.title}> 
-          <Text style={styles.title}> 
-            username: {user.username}
-          </Text> 
-          <Text style={styles.title}> 
-            {'\n'}
-            dateJoined: {user.dateJoined} 
-          </Text>
+          username: {user.username}
+          {'\n'}
+          dateJoined: {user.dateJoined} 
         </Text>
         
       )}
