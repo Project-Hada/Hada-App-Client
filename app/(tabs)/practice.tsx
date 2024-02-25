@@ -1,27 +1,70 @@
 import React from 'react';
-import { Pressable, StyleSheet, View, Text, TouchableOpacity } from 'react-native';
+import { StyleSheet, View, Text, TouchableOpacity } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import Animated, { useAnimatedStyle, useSharedValue, withTiming } from 'react-native-reanimated';
+import Animated, { 
+  useSharedValue, 
+  useAnimatedStyle, 
+  withTiming, 
+  RollInLeft, 
+  RollOutRight
+} from 'react-native-reanimated';
+
 import FlashCard from '@/components/Practice/FlashCard';
 
 export default function PracticeScreen() {
-  
+  // Shared values to control the animation state
+  const cardOffsetX = useSharedValue(0);
+  const cardRotate = useSharedValue(0);
+
+  // Animated styles for the card
+  const cardStyle = useAnimatedStyle(() => {
+    return {
+      transform: [
+        { translateX: cardOffsetX.value },
+        { rotate: `${cardRotate.value}deg` },
+      ],
+    };
+  });
+
+  const speed = 400;
+
+  const tumbleRight = () => {
+    cardRotate.value = withTiming(180, { duration: speed });
+    cardOffsetX.value = withTiming(1000, { duration: speed }); // Move off to the right
+  };
+
+  const tumbleCardLeft = () => {
+    cardRotate.value = withTiming(-180, { duration: speed });
+    cardOffsetX.value = withTiming(-1000, { duration: speed }); // Move off to the left
+  };
+
+  const recenterCard = () => {
+    cardRotate.value = withTiming(0, { duration: speed });
+    cardOffsetX.value = withTiming(0, { duration: speed }); // Move back to center
+  };
+
   return (
     <SafeAreaView style={styles.container}>
-        <View style={styles.topNav}>
-            <Text> {'<'} </Text>
-        </View>
-        <View style={styles.flashCardContainer}>
-        <FlashCard definition={'나무'} romanization={'(namu)'} translation={'too much'} />
-      </View>
+      {/* ... Other components */}
+      <Animated.View 
+        entering={RollInLeft} 
+        exiting={RollOutRight} 
+        style={[styles.flashCardContainer, cardStyle]}
+      >
+        <FlashCard 
+          definition={'나무'} 
+          romanization={'(namu)'} 
+          translation={'too much'} 
+        />
+      </Animated.View>
       <View style={styles.bottomControls}>
-        <TouchableOpacity style={styles.leftControl}>
+        <TouchableOpacity style={styles.leftControl} onPress={tumbleCardLeft}>
           <Text>X</Text>
         </TouchableOpacity>
-        <TouchableOpacity style={styles.centerControl}>
+        <TouchableOpacity style={styles.centerControl} onPress={recenterCard}>
           <Text>{'<-'}</Text>
         </TouchableOpacity>
-        <TouchableOpacity style={styles.rightControl}>
+        <TouchableOpacity style={styles.rightControl} onPress={tumbleRight}>
           <Text>O</Text>
         </TouchableOpacity>
       </View>
@@ -58,8 +101,9 @@ const styles = StyleSheet.create({
     display: 'flex',
     flexDirection: 'row',
     justifyContent: 'space-between',
-    backgroundColor: "white",
-    alignItems: 'center'
+    backgroundColor: "transparent",
+    alignItems: 'center',
+    zIndex: 1
   },
   leftControl: {
     flex: 1,
