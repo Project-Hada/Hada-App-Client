@@ -11,11 +11,15 @@ export default function PracticeScreen() {
         </View>
         <View style={styles.flashCardContainer}>
             <View style={styles.flashCard}>
-                <View style={styles.definition}>
-
+                <View >
+                    <Text style={styles.definition}>
+                        나무
+                    </Text>
                 </View>
-                <View style={styles.romanization}>
-
+                <View >
+                    <Text style={styles.romanization}>
+                        {'(namu)'}
+                    </Text>
                 </View>
             </View>
         </View>
@@ -51,10 +55,14 @@ const styles = StyleSheet.create({
     backgroundColor: 'green',
     width: '100%',
     height: '100%',
-    borderRadius: 13
+    borderRadius: 13,
+    flexDirection: 'column',
+    display: 'flex',
+    justifyContent: 'center',
+    alignItems: 'center'  
   },
   definition: {
-
+    fontSize: 24
   },
   romanization: {
 
