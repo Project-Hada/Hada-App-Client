@@ -1,39 +1,65 @@
-import { StyleSheet } from 'react-native';
-
-import EditScreenInfo from '@/components/EditScreenInfo';
-import { Text, View } from '@/components/Themed';
-import { SafeAreaFrameContext, SafeAreaView } from 'react-native-safe-area-context';
+import React from 'react';
+import { Pressable, StyleSheet, View, Text, TouchableOpacity } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
+import Animated, { useAnimatedStyle, useSharedValue, withTiming } from 'react-native-reanimated';
 
 export default function PracticeScreen() {
+  // Shared value to control the flip value
+  const flip = useSharedValue(0);
+
+  // Trigger the flip animation
+  const triggerFlip = () => {
+    flip.value = withTiming(flip.value === 0 ? 180 : 0, { duration: 300 });
+  };
+
+  // Animated styles for the front of the card
+  const animatedStyleFront = useAnimatedStyle(() => {
+    return {
+      transform: [
+        {
+          rotateY: `${flip.value}deg`
+        }
+      ],
+      opacity: flip.value <= 90 ? 1 : 0,
+    };
+  });
+
+  // Animated styles for the back of the card
+  const animatedStyleBack = useAnimatedStyle(() => {
+    return {
+      transform: [
+        {
+          rotateY: `${flip.value + 180}deg`
+        }
+      ],
+      opacity: flip.value <= 90 ? 0 : 1,
+    };
+  });
   return (
     <SafeAreaView style={styles.container}>
         <View style={styles.topNav}>
             <Text> {'<'} </Text>
         </View>
         <View style={styles.flashCardContainer}>
-            <View style={styles.flashCard}>
-                <View style={styles.definitionContainer}>
-                    <Text style={styles.definition}>
-                        나무
-                    </Text>
-                </View>
-                <View style={styles.romanizationContainer}>
-                    <Text style={styles.romanization}>
-                        {'(namu)'}
-                    </Text>
-                </View>
-            </View>
-        </View>
+        <Pressable onPress={triggerFlip}>
+          <Animated.View style={[styles.flashCardFront, animatedStyleFront]}>
+            <Text style={styles.definition}>나무</Text>
+          </Animated.View>
+          <Animated.View style={[styles.flashCardBack, animatedStyleBack]}>
+            <Text>Eep</Text>
+          </Animated.View>
+        </Pressable>
+      </View>
         <View style={styles.bottomControls}>
-          <View style={styles.leftControl}>
+          <TouchableOpacity style={styles.leftControl}>
             <Text>X</Text>
-          </View>
-          <View style={styles.centerControl}>
+          </TouchableOpacity>
+          <TouchableOpacity style={styles.centerControl}>
             <Text>{'<-'}</Text>
-          </View>
-          <View style={styles.rightControl}>
+          </TouchableOpacity>
+          <TouchableOpacity style={styles.rightControl}>
             <Text>O</Text>
-          </View>
+          </TouchableOpacity>
         </View>
     </SafeAreaView>
   );
@@ -56,13 +82,15 @@ const styles = StyleSheet.create({
     justifyContent: 'center'
   },
   flashCardContainer: {
+    position: 'relative',
     flex: 6,
     backgroundColor: 'white',
     width: '100%',
     paddingHorizontal: 20,
     paddingVertical: 10
   },
-  flashCard: {
+  flashCardFront: {
+    position: 'absolute',
     flex: 1,
     backgroundColor: '#BEBEBE',
     width: '100%',
@@ -71,6 +99,16 @@ const styles = StyleSheet.create({
     display: 'flex',
     justifyContent: 'center',
     alignItems: 'center'  
+  },
+  flashCardBack: {
+    position: 'absolute',
+    flex: 1,
+    backgroundColor: '#BEBEBE',
+    width: '100%',
+    borderRadius: 13,
+    flexDirection: 'column',
+    justifyContent: 'center',
+    alignItems: 'center',
   },
   definitionContainer: {
     backgroundColor: 'transparent'
