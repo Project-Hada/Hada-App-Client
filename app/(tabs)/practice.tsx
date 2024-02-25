@@ -9,7 +9,7 @@ export default function PracticeScreen() {
 
   // Trigger the flip animation
   const triggerFlip = () => {
-    flip.value = withTiming(flip.value === 0 ? 180 : 0, { duration: 300 });
+    flip.value = withTiming(flip.value === 0 ? -180 : 0, { duration: 300 });
   };
 
   // Animated styles for the front of the card
@@ -20,7 +20,7 @@ export default function PracticeScreen() {
           rotateY: `${flip.value}deg`
         }
       ],
-      opacity: flip.value <= 90 ? 1 : 0,
+      opacity: flip.value <= -90 ? 1 : 0,
     };
   });
 
@@ -32,7 +32,7 @@ export default function PracticeScreen() {
           rotateY: `${flip.value + 180}deg`
         }
       ],
-      opacity: flip.value <= 90 ? 0 : 1,
+      opacity: flip.value <= -90 ? 0 : 1,
     };
   });
   return (
@@ -41,9 +41,18 @@ export default function PracticeScreen() {
             <Text> {'<'} </Text>
         </View>
         <View style={styles.flashCardContainer}>
-        <Pressable onPress={triggerFlip}>
+        <Pressable onPress={triggerFlip} style={styles.flashCardPressableContainer}>
           <Animated.View style={[styles.flashCardFront, animatedStyleFront]}>
-            <Text style={styles.definition}>나무</Text>
+                <View style={styles.definitionContainer}>
+                    <Text style={styles.definition}>
+                        나무
+                    </Text>
+                </View>
+                <View style={styles.romanizationContainer}>
+                    <Text style={styles.romanization}>
+                        {'(namu)'}
+                    </Text>
+                </View>
           </Animated.View>
           <Animated.View style={[styles.flashCardBack, animatedStyleBack]}>
             <Text>Eep</Text>
@@ -82,17 +91,28 @@ const styles = StyleSheet.create({
     justifyContent: 'center'
   },
   flashCardContainer: {
-    position: 'relative',
     flex: 6,
     backgroundColor: 'white',
     width: '100%',
     paddingHorizontal: 20,
     paddingVertical: 10
   },
+  flashCardPressableContainer: {
+    position: 'relative',
+    flex: 1,
+    width: '100%',
+    justifyContent: 'center',
+    alignItems: 'center',
+    transform: [
+      { scaleX: -1 }
+    ], 
+    
+  },
   flashCardFront: {
     position: 'absolute',
-    flex: 1,
     backgroundColor: '#BEBEBE',
+    flex: 1,
+    height: '100%',
     width: '100%',
     borderRadius: 13,
     flexDirection: 'column',
@@ -105,6 +125,7 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: '#BEBEBE',
     width: '100%',
+    height: '100%',
     borderRadius: 13,
     flexDirection: 'column',
     justifyContent: 'center',
