@@ -5,9 +5,10 @@ type FlashCardProps = {
   definition: string;
   romanization: string;
   translation: string;
+  onFlip: () => void;
 };
 
-export default function FlashCard({ definition, romanization, translation }: FlashCardProps) {
+export default function FlashCard({ definition, romanization, translation, onFlip }: FlashCardProps) {
   const [flipAnim, setFlipAnim] = useState(new Animated.Value(0));
   const [isFlipped, setIsFlipped] = useState(false);
 
@@ -34,12 +35,14 @@ export default function FlashCard({ definition, romanization, translation }: Fla
   };
 
   const triggerFlip = () => {
+    onFlip(); //notifies the parent
     Animated.timing(flipAnim, {
       toValue: isFlipped ? 0 : 1,
       duration: 300,
       useNativeDriver: true,
-    }).start();
-    setIsFlipped(!isFlipped);
+    }).start(() => {
+      setIsFlipped(!isFlipped);
+    });
   };
 
   return (
@@ -64,6 +67,7 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
+    zIndex: 5,
   },
   flashCardFront: {
     width: '100%',

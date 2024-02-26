@@ -1,6 +1,7 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { StyleSheet, View, Text, TouchableOpacity, Animated, SafeAreaView, StyleProp, ViewStyle } from 'react-native';
 import FlashCard from '@/components/Practice/FlashCard';
+import FlashCardSlider from '@/components/Practice/FlashCardSlider';
 
 const flashCards = [
   {
@@ -83,13 +84,21 @@ const flashCards = [
 
 export default function PracticeScreen() {
   const [currentIndex, setCurrentIndex] = useState(0);
+  const [dynamicIndex, setDynamicIndex] = useState(currentIndex);
   const [nextIndex, setNextIndex] = useState(1); // Next card index
   const [history, setHistory] = useState<string[]>([]); // Track user actions for the back functionality
   const cardOffsetX = useRef(new Animated.Value(0)).current; // Animation for swiping
+  const [isFlipped, setIsFlipped] = useState(false);
+  const [sliderIndex, setSliderIndex] = useState(0);
+
+
 
   // Function to handle the card swipe animation
   const moveCard = (direction: string) => {
     const moveTo = direction === 'X' ? -1000 : 1000; // Determine direction based on 'X' or 'O'
+    setSliderIndex(999);
+    setDynamicIndex(nextIndex);
+
     Animated.timing(cardOffsetX, {
       toValue: moveTo,
       duration: 300,
@@ -106,6 +115,7 @@ export default function PracticeScreen() {
       // Update indices
       setCurrentIndex(newCurrentIndex);
       setNextIndex(newNextIndex);
+      setSliderIndex(0);
     });
   };
 
@@ -138,15 +148,22 @@ export default function PracticeScreen() {
     <SafeAreaView style={styles.container}>
       <View style={styles.flashCardContainer}>
         <FlashCard
-          definition={flashCards[nextIndex].definition}
-          romanization={flashCards[nextIndex].romanization}
-          translation={flashCards[nextIndex].translation}
+          definition={flashCards[dynamicIndex].definition}
+          romanization={flashCards[dynamicIndex].romanization}
+          translation={flashCards[dynamicIndex].translation}
+          onFlip={() => setIsFlipped(!isFlipped)}
         />
-        <Animated.View style={cardStyle}>
-          <View style={{backgroundColor: 'red', position: "absolute", width: '100%', height: 500}}>
 
-          </View>
-        </Animated.View>
+        <View style={[styles.flashCardAnimated, {zIndex: sliderIndex}]}>
+          <Animated.View style={[cardStyle]}>
+            <FlashCardSlider
+              definition={flashCards[currentIndex].definition}
+              romanization={flashCards[currentIndex].romanization}
+              translation={flashCards[currentIndex].translation} 
+              isFlipped={isFlipped}            />
+          </Animated.View>
+        </View>
+        
       </View>
       <View style={styles.bottomControls}>
         <TouchableOpacity onPress={() => moveCard('X')} style={styles.leftControl}>
@@ -185,10 +202,14 @@ const styles = StyleSheet.create({
     justifyContent: 'center'
   },
   flashCardAnimated: {
-    position: 'relative',
-    flex: 6,
-    backgroundColor: 'white',
-    width: '100%',
+    backgroundColor: 'transparent',
+    position: 'absolute',
+    zIndex: 9999, 
+    height: '100%', 
+    width: '100%', 
+    alignSelf: 'center', 
+    justifyContent: 'center',
+    pointerEvents: 'none'
   },
   nextFlashCard: {
     position: 'absolute',
@@ -202,7 +223,6 @@ const styles = StyleSheet.create({
     backgroundColor: 'white',
     width: '100%',
     paddingHorizontal: 20,
-    paddingVertical: 10
   },
   bottomControls: {
     flex: 1.4,
