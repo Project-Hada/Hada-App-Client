@@ -43,10 +43,6 @@ export default function LibraryScreen({navigation}: any) {
 
     return (
         <SafeAreaView style={libStyles.container}>
-            <View style={libStyles.headerContainer}>
-                <Text style={libStyles.headertitle}>Library</Text>
-            </View>
-            {/* add addition features in the future here */}
             <ScrollView contentContainerStyle={libStyles.scrollView} >
                 {playlistData.map((item) => {
                     return(
@@ -55,7 +51,9 @@ export default function LibraryScreen({navigation}: any) {
                             style={libStyles.playlist} 
                             onPress={() => navigation.navigate('pages/deckprev')}
                         >
-                            <MaterialCommunityIcons name="access-point" color="black" style={libStyles.icons}/>
+                            <View style={libStyles.iconContainer}>
+                                <MaterialCommunityIcons size={55} name="access-point" color="black"/>
+                            </View>
                             <View style={libStyles.playlistInfo}>
                                 <Text style={libStyles.playlistName} >{item.title}</Text>
                                 <Text style={libStyles.playlistWordCount} >{item.wordCount} words</Text>
@@ -83,7 +81,7 @@ const fonts = {
     subTextSize: 14,
 };
 
-const libStyles = StyleSheet.create({
+export const libStyles = StyleSheet.create({
     container: {
         flex: 1,
         width: '100%',
@@ -118,13 +116,11 @@ const libStyles = StyleSheet.create({
         marginBottom: 15,
         marginHorizontal: 15,
     },
-    icons: {
-        flex: 1,
-        maxWidth: 55,
+    iconContainer: {
         borderRadius: 3,
+        backgroundColor: colors.iconBackground,
         marginHorizontal: 10,
-        fontSize: 55,
-        backgroundColor: colors.iconBackground
+        maxWidth: 55,
     },
     playlistInfo: {
         flex: 5

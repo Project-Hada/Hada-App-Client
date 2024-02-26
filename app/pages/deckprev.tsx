@@ -1,5 +1,5 @@
 import React from 'react';
-import { StyleSheet, View, Text, FlatList, TouchableOpacity } from 'react-native';
+import { StyleSheet, View, Text, FlatList, TouchableOpacity, SafeAreaView } from 'react-native';
 import { MaterialCommunityIcons, MaterialIcons, AntDesign } from '@expo/vector-icons';
 
 interface WordItem {
@@ -37,11 +37,11 @@ const dummyData: WordItem[] = [
   
 ];
 
-export default function DeckPreview() {
+export default function DeckPreview({navigation}: any) {
   return (
-    <View style={styles.container}>
+    <SafeAreaView style={styles.container}>
         <View style={styles.header}>
-            <TouchableOpacity style={styles.backIcon}>
+            <TouchableOpacity style={styles.backIcon} onPress={() => navigation.goBack()}>
                 <MaterialIcons name="arrow-back-ios" size={24} color="gray"/>
             </TouchableOpacity>
             <View style={styles.headerContent}>
@@ -56,7 +56,7 @@ export default function DeckPreview() {
     <FlatList
         data={dummyData}
         renderItem={({ item }) => (
-        <TouchableOpacity>
+        <TouchableOpacity >
             <View style={styles.listItem}>
                 <View style={styles.previewBadge}>
                     <Text style={styles.previewBadgeText}>{item.term[0]}</Text>
@@ -75,12 +75,12 @@ export default function DeckPreview() {
         <TouchableOpacity style={styles.practiceButton}>
             <Text style={styles.practiceButtonText}>Practice</Text>
         </TouchableOpacity>
-    </View>
+    </SafeAreaView>
   );
 };
 
 
-const styles = StyleSheet.create({
+export const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#F2E8E1',
