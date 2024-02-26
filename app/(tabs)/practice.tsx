@@ -81,12 +81,16 @@ const flashCards = [
   }
 ]
 
+type HistoryItem = {
+  direction: string;
+  currentIndex: number;
+}
 
 export default function PracticeScreen() {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [dynamicIndex, setDynamicIndex] = useState(currentIndex);
   const [nextIndex, setNextIndex] = useState(1); // Next card index
-  const [history, setHistory] = useState<string[]>([]); // Track user actions for the back functionality
+  const [history, setHistory] = useState<HistoryItem[]>([]); // Track user actions for the back functionality
   const cardOffsetX = useRef(new Animated.Value(0)).current; // Animation for swiping
   const [isFlipped, setIsFlipped] = useState(false);
   const [sliderIndex, setSliderIndex] = useState(0);
@@ -106,11 +110,10 @@ export default function PracticeScreen() {
     }).start(() => {
       // After the animation, reset position and update card indices
       cardOffsetX.setValue(0); // Reset position
+      // Save action to history
+      setHistory([...history, {direction, currentIndex}]);
       const newCurrentIndex = (currentIndex + 1) % flashCards.length;
       const newNextIndex = (nextIndex + 1) % flashCards.length;
-
-      // Save action to history
-      setHistory([...history, direction ]);
 
       // Update indices
       setCurrentIndex(newCurrentIndex);
@@ -121,14 +124,16 @@ export default function PracticeScreen() {
 
   // Function to handle the back action
   const bringBackCard = () => {
-    if(currentIndex <= 0 ) return;
+    if(history.length <= 0 ) return;
+    const historyLen = history.length - 1;
     const moveTo = 0; // Determine direction based on 'X' or 'O'
-    const offset = (history[history.length - 1]) === 'left' ? -1000 : 1000; // Determine direction based on 'X' or 'O'
+    const offset = (history[historyLen].direction) === 'left' ? -1000 : 1000; // Determine direction based on 'X' or 'O'
     cardOffsetX.setValue(offset);
     setSliderIndex(999);
-    setHistory(history.slice(0, history.length - 1))
-    setCurrentIndex(currentIndex - 1);
-    setNextIndex(nextIndex - 1);
+    const newCurrentIndex = history[historyLen].currentIndex;
+    setCurrentIndex(newCurrentIndex);
+    setNextIndex((newCurrentIndex + 1) % flashCards.length);
+    setHistory(history.slice(0, historyLen))
 
     Animated.timing(cardOffsetX, {
       toValue: moveTo,
@@ -137,7 +142,7 @@ export default function PracticeScreen() {
     }).start(() => {
       // After the animation, reset position and update card indices
       cardOffsetX.setValue(0);
-      setDynamicIndex(currentIndex - 1);
+      setDynamicIndex(newCurrentIndex);
       // Update indices
       setSliderIndex(0);
     });
