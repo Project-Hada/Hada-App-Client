@@ -37,22 +37,8 @@ const [playlistData, setPlaylistData] = useState(
     ]
 );
 
-type RootStackParamList = {
-    Library: undefined; // No parameters expected to be passed to LibraryScreen
-    DeckPreview: undefined; // Adjust if DeckPreview expects parameters
-  };
-  
-  // Type for the LibraryScreen's navigation prop
-  type LibraryScreenNavigationProp = StackNavigationProp<
-    RootStackParamList,
-    'Library'
-  >;
-  
-  type Props = {
-    navigation: LibraryScreenNavigationProp;
-  };
 
-export default function LibraryScreen({navigation}: Props) {
+export default function LibraryScreen({navigation}: any) {
 
 
     return (
@@ -67,7 +53,7 @@ export default function LibraryScreen({navigation}: Props) {
                         <TouchableOpacity 
                             key={item.key} 
                             style={libStyles.playlist} 
-                            onPress={() => navigation.navigate('DeckPreview')}
+                            onPress={() => navigation.navigate('pages/deckprev')}
                         >
                             <MaterialCommunityIcons name="access-point" color="black" style={libStyles.icons}/>
                             <View style={libStyles.playlistInfo}>
