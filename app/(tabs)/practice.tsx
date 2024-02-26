@@ -61,7 +61,7 @@ const flashCards = [
   },
   {
     "definition": "번개",
-    "romanization": "(baengae)",
+    "romanization": "(baen   gae)",
     "translation": "lightning"
   },
   {
@@ -95,7 +95,7 @@ export default function PracticeScreen() {
 
   // Function to handle the card swipe animation
   const moveCard = (direction: string) => {
-    const moveTo = direction === 'X' ? -1000 : 1000; // Determine direction based on 'X' or 'O'
+    const moveTo = direction === 'left' ? -1000 : 1000; // Determine direction based on 'X' or 'O'
     setSliderIndex(999);
     setDynamicIndex(nextIndex);
 
@@ -121,20 +121,25 @@ export default function PracticeScreen() {
 
   // Function to handle the back action
   const bringBackCard = () => {
-    setHistory(history => {
-      if (history.length === 0) return history; // If history is empty, do nothing
-  
-      // Remove the last action from history
-      const newHistory = history.slice(0, history.length - 1);
-  
-      // Decrement currentIndex to revert to the previous card
-      setCurrentIndex(currentIndex => {
-        // Ensure currentIndex does not go below 0
-        return (currentIndex - 1 + flashCards.length) % flashCards.length;
-      });
-  
-      // Return the updated history without the last action
-      return newHistory;
+    if(currentIndex <= 0 ) return;
+    const moveTo = 0; // Determine direction based on 'X' or 'O'
+    const offset = (history[history.length - 1]) === 'left' ? -1000 : 1000; // Determine direction based on 'X' or 'O'
+    cardOffsetX.setValue(offset);
+    setSliderIndex(999);
+    setHistory(history.slice(0, history.length - 1))
+    setCurrentIndex(currentIndex - 1);
+    setNextIndex(nextIndex - 1);
+
+    Animated.timing(cardOffsetX, {
+      toValue: moveTo,
+      duration: 300,
+      useNativeDriver: true,
+    }).start(() => {
+      // After the animation, reset position and update card indices
+      cardOffsetX.setValue(0);
+      setDynamicIndex(currentIndex - 1);
+      // Update indices
+      setSliderIndex(0);
     });
   };
   
@@ -167,13 +172,13 @@ export default function PracticeScreen() {
         
       </View>
       <View style={styles.bottomControls}>
-        <TouchableOpacity onPress={() => moveCard('X')} style={styles.leftControl}>
+        <TouchableOpacity onPress={() => moveCard('left')} style={styles.leftControl}>
           <Text>X</Text>
         </TouchableOpacity>
         <TouchableOpacity onPress={bringBackCard} style={styles.centerControl}>
           <Text>{'<-'}</Text>
         </TouchableOpacity>
-        <TouchableOpacity onPress={() => moveCard('O')} style={styles.rightControl}>
+        <TouchableOpacity onPress={() => moveCard('right')} style={styles.rightControl}>
           <Text>O</Text>
         </TouchableOpacity>
       </View>
