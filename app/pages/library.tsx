@@ -60,7 +60,7 @@ const colors = {
 };
 
 const fonts = {
-    fontFamiliy: 'General Sans',
+    fontFamiliy: 'GeneralSans-Regular',
     headerTitleSize: 24,
     playlistTitleSize: 18,
     subTextSize: 14,
