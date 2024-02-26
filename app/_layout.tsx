@@ -8,6 +8,7 @@ import { View, Text, StyleSheet, SafeAreaView } from 'react-native';
 import PracticeScreen from './pages/practice';
 import { useFonts } from 'expo-font';
 import FontAwesome from '@expo/vector-icons/build/FontAwesome';
+import flashCards from './fakeData';
 
 const Stack = createStackNavigator();
 
@@ -45,32 +46,54 @@ export default function RootLayout() {
     // You can return a loading indicator here if you like
     return <View style={styles.loadingContainer}></View>;
   }
+
+  const dummyData = [
+    {
+        name: "access-point", 
+        title: "Someone's Study Set",
+        words: flashCards
+    },
+    {
+        name: "access-point", 
+        title: "Someone's Study Set",
+        words: flashCards
+    },
+    {
+        name: "access-point", 
+        title: "Someone's Study Set",
+        words: flashCards
+    },
+];
   
   return (
-      <Stack.Navigator>
-        <Stack.Screen 
-          name="pages/library" 
-          component={LibraryScreen} 
-          options={{
-            header: libraryHeader
-          }}
-        />
-        <Stack.Screen 
-          name="pages/deckprev" 
-          component={DeckPreview} 
-          options={{
-            headerShown: false
-          }}
-        />
-        <Stack.Screen 
-          name="pages/practice" 
-          component={PracticeScreen} 
-          options={{
-            headerShown: false
-          }}
-        />
-        {/* Add other screens here */}
-      </Stack.Navigator>
+    <Stack.Navigator>
+    <Stack.Screen 
+      name="pages/library" 
+      component={LibraryScreen} 
+      initialParams={{ playlistData: dummyData }} // Pass initial params here
+      options={{
+        header: libraryHeader
+      }}
+    />
+    <Stack.Screen 
+      name="pages/deckprev" 
+      component={DeckPreview} 
+      initialParams={{ flashCards: flashCards }} // Pass initial params here
+      options={{
+        headerShown: false
+      }}
+    />
+    <Stack.Screen 
+      name="pages/practice" 
+      component={PracticeScreen} 
+      initialParams={{ flashCards: flashCards }} // Pass initial params here
+      options={{
+        headerShown: false
+      }}
+    />
+    {/* Add other screens here */}
+  </Stack.Navigator>
+  
   );
 }
 

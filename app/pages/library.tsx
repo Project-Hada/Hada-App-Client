@@ -1,53 +1,38 @@
-import React from 'react'
+import React, { JSXElementConstructor, ReactElement, ReactNode, ReactPortal } from 'react'
 import { useState } from 'react'
 import { View, Text, StyleSheet, ScrollView, SafeAreaView, TouchableOpacity } from 'react-native'
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { StackNavigationProp } from '@react-navigation/stack';
-
-const [playlistData, setPlaylistData] = useState(
-    [
-        {name: "access-point", title: "Someone's Study Set", wordCount: "1", key:"1"},
-        {name: "access-point", title: "Someone's Study Set", wordCount: "2", key:"2"},
-        {name: "access-point", title: "Someone's Study Set", wordCount: "21", key:"3"},
-        {name: "access-point", title: "Someone's Study Set", wordCount: "6", key:"4"},
-        {name: "access-point", title: "Someone's Study Set", wordCount: "9", key:"5"},
-        {name: "access-point", title: "Someone's Study Set", wordCount: "4", key:"6"},
-        {name: "access-point", title: "Someone's Study Set", wordCount: "20", key:"7"},
-        {name: "access-point", title: "Someone's Study Set", wordCount: "9", key:"8"},
-        {name: "access-point", title: "Someone's Study Set", wordCount: "10", key:"9"},
-        {name: "access-point", title: "Someone's Study Set", wordCount: "21", key:"10"},
-        {name: "access-point", title: "Someone's Study Set", wordCount: "6", key:"11"},
-        {name: "access-point", title: "Someone's Study Set", wordCount: "9", key:"12"},
-        {name: "access-point", title: "Someone's Study Set", wordCount: "4", key:"13"},
-        {name: "access-point", title: "Someone's Study Set", wordCount: "20", key:"14"},
-        {name: "access-point", title: "Someone's Study Set", wordCount: "9", key:"15"},
-        {name: "access-point", title: "Someone's Study Set", wordCount: "10", key:"16"},
-        {name: "access-point", title: "Someone's Study Set", wordCount: "21", key:"17"},
-        {name: "access-point", title: "Someone's Study Set", wordCount: "6", key:"18"},
-        {name: "access-point", title: "Someone's Study Set", wordCount: "9", key:"19"},
-        {name: "access-point", title: "Someone's Study Set", wordCount: "4", key:"20"},
-        {name: "access-point", title: "Someone's Study Set", wordCount: "20", key:"21"},
-        {name: "access-point", title: "Someone's Study Set", wordCount: "9", key:"22"},
-        {name: "access-point", title: "Someone's Study Set", wordCount: "10", key:"23"},
-        {name: "access-point", title: "Someone's Study Set", wordCount: "21", key:"24"},
-        {name: "access-point", title: "Someone's Study Set", wordCount: "6", key:"25"},
-        {name: "access-point", title: "Someone's Study Set", wordCount: "9", key:"26"},
-        {name: "access-point", title: "Someone's Study Set", wordCount: "7", key:"27"},
-        {name: "access-point", title: "Someone's Study Set", wordCount: "77", key:"28"},
-    ]
-);
+import flashCards from '../fakeData';
 
 
-export default function LibraryScreen({navigation}: any) {
+type FlashCardType = {
+    definition: string;
+    romanization: string;
+    translation: string;
+  };
+  
+  type PlaylistItemType = {
+    name: string;
+    title: string;
+    words: FlashCardType[];
+  };
+
+  type LibraryScreenProps = {
+    navigation: any;
+    playlistData: PlaylistItemType[];
+  }
+export default function LibraryScreen({navigation, route}: any) {
+    const { playlistData } = route.params;
 
 
     return (
         <SafeAreaView style={libStyles.container}>
             <ScrollView contentContainerStyle={libStyles.scrollView} >
-                {playlistData.map((item) => {
+                {playlistData.map((item: any, i: any) => {
                     return(
                         <TouchableOpacity 
-                            key={item.key} 
+                            key={`playlist-${i}`} 
                             style={libStyles.playlist} 
                             onPress={() => navigation.navigate('pages/deckprev')}
                         >
@@ -56,7 +41,7 @@ export default function LibraryScreen({navigation}: any) {
                             </View>
                             <View style={libStyles.playlistInfo}>
                                 <Text style={libStyles.playlistName} >{item.title}</Text>
-                                <Text style={libStyles.playlistWordCount} >{item.wordCount} words</Text>
+                                <Text style={libStyles.playlistWordCount} >{item.words.length} words</Text>
                             </View>
                         </TouchableOpacity>
                     )

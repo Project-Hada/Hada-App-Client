@@ -4,90 +4,23 @@ import FlashCard from '@/components/Practice/FlashCard';
 import FlashCardSlider from '@/components/Practice/FlashCardSlider';
 import { FontAwesome6 } from '@expo/vector-icons';
 
-const flashCards = [
-  {
-    "definition": "나무",
-    "romanization": "(namu)",
-    "translation": "tree"
-  },
-  {
-    "definition": "사과",
-    "romanization": "(sagwa)",
-    "translation": "apple"
-  },
-  {
-    "definition": "바다",
-    "romanization": "(bada)",
-    "translation": "sea"
-  },
-  {
-    "definition": "햇볕",
-    "romanization": "(haetbyeot)",
-    "translation": "sunlight"
-  },
-  {
-    "definition": "비",
-    "romanization": "(bi)",
-    "translation": "rain"
-  },
-  {
-    "definition": "바람",
-    "romanization": "(baram)",
-    "translation": "wind"
-  },
-  {
-    "definition": "하늘",
-    "romanization": "(haneul)",
-    "translation": "sky"
-  },
-  {
-    "definition": "별",
-    "romanization": "(byeol)",
-    "translation": "star"
-  },
-  {
-    "definition": "눈",
-    "romanization": "(nun)",
-    "translation": "snow"
-  },
-  {
-    "definition": "구름",
-    "romanization": "(gureum)",
-    "translation": "cloud"
-  },
-  {
-    "definition": "빗물",
-    "romanization": "(bitmul)",
-    "translation": "rainwater"
-  },
-  {
-    "definition": "번개",
-    "romanization": "(baen   gae)",
-    "translation": "lightning"
-  },
-  {
-    "definition": "무지개",
-    "romanization": "(mujigae)",
-    "translation": "rainbow"
-  },
-  {
-    "definition": "바람막이",
-    "romanization": "(barammaki)",
-    "translation": "windbreaker"
-  },
-  {
-    "definition": "태양",
-    "romanization": "(taeyang)",
-    "translation": "sun"
-  }
-]
-
 type HistoryItem = {
   direction: string;
   currentIndex: number;
 }
 
-export default function PracticeScreen({navigation}: any) {
+type PracticeScreenProps = {
+  navigation: any;
+  flashCards: FlashCardType[];
+};
+
+type FlashCardType = {
+  definition: string;
+  romanization: string;
+  translation: string;
+};
+
+export default function PracticeScreen({navigation, route}: any) {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [dynamicIndex, setDynamicIndex] = useState(currentIndex);
   const [nextIndex, setNextIndex] = useState(1); // Next card index
@@ -96,9 +29,10 @@ export default function PracticeScreen({navigation}: any) {
   const [isFlipped, setIsFlipped] = useState(false);
   const [sliderIndex, setSliderIndex] = useState(0);
 
+  const { flashCards } = route.params;
 
   const renderProgressIndicators = () => {
-    return flashCards.map((card, index) => (
+    return flashCards.map((card: any, index: any) => (
       <View
         key={`progress-${index}`}
         style={[

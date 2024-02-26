@@ -2,42 +2,20 @@ import React from 'react';
 import { StyleSheet, View, Text, FlatList, TouchableOpacity, SafeAreaView } from 'react-native';
 import { MaterialCommunityIcons, MaterialIcons, AntDesign } from '@expo/vector-icons';
 
-interface WordItem {
-  id: string;
-  term: string;
+
+type FlashCardType = {
   definition: string;
+  romanization: string;
+  translation: string;
+};
+
+type DeckPreviewProps = {
+  navigation: any;
+  flashCards: FlashCardType[];
 }
 
-const dummyData: WordItem[] = [
-  {
-    id: '1',
-    term: '안녕하세요',
-    definition: 'hello',
-  },
-  {
-    id: '2',
-    term: '녕하세요',
-    definition: 'ello',
-  },
-  {
-    id: '3',
-    term: '하세요',
-    definition: 'llo',
-  },
-  {
-    id: '4',
-    term: '세요',
-    definition: 'lo',
-  },
-  {
-    id: '5',
-    term: '요',
-    definition: 'o',
-  },
-  
-];
-
-export default function DeckPreview({navigation}: any) {
+export default function DeckPreview({navigation, route}: any) {
+  const { flashCards } = route.params;
   return (
     <SafeAreaView style={styles.container}>
         <View style={styles.header}>
@@ -48,28 +26,28 @@ export default function DeckPreview({navigation}: any) {
                 <Text style={styles.headerTitle}>Someone’s Study Set</Text>
                 <View style={styles.subHeader}>
                     <MaterialCommunityIcons name="cards-variant" size={18} color="gray"/>
-                    <Text style={styles.wordCount}>{dummyData.length} words</Text>
+                    <Text style={styles.wordCount}>{flashCards.length} words</Text>
                 </View>
             </View>
         </View>
         
     <FlatList
-        data={dummyData}
+        data={flashCards}
         renderItem={({ item }) => (
         <TouchableOpacity >
             <View style={styles.listItem}>
                 <View style={styles.previewBadge}>
-                    <Text style={styles.previewBadgeText}>{item.term[0]}</Text>
+                    <Text style={styles.previewBadgeText}>{item.definition.slice(0,1)}</Text>
                 </View>
                 <View style={styles.termContainer}>
-                    <Text style={styles.term}>{item.term}</Text>
-                    <Text style={styles.definition}>{item.definition}</Text>
+                    <Text style={styles.term}>{item.definition}</Text>
+                    <Text style={styles.definition}>{item.translation}</Text>
                 </View>
-                <AntDesign name="play" size={36} color="#FFDF37"/>
+                {/* <AntDesign name="play" size={36} color="#FFDF37"/> next sprint */}
             </View>
         </TouchableOpacity>
         )}
-        keyExtractor={item => item.id}
+        keyExtractor={item => `term-${item.definition}`}
       />
       
         <TouchableOpacity onPress={() => navigation.navigate('pages/practice')} style={styles.practiceButton}>
@@ -84,6 +62,7 @@ export const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#F2E8E1',
+    paddingHorizontal: 20
   },
   header: {
     flexDirection: 'row',
@@ -118,7 +97,7 @@ export const styles = StyleSheet.create({
     justifyContent: 'space-between',
     padding: 20,
     marginVertical: 5, 
-    marginHorizontal: 5,
+    marginHorizontal: 20,
     borderWidth: 1,
     borderRightWidth: 4,
     borderBottomWidth: 4,
