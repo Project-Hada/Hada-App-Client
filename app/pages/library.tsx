@@ -52,7 +52,7 @@ export default function LibraryScreen({navigation}: any) {
                             onPress={() => navigation.navigate('pages/deckprev')}
                         >
                             <View style={libStyles.iconContainer}>
-                                <MaterialCommunityIcons size={55} name="access-point" color="black"/>
+                                <MaterialCommunityIcons size={44} name="access-point" color="black"/>
                             </View>
                             <View style={libStyles.playlistInfo}>
                                 <Text style={libStyles.playlistName} >{item.title}</Text>
@@ -117,10 +117,13 @@ export const libStyles = StyleSheet.create({
         marginHorizontal: 15,
     },
     iconContainer: {
+        justifyContent: 'center',
+        alignItems: 'center',
         borderRadius: 3,
         backgroundColor: colors.iconBackground,
         marginHorizontal: 10,
-        maxWidth: 55,
+        width: 55,
+        height: 55
     },
     playlistInfo: {
         flex: 5

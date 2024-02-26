@@ -87,7 +87,7 @@ type HistoryItem = {
   currentIndex: number;
 }
 
-export default function PracticeScreen() {
+export default function PracticeScreen({navigation}: any) {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [dynamicIndex, setDynamicIndex] = useState(currentIndex);
   const [nextIndex, setNextIndex] = useState(1); // Next card index
@@ -170,12 +170,12 @@ export default function PracticeScreen() {
 
   return (
     <SafeAreaView style={styles.container}>
-      <View style={styles.topNav}>
+      <TouchableOpacity onPress={() => navigation.goBack()} style={styles.topNav}>
         <FontAwesome6 name="chevron-left" size={24} color="black" />
         <View style={styles.progress}>
           {renderProgressIndicators()}
         </View>
-      </View>
+      </TouchableOpacity>
       <View style={styles.flashCardContainer}>
         <FlashCard
           definition={flashCards[dynamicIndex].definition}
