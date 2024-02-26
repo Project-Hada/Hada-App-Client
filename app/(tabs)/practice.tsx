@@ -2,6 +2,7 @@ import React, { useState, useRef, useEffect } from 'react';
 import { StyleSheet, View, Text, TouchableOpacity, Animated, SafeAreaView, StyleProp, ViewStyle } from 'react-native';
 import FlashCard from '@/components/Practice/FlashCard';
 import FlashCardSlider from '@/components/Practice/FlashCardSlider';
+import { FontAwesome6 } from '@expo/vector-icons';
 
 const flashCards = [
   {
@@ -176,15 +177,16 @@ export default function PracticeScreen() {
         </View>
         
       </View>
+      
+      <TouchableOpacity onPress={bringBackCard} style={styles.centerControl}>
+      <FontAwesome6 name="rotate-left" size={38} color="#929292" />
+      </TouchableOpacity>
       <View style={styles.bottomControls}>
-        <TouchableOpacity onPress={() => moveCard('left')} style={styles.leftControl}>
-          <Text>X</Text>
+        <TouchableOpacity onPress={() => moveCard('left')} style={[styles.controls, styles.left]}>
+        <FontAwesome6 name="circle-xmark" size={44} color="black" />
         </TouchableOpacity>
-        <TouchableOpacity onPress={bringBackCard} style={styles.centerControl}>
-          <Text>{'<-'}</Text>
-        </TouchableOpacity>
-        <TouchableOpacity onPress={() => moveCard('right')} style={styles.rightControl}>
-          <Text>O</Text>
+        <TouchableOpacity onPress={() => moveCard('right')} style={[styles.controls, styles.right]}>
+          <FontAwesome6 name="circle-check" size={44} color="black" />
         </TouchableOpacity>
       </View>
     </SafeAreaView>
@@ -202,6 +204,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     flexDirection: 'column',
+    backgroundColor: '#F2E8E1'
   },
   topNav: {
     backgroundColor: 'white',
@@ -230,46 +233,53 @@ const styles = StyleSheet.create({
   },
   flashCardContainer: {
     position: 'relative',
-    flex: 6,
-    backgroundColor: 'white',
+    flex: 5,
+    backgroundColor: 'transparent',
     width: '100%',
-    paddingHorizontal: 20,
+    paddingHorizontal: 36,
   },
   bottomControls: {
-    flex: 1.4,
+    flex: 1.6,
     width: "100%",
     display: 'flex',
     flexDirection: 'row',
     justifyContent: 'space-between',
-    backgroundColor: "white",
-    alignItems: 'center'
+    backgroundColor: "transparent",
+    alignItems: 'center',
+    gap: 26,
+    paddingHorizontal: 20
   },
-  leftControl: {
+  right: {
+    backgroundColor: "#72DA4F"
+  },
+  left: {
+    backgroundColor: "#FF454C"
+  },
+  controls: {
     flex: 1,
     height: 100,
     backgroundColor: '#D9D9D9',
-    width: 121,
+    
     justifyContent: 'center',
     alignItems: 'center',
-    borderTopRightRadius: 25,
-    borderBottomRightRadius: 25
-    
+    borderRadius: 8,
+    shadowColor: '#171717',
+    shadowOffset: {
+      width: 4, // X offset
+      height: 4, // Y offset
+    },
+    shadowOpacity: 1, // Transparency (0 to 1)
+    shadowRadius: 0, // Blur radius
+    elevation: 5, // Android-specific elevation
+    borderWidth: 1,
+    borderColor: 'black'
   },
   centerControl: {
     flex: 1,
     backgroundColor: 'transparent',
     justifyContent: 'center',
-    alignItems: 'center'
-  },
-  rightControl: {
-    flex: 1,
-    height: 100,
-    backgroundColor: '#D9D9D9',
-    width: 121,
-    justifyContent: 'center',
     alignItems: 'center',
-    borderTopLeftRadius: 25,
-    borderBottomLeftRadius: 25
+    marginBottom: -26,
   },
   title: {
     fontSize: 20,

@@ -47,7 +47,7 @@ export default function FlashCard({ definition, romanization, translation, onFli
 
   return (
     <Pressable onPress={triggerFlip} style={styles.flashCardPressableContainer}>
-      <Animated.View style={[styles.flashCardFront, frontAnimatedStyle]}>
+      <Animated.View style={[styles.flashCard, frontAnimatedStyle]}>
         <View style={styles.definitionContainer}>
           <Text style={styles.definition}>{definition}</Text>
         </View>
@@ -55,7 +55,7 @@ export default function FlashCard({ definition, romanization, translation, onFli
           <Text style={styles.romanization}>{romanization}</Text>
         </View>
       </Animated.View>
-      <Animated.View style={[styles.flashCardBack, backAnimatedStyle, { position: 'absolute' }]}>
+      <Animated.View style={[styles.flashCard, backAnimatedStyle, { position: 'absolute' }]}>
         <Text style={styles.translation}>{translation}</Text>
       </Animated.View>
     </Pressable>
@@ -68,31 +68,38 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     zIndex: 5,
+    
   },
-  flashCardFront: {
+  flashCard: {
     width: '100%',
     height: '100%',
-    borderRadius: 13 ,
-    backgroundColor: '#BEBEBE',
+    borderRadius: 14 ,
+    backgroundColor: 'white',
     justifyContent: 'center',
     alignItems: 'center',
     backfaceVisibility: 'hidden',
-  },
-  flashCardBack: {
-    width: '100%',
-    height: '100%',
-    borderRadius: 13,
-    backgroundColor: '#BEBEBE',
-    justifyContent: 'center',
-    alignItems: 'center',
-    backfaceVisibility: 'hidden',
+        shadowColor: '#171717',
+    shadowOffset: {
+      width: 4, // X offset
+      height: 4, // Y offset
+    },
+    shadowOpacity: 1, // Transparency (0 to 1)
+    shadowRadius: 0, // Blur radius
+    elevation: 5, // Android-specific elevation
+    borderWidth: 1,
+    borderColor: 'black'
   },
   definitionContainer: {},
   definition: {
     fontSize: 38,
+    fontFamily: 'GeneralSans-Variable',
   },
   romanizationContainer: {},
-  romanization: {},
+  romanization: {
+    fontSize: 28,
+    fontFamily: 'GeneralSans-Regular',
+    color: "#A7A7A7"
+  },
   translation: {
     fontSize: 34,
   },
