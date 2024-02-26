@@ -97,6 +97,19 @@ export default function PracticeScreen() {
   const [sliderIndex, setSliderIndex] = useState(0);
 
 
+  const renderProgressIndicators = () => {
+    return flashCards.map((card, index) => (
+      <View
+        key={`progress-${index}`}
+        style={[
+          styles.progressIndicator,
+          currentIndex > index ? styles.progressIndicatorPassed : null,
+          // If currentIndex is equal to index, it's the current card, we can highlight it differently
+          currentIndex === index ? styles.progressIndicatorCurrent : null,
+        ]}
+      />
+    ));
+  };
 
   // Function to handle the card swipe animation
   const moveCard = (direction: string) => {
@@ -157,6 +170,12 @@ export default function PracticeScreen() {
 
   return (
     <SafeAreaView style={styles.container}>
+      <View style={styles.topNav}>
+        <FontAwesome6 name="chevron-left" size={24} color="black" />
+        <View style={styles.progress}>
+          {renderProgressIndicators()}
+        </View>
+      </View>
       <View style={styles.flashCardContainer}>
         <FlashCard
           definition={flashCards[dynamicIndex].definition}
@@ -199,6 +218,22 @@ const styles = StyleSheet.create({
     flex: 6,
     width: "100%",
   },
+  progress: {
+    flexDirection: 'row',
+    width: "100%"
+  },
+  progressIndicator: {
+    flex: 1, // Each indicator will take equal space
+    height: 4, // Set the height of the indicator
+    backgroundColor: '#E0E0E0', // Default color for indicators
+    marginHorizontal: 2, // Optional: add some spacing between indicators
+  },
+  progressIndicatorPassed: {
+    backgroundColor: '#38DAEF', // Color for passed cards
+  },
+  progressIndicatorCurrent: {
+    backgroundColor: '#38DAEF', // Optional: if you want to highlight the current card differently
+  },
   container: {
     flex: 1,
     alignItems: 'center',
@@ -207,12 +242,14 @@ const styles = StyleSheet.create({
     backgroundColor: '#F2E8E1'
   },
   topNav: {
-    backgroundColor: 'white',
+    backgroundColor: 'transparent',
     display: 'flex',
     alignItems: 'flex-start',
     width: '100%',
     flex: .4,
-    paddingLeft: 16,
+    paddingHorizontal: 26,
+    paddingVertical: 28,
+    gap: 16,
     justifyContent: 'center'
   },
   flashCardAnimated: {

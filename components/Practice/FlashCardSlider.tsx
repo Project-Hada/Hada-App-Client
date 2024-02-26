@@ -65,11 +65,14 @@ const styles = StyleSheet.create({
   definitionContainer: {},
   definition: {
     fontSize: 38,
-    fontFamily: 'General Sans Variable Bold',
-    fontWeight: 'bold',
+    fontFamily: 'GeneralSans-Variable',
   },
   romanizationContainer: {},
-  romanization: {},
+  romanization: {
+    fontSize: 28,
+    fontFamily: 'GeneralSans-Regular',
+    color: "#A7A7A7"
+  },
   translation: {
     fontSize: 34,
   },
