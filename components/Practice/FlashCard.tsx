@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { StyleSheet, View, Text, Pressable, Animated } from 'react-native';
 
 type FlashCardProps = {
@@ -6,9 +6,10 @@ type FlashCardProps = {
   romanization: string;
   translation: string;
   onFlip: () => void;
+  resetFlip: boolean;
 };
 
-export default function FlashCard({ definition, romanization, translation, onFlip }: FlashCardProps) {
+export default function FlashCard({ definition, romanization, translation, onFlip, resetFlip }: FlashCardProps) {
   const [flipAnim, setFlipAnim] = useState(new Animated.Value(0));
   const [isFlipped, setIsFlipped] = useState(false);
 
@@ -44,6 +45,15 @@ export default function FlashCard({ definition, romanization, translation, onFli
       setIsFlipped(!isFlipped);
     });
   };
+
+  useEffect(() => {
+      flipAnim.setValue(0); // Resets to face up without animation
+      setIsFlipped(false);
+  }, [resetFlip]);
+
+  const reset = () => {
+
+  }
 
   return (
     <Pressable onPress={triggerFlip} style={styles.flashCardPressableContainer}>
