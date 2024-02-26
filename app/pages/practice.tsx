@@ -28,6 +28,8 @@ export default function PracticeScreen({navigation, route}: any) {
   const cardOffsetX = useRef(new Animated.Value(0)).current; // Animation for swiping
   const [isFlipped, setIsFlipped] = useState(false);
   const [sliderIndex, setSliderIndex] = useState(0);
+  const [wasFlipped, setWasFlipped] = useState(false);
+  const [resetFlip, setResetFlip] = useState(false)
 
   const { flashCards } = route.params;
 
@@ -47,6 +49,9 @@ export default function PracticeScreen({navigation, route}: any) {
 
   // Function to handle the card swipe animation
   const moveCard = (direction: string) => {
+    const newFlippedValue = isFlipped;
+    setWasFlipped(newFlippedValue);
+    setResetFlip(!resetFlip);
     const moveTo = direction === 'left' ? -1000 : 1000; // Determine direction based on 'X' or 'O'
     setSliderIndex(999);
     setDynamicIndex(nextIndex);
@@ -56,6 +61,8 @@ export default function PracticeScreen({navigation, route}: any) {
       duration: 300,
       useNativeDriver: true,
     }).start(() => {
+      setWasFlipped(false);
+      setIsFlipped(false);
       // After the animation, reset position and update card indices
       cardOffsetX.setValue(0); // Reset position
       // Save action to history
@@ -72,6 +79,8 @@ export default function PracticeScreen({navigation, route}: any) {
 
   // Function to handle the back action
   const bringBackCard = () => {
+    setIsFlipped(false);
+    setWasFlipped(false);
     if(history.length <= 0 ) return;
     const historyLen = history.length - 1;
     const moveTo = 0; // Determine direction based on 'X' or 'O'
@@ -88,6 +97,7 @@ export default function PracticeScreen({navigation, route}: any) {
       duration: 300,
       useNativeDriver: true,
     }).start(() => {
+      setResetFlip(!resetFlip)
       // After the animation, reset position and update card indices
       cardOffsetX.setValue(0);
       setDynamicIndex(newCurrentIndex);
@@ -104,6 +114,7 @@ export default function PracticeScreen({navigation, route}: any) {
 
   return (
     <SafeAreaView style={styles.container}>
+      {/* <Text>{`I${isFlipped}, W${wasFlipped}`}</Text> */}
       <TouchableOpacity onPress={() => navigation.goBack()} style={styles.topNav}>
         <FontAwesome6 name="chevron-left" size={24} color="black" />
         <View style={styles.progress}>
@@ -116,6 +127,7 @@ export default function PracticeScreen({navigation, route}: any) {
           romanization={flashCards[dynamicIndex].romanization}
           translation={flashCards[dynamicIndex].translation}
           onFlip={() => setIsFlipped(!isFlipped)}
+          resetFlip={resetFlip}
         />
 
         <View style={[styles.flashCardAnimated, {zIndex: sliderIndex, opacity: sliderIndex}]}>
@@ -124,7 +136,7 @@ export default function PracticeScreen({navigation, route}: any) {
               definition={flashCards[currentIndex].definition}
               romanization={flashCards[currentIndex].romanization}
               translation={flashCards[currentIndex].translation} 
-              isFlipped={isFlipped}            
+              isFlipped={wasFlipped || isFlipped}            
               />
           </Animated.View>
         </View>
