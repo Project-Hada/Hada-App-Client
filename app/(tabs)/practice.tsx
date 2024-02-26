@@ -154,13 +154,14 @@ export default function PracticeScreen() {
           onFlip={() => setIsFlipped(!isFlipped)}
         />
 
-        <View style={[styles.flashCardAnimated, {zIndex: sliderIndex}]}>
+        <View style={[styles.flashCardAnimated, {zIndex: sliderIndex, opacity: sliderIndex}]}>
           <Animated.View style={[cardStyle]}>
             <FlashCardSlider
               definition={flashCards[currentIndex].definition}
               romanization={flashCards[currentIndex].romanization}
               translation={flashCards[currentIndex].translation} 
-              isFlipped={isFlipped}            />
+              isFlipped={isFlipped}            
+              />
           </Animated.View>
         </View>
         
