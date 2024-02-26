@@ -36,6 +36,7 @@ export default function library() {
             {name: "access-point", title: "Someone's Study Set", wordCount: "77", key:"28"},
         ]
     );
+
     return (
         <View style={libStyles.container}>
             <View style={libStyles.headerContainer}>
@@ -46,7 +47,7 @@ export default function library() {
                 {playlistData.map((item) => {
                     return(
                         <View key={item.key} style={libStyles.playlist} >
-                            <MaterialCommunityIcons name="access-point" size={24} color="black" style={libStyles.icons}/>
+                            <MaterialCommunityIcons name="access-point" color="black" style={libStyles.icons}/>
                             <View style={libStyles.playlistInfo}>
                                 <Text style={libStyles.playlistName} >{item.title}</Text>
                                 <Text style={libStyles.playlistWordCount} >{item.wordCount} words</Text>
@@ -59,12 +60,27 @@ export default function library() {
     );
 }
 
+const colors = {
+    backgroundThemeColor: '#F2E8E1',
+    iconBackground: '#7F9CEF',
+    playlistColor: '#FFFFFF',
+    textColor: '#000000',
+    subtextColor: '#A7A7A7',
+};
+
+const fonts = {
+    fontFamiliy: 'General Sans',
+    headerTitleSize: 24,
+    playlistTitleSize: 18,
+    subTextSize: 14,
+};
+
 const libStyles = StyleSheet.create({
     container: {
         flex: 1,
         width: '100%',
         justifyContent: 'center',
-        backgroundColor: '#F2E8E1',
+        backgroundColor: colors.backgroundThemeColor,
         padding: 0,
         margin: 0
     },
@@ -75,54 +91,53 @@ const libStyles = StyleSheet.create({
         marginBottom: 40,
         marginTop: 20,
     },
-    headertitle: {
-        fontSize: 20,
-        color: '#000000',
-        fontWeight: 'bold',
-    },
-    title: {
-        marginVertical: 20,
-        fontSize: 20,
-        color: '#000000',
-        fontWeight: 'bold'
-
-    },
     scrollView: {
         width: '100%',
         justifyContent: 'center',
     },
     playlist: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        
+        backgroundColor: colors.playlistColor,
+        
+        borderRadius: 8,
+        borderWidth: 2,
+        shadowColor: colors.textColor,
+        shadowOffset: {width: 4, height: 4},
+        
         paddingVertical: 10,
         marginBottom: 15,
         marginHorizontal: 15,
-        flexDirection: 'row',
-        alignItems: 'center',
-        backgroundColor: '#FFFFFF',
-        borderRadius: 10,
-        borderWidth: 2,
-        shadowColor: '#000000',
-        shadowOffset: {width: 3, height: 3},
-        shadowOpacity: .8
     },
     icons: {
         flex: 1,
-        maxWidth: 45,
+        maxWidth: 55,
         borderRadius: 3,
         marginHorizontal: 10,
-        fontSize: 45,
-        backgroundColor: '#7F9CEF'
+        fontSize: 55,
+        backgroundColor: colors.iconBackground
     },
     playlistInfo: {
         flex: 5
     },
+
+    headertitle: {
+        fontFamily: fonts.fontFamiliy,
+        fontSize: fonts.headerTitleSize,
+        color: colors.textColor,
+        fontWeight: "bold",
+    },
     playlistName: {
-        fontSize: 15,
+        fontFamily: fonts.fontFamiliy,
+        fontSize: fonts.playlistTitleSize,
         fontWeight: 'bold',
-        color: '#000000'
+        color: colors.textColor
     },
     playlistWordCount: {
-        fontSize: 13,
-        fontWeight: '200',
-        color: '#A7A7A7'
+        fontFamily: fonts.fontFamiliy,
+        fontSize: fonts.subTextSize,
+        fontWeight: 'normal',
+        color: colors.subtextColor
     },
 });
