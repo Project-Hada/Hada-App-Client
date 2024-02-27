@@ -9,31 +9,34 @@ import { doc, getDoc, getDocs, collection, query, where, DocumentReference, Docu
 import { UserSchema, userConverter } from '../collection/UserSchema'
 
 export default function TabOneScreen() {
-  const [deckList, setDeckList] = useState<{id: string; [key: string]: any; }[]>([]);
-  const [userList, setUserList] = useState<{id: string; [key: string]: any; }[]>([]);
+  // collection references
   const usersCollectionRef = collection(db, "users")
   const decksCollectionRef = collection(db, "decks")
+
+  // save database collection as state
+  const [deckList, setDeckList] = useState<{id: string; [key: string]: any; }[]>([]);
+  const [userList, setUserList] = useState<{id: string; [key: string]: any; }[]>([]);
 
   // for input form
   const [text, onChangeText] = useState('');
 
-  useEffect(() => {
-    const getUsersList = async () => {
-      try {
-        const data = await getDocs(usersCollectionRef);
-        const filteredData = data.docs.map((doc) => ({
-          ...doc.data(),
-          id: doc.id
-        }));
+  const getUsersList = async () => {
+    try {
+      const data = await getDocs(usersCollectionRef);
+      const filteredData = data.docs.map((doc) => ({
+        ...doc.data(),
+        id: doc.id
+      }));
 
-        setUserList(filteredData);
-        // console.log("users\n", filteredData);
-      }
-      catch (err) {
-        console.log(err);
-      }
+      setUserList(filteredData);
+      // console.log("users\n", filteredData);
     }
-    
+    catch (err) {
+      console.log(err);
+    }
+  }
+
+  useEffect(() => {
     getUsersList();
   }, [])
 
@@ -68,9 +71,12 @@ export default function TabOneScreen() {
 
     const docRef = await addDoc(
       usersCollectionRef.withConverter(userConverter), 
-      new UserSchema(text, String(`${month}/${day}/${year}`), [])
+      new UserSchema(text, String(`${month+1}/${day}/${year}`), [])
     );
     console.log("Document written with ID: ", docRef.id);
+
+    getUsersList();
+    onChangeText("")
   }
 
   return (
