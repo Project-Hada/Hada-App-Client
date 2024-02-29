@@ -4,7 +4,7 @@ import { Text, View } from '@/components/Themed';
 
 import { useState, useEffect } from 'react'
 import { db } from "../data/firebaseConfig"
-import { doc, getDoc, getDocs, collection, query, where, DocumentReference, DocumentData, addDoc } from 'firebase/firestore';
+import { doc, getDoc, getDocs, collection, query, where, DocumentReference, DocumentData, addDoc, deleteDoc } from 'firebase/firestore';
 
 import { UserSchema, userConverter } from '../collection/UserSchema'
 import { DeckSchema, deckConverter } from '../collection/DeckSchema'
@@ -55,8 +55,8 @@ export default function TabOneScreen() {
   }
 
   useEffect(() => {
-    getUsersList();
-    getDecksList();
+    // getUsersList();
+    // getDecksList();
   }, [])
 
 
@@ -92,6 +92,16 @@ export default function TabOneScreen() {
     setDeckInput("")
   }
 
+  const handleDeleteUser = async ( uid: String ) => {
+    await deleteDoc(doc(db, "/users/" + uid));
+    getUsersList();
+  }
+
+  const handleDeleteDeck = async ( did: String ) => {
+    await deleteDoc(doc(db, "/decks/" + did));
+    getDecksList();
+  }
+
   return (
     <ScrollView contentContainerStyle={styles.container}>
       <ScrollView style={styles.leftView}>
@@ -109,12 +119,19 @@ export default function TabOneScreen() {
 
         <Text><h1>Users</h1></Text>
         {userList.map((user) => 
-          <Text key={user.id}> 
-            <h3>username:</h3> {user.username}
-            {'\n'}
-            <h3>dateJoined:</h3> {user.dateJoined} 
-            {"\n-------------------"}
-          </Text>
+          <View key={user.id}>
+            <Button
+              title="Delete"
+              color="red"
+              onPress={() => handleDeleteUser(user.id)}
+            />
+            <Text> 
+              <h3>username:</h3> {user.username}
+              {'\n'}
+              <h3>dateJoined:</h3> {user.dateJoined} 
+              {"\n-------------------"}
+            </Text>
+          </View>
         )}
       </ScrollView>
 
@@ -134,16 +151,23 @@ export default function TabOneScreen() {
 
         <Text><h1>Decks</h1></Text>
         {deckList.map((deck) => 
-          <Text key={deck.id}>
-            {'-------------------------------------------------------\n'}
-            deck name: {deck.deckName}
-            {'\n'}
-            <h3>cards:</h3>
-            {deck.cards.map((c : any) => {
-                return ( "front: " + c.front + "\nback: " + c.back + "\n-----------------\n" ) 
-              })
-            }
-          </Text>
+          <View key={deck.id}>
+            <Button
+              title="Delete"
+              color="red"
+              onPress={() => handleDeleteDeck(deck.id)}
+            />
+            <Text>
+              {'-------------------------------------------------------\n'}
+              deck name: {deck.deckName}
+              {'\n'}
+              <h3>cards:</h3>
+              {deck.cards.map((c : any) => {
+                  return ( "front: " + c.front + "\nback: " + c.back + "\n-----------------\n" ) 
+                })
+              }
+            </Text>
+          </View>
         )}
       </ScrollView>
     </ScrollView>
@@ -180,6 +204,5 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: 'skyblue',
     borderWidth: 1,
-    
   }
 });
