@@ -4,7 +4,7 @@ import { Text, View } from '@/components/Themed';
 
 import { useState, useEffect } from 'react'
 import { db } from "../data/firebaseConfig"
-import { doc, getDoc, getDocs, collection, query, where, DocumentReference, DocumentData, addDoc, deleteDoc } from 'firebase/firestore';
+import { doc, getDoc, getDocs, collection, query, where, DocumentReference, DocumentData, addDoc, deleteDoc, updateDoc } from 'firebase/firestore';
 
 import { UserSchema, userConverter } from '../collection/UserSchema'
 import { DeckSchema, deckConverter } from '../collection/DeckSchema'
@@ -21,6 +21,8 @@ export default function TabOneScreen() {
   // for input form
   const [userInput, setUserInput] = useState('');
   const [deckInput, setDeckInput] = useState('');
+  const [userUpdateInput, setUserUpdateInput] = useState('');
+  const [deckUpdateInput, setDeckUpdateInput] = useState('');
 
   const getUsersList = async () => {
     try {
@@ -55,8 +57,8 @@ export default function TabOneScreen() {
   }
 
   useEffect(() => {
-    // getUsersList();
-    // getDecksList();
+    getUsersList();
+    getDecksList();
   }, [])
 
 
@@ -81,7 +83,7 @@ export default function TabOneScreen() {
   const handleSubmitForDeckInput = async () => {
     console.log(deckInput);
 
-    const testUserId = userList[0].id;
+    const testUserId = userList[0].id;  // TEST:: get the first user
     const docRef = await addDoc(
       decksCollectionRef.withConverter(deckConverter), 
       new DeckSchema(deckInput, doc(db, "/users/" + testUserId), [])
@@ -90,6 +92,18 @@ export default function TabOneScreen() {
 
     getDecksList();
     setDeckInput("")
+  }
+
+  const handleUpdateUsername = async (uid: String) => {
+    await updateDoc(doc(db, "/users/" + uid), {username: userUpdateInput})
+    setUserUpdateInput("")
+    getUsersList();
+  }
+
+  const handleUpdateDeckName = async (did: String) => {
+    await updateDoc(doc(db, "/decks/" + did), {deckName: deckUpdateInput})
+    setDeckUpdateInput("")
+    getDecksList();
   }
 
   const handleDeleteUser = async ( uid: String ) => {
@@ -104,7 +118,7 @@ export default function TabOneScreen() {
 
   return (
     <ScrollView contentContainerStyle={styles.container}>
-      <ScrollView style={styles.leftView}>
+      <ScrollView style={styles.leftView} showsVerticalScrollIndicator={false}>
         <TextInput
           style={styles.input}
           onChangeText={setUserInput}
@@ -120,11 +134,28 @@ export default function TabOneScreen() {
         <Text><h1>Users</h1></Text>
         {userList.map((user) => 
           <View key={user.id}>
+            {/* delete */}
             <Button
               title="Delete"
               color="red"
               onPress={() => handleDeleteUser(user.id)}
             />
+            
+            {/* update eg. -- updating username */}
+            <TextInput
+              style={styles.input}
+              onChangeText={setUserUpdateInput}
+              placeholder='new username'
+              placeholderTextColor="#D3D3D3" 
+              value={userUpdateInput}
+            />
+            <Button
+              title="Update"
+              color="#f0e800"
+              onPress={() => handleUpdateUsername(user.id)}
+            />
+
+
             <Text> 
               <h3>username:</h3> {user.username}
               {'\n'}
@@ -136,7 +167,7 @@ export default function TabOneScreen() {
       </ScrollView>
 
       
-      <ScrollView style={styles.rightView}>
+      <ScrollView style={styles.rightView} showsVerticalScrollIndicator={false}>
         <TextInput
           style={styles.input}
           onChangeText={setDeckInput}
@@ -152,11 +183,27 @@ export default function TabOneScreen() {
         <Text><h1>Decks</h1></Text>
         {deckList.map((deck) => 
           <View key={deck.id}>
+            {/* delete */}
             <Button
               title="Delete"
               color="red"
               onPress={() => handleDeleteDeck(deck.id)}
             />
+
+            {/* update -- eg. updating deck name */}
+            <TextInput
+              style={styles.input}
+              onChangeText={setDeckUpdateInput}
+              placeholder='new deck name'
+              placeholderTextColor="#D3D3D3" 
+              value={deckUpdateInput}
+            />
+            <Button
+              title="Update"
+              color="#f0e800"
+              onPress={() => handleUpdateDeckName(deck.id)}
+            />
+
             <Text>
               {'-------------------------------------------------------\n'}
               deck name: {deck.deckName}
@@ -194,6 +241,7 @@ const styles = StyleSheet.create({
     height: 40, 
     borderColor: 'gray', 
     borderWidth: 1,
+    backgroundColor: "white"
   },
   leftView: {
     flex: 1,
