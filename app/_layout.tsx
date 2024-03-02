@@ -1,5 +1,5 @@
 // _layout.tsx
-import React from 'react';
+import React, { useEffect } from 'react';
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
 import LibraryScreen from './pages/library'; // Update the path as needed
@@ -9,12 +9,22 @@ import PracticeScreen from './pages/practice';
 import { useFonts } from 'expo-font';
 import FontAwesome from '@expo/vector-icons/build/FontAwesome';
 import { useFlashcards } from '../Tools/Contexts/FlashcardContext';
+import flashCards from './fakeData';
 
 const Stack = createStackNavigator();
 
 export default function RootLayout() {
 
-  const { flashcards } = useFlashcards();
+  const { flashcards, setFlashcards } = useFlashcards();
+
+
+  useEffect(() => {
+    setFlashcards(flashCards);
+    console.log("uhho", flashcards)
+    
+    console.log("bruhcohco", flashCards)
+  }, []);
+
   
   const [loaded, error] = useFonts({
     SpaceMono: require('../assets/fonts/SpaceMono-Regular.ttf'),

@@ -9,10 +9,7 @@ import { FlashCardType } from '@/Tools/types';
 export default function App() {
   const [initialFlashcards, setInitialFlashcards] = useState<FlashCardType[]>([]);
 
-  useEffect(() => {
-    setInitialFlashcards(flashCards);
-    console.log("flash", flashCards);
-  }, []);
+  
 
 
   return (
