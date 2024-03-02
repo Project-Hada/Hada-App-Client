@@ -3,6 +3,9 @@ import { StyleSheet, View, Text, TouchableOpacity, Animated, SafeAreaView, Style
 import FlashCard from '@/components/Practice/FlashCard';
 import FlashCardSlider from '@/components/Practice/FlashCardSlider';
 import { FontAwesome6 } from '@expo/vector-icons';
+import { FlashCardType } from '@/Tools/types';
+import { useFlashcards } from '../../Tools/Contexts/FlashcardContext';
+
 
 type HistoryItem = {
   direction: string;
@@ -14,13 +17,8 @@ type PracticeScreenProps = {
   flashCards: FlashCardType[];
 };
 
-type FlashCardType = {
-  definition: string;
-  romanization: string;
-  translation: string;
-};
-
 export default function PracticeScreen({navigation, route}: any) {
+  const { flashcards } = useFlashcards();
   const [currentIndex, setCurrentIndex] = useState(0);
   const [dynamicIndex, setDynamicIndex] = useState(currentIndex);
   const [nextIndex, setNextIndex] = useState(1); // Next card index
@@ -31,10 +29,8 @@ export default function PracticeScreen({navigation, route}: any) {
   const [wasFlipped, setWasFlipped] = useState(false);
   const [resetFlip, setResetFlip] = useState(false)
 
-  const { flashCards } = route.params;
-
   const renderProgressIndicators = () => {
-    return flashCards.map((card: any, index: any) => (
+    return flashcards.map((card: any, index: any) => (
       <View
         key={`progress-${index}`}
         style={[
@@ -67,8 +63,8 @@ export default function PracticeScreen({navigation, route}: any) {
       cardOffsetX.setValue(0); // Reset position
       // Save action to history
       setHistory([...history, {direction, currentIndex}]);
-      const newCurrentIndex = (currentIndex + 1) % flashCards.length;
-      const newNextIndex = (nextIndex + 1) % flashCards.length;
+      const newCurrentIndex = (currentIndex + 1) % flashcards.length;
+      const newNextIndex = (nextIndex + 1) % flashcards.length;
 
       // Update indices
       setCurrentIndex(newCurrentIndex);
@@ -89,7 +85,7 @@ export default function PracticeScreen({navigation, route}: any) {
     setSliderIndex(999);
     const newCurrentIndex = history[historyLen].currentIndex;
     setCurrentIndex(newCurrentIndex);
-    setNextIndex((newCurrentIndex + 1) % flashCards.length);
+    setNextIndex((newCurrentIndex + 1) % flashcards.length);
     setHistory(history.slice(0, historyLen))
 
     Animated.timing(cardOffsetX, {
@@ -123,9 +119,9 @@ export default function PracticeScreen({navigation, route}: any) {
       </TouchableOpacity>
       <View style={styles.flashCardContainer}>
         <FlashCard
-          definition={flashCards[dynamicIndex].definition}
-          romanization={flashCards[dynamicIndex].romanization}
-          translation={flashCards[dynamicIndex].translation}
+          definition={flashcards[dynamicIndex].definition}
+          romanization={flashcards[dynamicIndex].romanization}
+          translation={flashcards[dynamicIndex].translation}
           onFlip={() => setIsFlipped(!isFlipped)}
           resetFlip={resetFlip}
         />
@@ -133,9 +129,9 @@ export default function PracticeScreen({navigation, route}: any) {
         <View style={[styles.flashCardAnimated, {zIndex: sliderIndex, opacity: sliderIndex}]}>
           <Animated.View style={[cardStyle]}>
             <FlashCardSlider
-              definition={flashCards[currentIndex].definition}
-              romanization={flashCards[currentIndex].romanization}
-              translation={flashCards[currentIndex].translation} 
+              definition={flashcards[currentIndex].definition}
+              romanization={flashcards[currentIndex].romanization}
+              translation={flashcards[currentIndex].translation} 
               isFlipped={wasFlipped || isFlipped}            
               />
           </Animated.View>

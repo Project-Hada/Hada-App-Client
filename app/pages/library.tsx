@@ -3,7 +3,8 @@ import { useState } from 'react'
 import { View, Text, StyleSheet, ScrollView, SafeAreaView, TouchableOpacity } from 'react-native'
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { StackNavigationProp } from '@react-navigation/stack';
-import flashCards from '../fakeData';
+
+import { useFlashcards } from '../../Tools/Contexts/FlashcardContext';
 
 
 type FlashCardType = {

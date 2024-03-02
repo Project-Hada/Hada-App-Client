@@ -1,6 +1,6 @@
+import { FlashCardType } from "@/Tools/types";
 
-
-const flashCards = [
+const flashCards: FlashCardType[] = [
     {
       "definition": "나무",
       "romanization": "(namu)",

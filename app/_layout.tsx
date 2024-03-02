@@ -8,11 +8,13 @@ import { View, Text, StyleSheet, SafeAreaView } from 'react-native';
 import PracticeScreen from './pages/practice';
 import { useFonts } from 'expo-font';
 import FontAwesome from '@expo/vector-icons/build/FontAwesome';
-import flashCards from './fakeData';
+import { useFlashcards } from '../Tools/Contexts/FlashcardContext';
 
 const Stack = createStackNavigator();
 
 export default function RootLayout() {
+
+  const { flashcards } = useFlashcards();
   
   const [loaded, error] = useFonts({
     SpaceMono: require('../assets/fonts/SpaceMono-Regular.ttf'),
@@ -47,52 +49,44 @@ export default function RootLayout() {
     return <View style={styles.loadingContainer}></View>;
   }
 
-  const dummyData = [
+  const playlistData = [
     {
         name: "access-point", 
         title: "Someone's Study Set",
-        words: flashCards
+        words: flashcards
     },
     {
         name: "access-point", 
         title: "Someone's Study Set",
-        words: flashCards
+        words: flashcards
     },
     {
         name: "access-point", 
         title: "Someone's Study Set",
-        words: flashCards
+        words: flashcards
     },
 ];
   
   return (
     <Stack.Navigator>
-    <Stack.Screen 
-      name="pages/library" 
-      component={LibraryScreen} 
-      initialParams={{ playlistData: dummyData }} // Pass initial params here
-      options={{
-        header: libraryHeader
-      }}
-    />
-    <Stack.Screen 
-      name="pages/deckprev" 
-      component={DeckPreview} 
-      initialParams={{ flashCards: flashCards }} // Pass initial params here
-      options={{
-        headerShown: false
-      }}
-    />
-    <Stack.Screen 
-      name="pages/practice" 
-      component={PracticeScreen} 
-      initialParams={{ flashCards: flashCards }} // Pass initial params here
-      options={{
-        headerShown: false
-      }}
-    />
-    {/* Add other screens here */}
-  </Stack.Navigator>
+      <Stack.Screen
+        name="pages/library"
+        component={LibraryScreen}
+        initialParams={{ playlistData }} // Pass the playlist data with flashcards from context
+        options={{ header: libraryHeader }}
+      />
+      <Stack.Screen
+        name="pages/deckprev"
+        component={DeckPreview}
+        options={{ headerShown: false }}
+      />
+      <Stack.Screen
+        name="pages/practice"
+        component={PracticeScreen}
+        options={{ headerShown: false }}
+      />
+      {/* Add other screens here */}
+    </Stack.Navigator>
   
   );
 }

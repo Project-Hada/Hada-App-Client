@@ -1,6 +1,7 @@
 import React from 'react';
 import { StyleSheet, View, Text, FlatList, TouchableOpacity, SafeAreaView } from 'react-native';
 import { MaterialCommunityIcons, MaterialIcons, AntDesign } from '@expo/vector-icons';
+import { useFlashcards } from '../../Tools/Contexts/FlashcardContext';
 
 
 type FlashCardType = {
@@ -11,11 +12,11 @@ type FlashCardType = {
 
 type DeckPreviewProps = {
   navigation: any;
-  flashCards: FlashCardType[];
 }
 
 export default function DeckPreview({navigation, route}: any) {
-  const { flashCards } = route.params;
+  const  flashcards  = useFlashcards();
+  console.log(flashcards);
   return (
     <SafeAreaView style={styles.container}>
         <View style={styles.header}>
@@ -26,13 +27,13 @@ export default function DeckPreview({navigation, route}: any) {
                 <Text style={styles.headerTitle}>Someone’s Study Set</Text>
                 <View style={styles.subHeader}>
                     <MaterialCommunityIcons name="cards-variant" size={18} color="gray"/>
-                    <Text style={styles.wordCount}>{flashCards.length} words</Text>
+                    <Text style={styles.wordCount}>{flashcards.length} words</Text>
                 </View>
             </View>
         </View>
         
     <FlatList
-        data={flashCards}
+        data={flashcards}
         renderItem={({ item }) => (
         <TouchableOpacity >
             <View style={styles.listItem}>
