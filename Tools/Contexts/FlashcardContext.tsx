@@ -1,43 +1,30 @@
-// FlashcardContext.tsx
-import React, { createContext, useState, ReactNode } from 'react';
+import React, { Dispatch, SetStateAction } from 'react';
+import { FlashCardType } from '../types';
 
-interface FlashCard {
-  definition: string;
-  romanization: string;
-  translation: string;
+//LLM helped with ts types
+/**
+ * I had created the context thinking it would limit calls,
+ * but then realized the util isn't a child component. So if
+ * the program were to expand with more children, it might prove useful.
+ */
+interface IContext {
+  flashcards: FlashCardType[];
+  setFlashcards: Dispatch<SetStateAction<FlashCardType[]>>;
 }
 
-interface FlashcardContextType {
-  flashcards: FlashCard[];
-  setFlashcards: React.Dispatch<React.SetStateAction<FlashCard[]>>;
-}
-
-// Creating the context with an empty array as the default value for flashcards
-export const FlashcardContext = createContext<FlashcardContextType>({
+const FlashcardContext = React.createContext<IContext>({
   flashcards: [],
   setFlashcards: () => {},
-});
+})
 
-interface FlashcardProviderProps {
-  children: ReactNode;
-  initialFlashcards?: FlashCard[];
+export interface FlashcardContextType {
+  flashcards: FlashCardType[];
+  setFlashcards: React.Dispatch<React.SetStateAction<FlashCardType[]>>;
 }
 
-// The Provider component now correctly typed with FlashcardProviderProps
-export const FlashcardProvider: React.FC<FlashcardProviderProps> = ({ children, initialFlashcards }) => {
-  const [flashcards, setFlashcards] = useState<FlashCard[]>(initialFlashcards || []);
+export default FlashcardContext;
 
-  return (
-    <FlashcardContext.Provider value={{ flashcards, setFlashcards }}>
-      {children}
-    </FlashcardContext.Provider>
-  );
-};
-
-export const useFlashcards = () => {
-  const context = React.useContext(FlashcardContext);
-  if (!context) {
-    throw new Error('useFlashcards must be used within a FlashcardProvider');
-  }
-  return context;
-};
+/**
+ * Sources:
+ * React Context: https://react.dev/learn/passing-data-deeply-with-context
+ */

@@ -1,7 +1,7 @@
-import React from 'react';
+import React, { useContext } from 'react';
 import { StyleSheet, View, Text, FlatList, TouchableOpacity, SafeAreaView } from 'react-native';
 import { MaterialCommunityIcons, MaterialIcons, AntDesign } from '@expo/vector-icons';
-import { useFlashcards } from '../../Tools/Contexts/FlashcardContext';
+import FlashcardContext from '@/Tools/Contexts/FlashcardContext';
 
 
 type FlashCardType = {
@@ -15,7 +15,9 @@ type DeckPreviewProps = {
 }
 
 export default function DeckPreview({navigation, route}: any) {
-  const  flashcards  = useFlashcards();
+  const {
+    flashcards
+  } = useContext(FlashcardContext);
   console.log(flashcards);
   return (
     <SafeAreaView style={styles.container}>

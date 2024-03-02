@@ -2,23 +2,27 @@ import React, { useEffect, useState } from 'react';
 import { NavigationContainer } from '@react-navigation/native';
 import RootLayout from './_layout';
 import { View } from 'react-native';
-import { FlashcardProvider } from '@/Tools/Contexts/FlashcardContext';
 import flashCards from './fakeData';
 import { FlashCardType } from '@/Tools/types';
+import FlashcardContext, { FlashcardContextType } from '@/Tools/Contexts/FlashcardContext';
 
 export default function App() {
-  const [initialFlashcards, setInitialFlashcards] = useState<FlashCardType[]>([]);
+  const [currFlashcards, setCurrFlashcards] = useState<FlashCardType[]>([]);
+
+  const value: FlashcardContextType = {
+    flashcards: flashCards,
+    setFlashcards: setCurrFlashcards
+  }
 
   
 
-
   return (
-    <FlashcardProvider initialFlashcards={initialFlashcards}> {/* Provide the initial flashcards */}
+    <FlashcardContext.Provider value={value}> {/* Provide the initial flashcards */}
       <View style={{backgroundColor: '#F2E8E1'}}>
         <NavigationContainer>
           <RootLayout />
         </NavigationContainer>
       </View>
-    </FlashcardProvider>
+    </FlashcardContext.Provider>
   );
 }

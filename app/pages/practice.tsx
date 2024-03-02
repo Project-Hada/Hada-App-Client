@@ -1,10 +1,10 @@
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState, useRef, useEffect, useContext } from 'react';
 import { StyleSheet, View, Text, TouchableOpacity, Animated, SafeAreaView, StyleProp, ViewStyle } from 'react-native';
 import FlashCard from '@/components/Practice/FlashCard';
 import FlashCardSlider from '@/components/Practice/FlashCardSlider';
 import { FontAwesome6 } from '@expo/vector-icons';
 import { FlashCardType } from '@/Tools/types';
-import { useFlashcards } from '../../Tools/Contexts/FlashcardContext';
+import FlashcardContext from '@/Tools/Contexts/FlashcardContext';
 
 
 type HistoryItem = {
@@ -18,7 +18,9 @@ type PracticeScreenProps = {
 };
 
 export default function PracticeScreen({navigation, route}: any) {
-  const { flashcards } = useFlashcards();
+  const {
+    flashcards
+  } = useContext(FlashcardContext);
   const [currentIndex, setCurrentIndex] = useState(0);
   const [dynamicIndex, setDynamicIndex] = useState(currentIndex);
   const [nextIndex, setNextIndex] = useState(1); // Next card index

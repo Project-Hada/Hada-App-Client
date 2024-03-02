@@ -1,10 +1,8 @@
-import React, { JSXElementConstructor, ReactElement, ReactNode, ReactPortal } from 'react'
-import { useState } from 'react'
+import React, { JSXElementConstructor, ReactElement, ReactNode, ReactPortal, useContext, useState } from 'react'
 import { View, Text, StyleSheet, ScrollView, SafeAreaView, TouchableOpacity } from 'react-native'
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { StackNavigationProp } from '@react-navigation/stack';
-
-import { useFlashcards } from '../../Tools/Contexts/FlashcardContext';
+import FlashcardContext from '@/Tools/Contexts/FlashcardContext';
 
 
 type FlashCardType = {
@@ -25,7 +23,9 @@ type FlashCardType = {
   }
 export default function LibraryScreen({navigation, route}: any) {
     const { playlistData } = route.params;
-
+    const {
+        flashcards
+    } = useContext(FlashcardContext);
 
     return (
         <SafeAreaView style={libStyles.container}>
