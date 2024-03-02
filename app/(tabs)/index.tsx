@@ -3,20 +3,11 @@ import { Button, ScrollView, StyleSheet, TextInput } from 'react-native';
 import { Text, View } from '@/components/Themed';
 
 import { useState, useEffect } from 'react'
-import { db } from "../data/firebaseConfig"
-import { doc, getDoc, getDocs, collection, query, where, DocumentReference, DocumentData, addDoc, deleteDoc, updateDoc } from 'firebase/firestore';
 
-import { UserSchema, userConverter } from '../collection/UserSchema'
-import { DeckSchema, deckConverter } from '../collection/DeckSchema'
-
-import { addNewUser, deleteUserById, getAllUsers, updateUserById } from '../services/usersFunctions';
-import { addNewDeck, deleteDeckById, getAllDecks, updateDeckById } from '../services/decksFunctions';
+import { addNewUser, getAllUsers, updateUserById, deleteUserById } from '../services/usersFunctions';
+import { addNewDeck, getAllDecks, updateDeckById, deleteDeckById } from '../services/decksFunctions';
 
 export default function TabOneScreen() {
-  // collection references
-  const usersCollectionRef = collection(db, "users")
-  const decksCollectionRef = collection(db, "decks")
-
   // save database collection as state
   const [deckList, setDeckList] = useState<{id: string; [key: string]: any; }[]>([]);
   const [userList, setUserList] = useState<{id: string; [key: string]: any; }[]>([]);

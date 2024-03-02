@@ -5,6 +5,18 @@ import { DeckSchema, deckConverter } from '../collection/DeckSchema'
 
 const decksCollectionRef = collection(db, "decks")
 
+/* CREATE Operations */
+export const addNewDeck = async (uid: String, deckInput: String) => {
+  const docRef = await addDoc(
+    decksCollectionRef.withConverter(deckConverter), 
+    new DeckSchema(deckInput, doc(db, "/users/" + uid), [])
+  );
+
+  // TODO: add deck reference to user array
+  console.log("Document written with ID: ", docRef.id);
+}
+
+/* READ Operations */
 export const getAllDecks = async (setDeckList: any) => {
   try {
     const data = await getDocs(decksCollectionRef);
@@ -21,20 +33,12 @@ export const getAllDecks = async (setDeckList: any) => {
   }
 }
 
-export const addNewDeck = async (uid: String, deckInput: String) => {
-    const docRef = await addDoc(
-      decksCollectionRef.withConverter(deckConverter), 
-      new DeckSchema(deckInput, doc(db, "/users/" + uid), [])
-    );
-
-    // TODO: add deck reference to user array
-    console.log("Document written with ID: ", docRef.id);
-}
-
+/* UPDATE Operations */
 export const updateDeckById = async (did: String, newData: {}) => {
   await updateDoc(doc(db, "/decks/" + did), newData)
 }
 
+/* DELETE Operations */
 export const deleteDeckById = async (did: String) => {
   await deleteDoc(doc(db, "/decks/" + did));
 }
