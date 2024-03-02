@@ -9,6 +9,9 @@ import { doc, getDoc, getDocs, collection, query, where, DocumentReference, Docu
 import { UserSchema, userConverter } from '../collection/UserSchema'
 import { DeckSchema, deckConverter } from '../collection/DeckSchema'
 
+import { addNewUser, deleteUserById, getAllUsers, updateUserById } from '../services/usersFunctions';
+import { addNewDeck, deleteDeckById, getAllDecks, updateDeckById } from '../services/decksFunctions';
+
 export default function TabOneScreen() {
   // collection references
   const usersCollectionRef = collection(db, "users")
@@ -25,35 +28,11 @@ export default function TabOneScreen() {
   const [deckUpdateInput, setDeckUpdateInput] = useState('');
 
   const getUsersList = async () => {
-    try {
-      const data = await getDocs(usersCollectionRef);
-      const filteredData = data.docs.map((doc) => ({
-        ...doc.data(),
-        id: doc.id
-      }));
-
-      setUserList(filteredData);
-      // console.log("users\n", filteredData);
-    }
-    catch (err) {
-      console.log(err);
-    }
+    getAllUsers(setUserList);
   }
 
   const getDecksList = async () => {
-    try {
-      const data = await getDocs(decksCollectionRef);
-      const filteredData = data.docs.map((doc) => ({
-        ...doc.data(),
-        id: doc.id,
-      }));
-
-      setDeckList(filteredData);
-      console.log("decks\n", filteredData);
-    }
-    catch (err) {
-      console.log(err);
-    }
+    getAllDecks(setDeckList);
   }
 
   useEffect(() => {
@@ -64,55 +43,42 @@ export default function TabOneScreen() {
 
   // writes to user
   const handleSubmitForUserInput = async () => {
-    console.log(userInput);
-    const dateObj = new Date();
-    const year = dateObj.getFullYear()
-    const month = dateObj.getMonth()
-    const day = dateObj.getDate()
-
-    const docRef = await addDoc(
-      usersCollectionRef.withConverter(userConverter), 
-      new UserSchema(userInput, String(`${month+1}/${day}/${year}`), [])
-    );
-    console.log("Document written with ID: ", docRef.id);
+    addNewUser(userInput);
 
     getUsersList();
     setUserInput("")
   }
 
   const handleSubmitForDeckInput = async () => {
-    console.log(deckInput);
-
+    // TODO: add proper user when auth is set up
     const testUserId = userList[0].id;  // TEST:: get the first user
-    const docRef = await addDoc(
-      decksCollectionRef.withConverter(deckConverter), 
-      new DeckSchema(deckInput, doc(db, "/users/" + testUserId), [])
-    );
-    console.log("Document written with ID: ", docRef.id);
-
+    addNewDeck(testUserId, deckInput);
+    
     getDecksList();
     setDeckInput("")
   }
 
   const handleUpdateUsername = async (uid: String) => {
-    await updateDoc(doc(db, "/users/" + uid), {username: userUpdateInput})
+    updateUserById(uid, {username: userUpdateInput});
+
     setUserUpdateInput("")
     getUsersList();
   }
 
   const handleUpdateDeckName = async (did: String) => {
-    await updateDoc(doc(db, "/decks/" + did), {deckName: deckUpdateInput})
+    updateDeckById(did, {deckName: deckUpdateInput});
+
     setDeckUpdateInput("")
     getDecksList();
   }
 
   const handleDeleteUser = async ( uid: String ) => {
-    await deleteDoc(doc(db, "/users/" + uid));
+    deleteUserById(uid);
     getUsersList();
   }
 
   const handleDeleteDeck = async ( did: String ) => {
-    await deleteDoc(doc(db, "/decks/" + did));
+    deleteDeckById(did);
     getDecksList();
   }
 
