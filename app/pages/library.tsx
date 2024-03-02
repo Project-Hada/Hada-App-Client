@@ -3,6 +3,7 @@ import { View, Text, StyleSheet, ScrollView, SafeAreaView, TouchableOpacity } fr
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { StackNavigationProp } from '@react-navigation/stack';
 import FlashcardContext from '@/Tools/Contexts/FlashcardContext';
+import flashCards from '../fakeData';
 
 
 type FlashCardType = {
@@ -23,9 +24,12 @@ type FlashCardType = {
   }
 export default function LibraryScreen({navigation, route}: any) {
     const { playlistData } = route.params;
-    const {
-        flashcards
-    } = useContext(FlashcardContext);
+    const { flashcards, setFlashcards } = useContext(FlashcardContext);
+    console.log("faeouo", flashcards)
+    console.log("aeou", flashCards);
+    setFlashcards(flashCards);
+    console.log("oeauaoe", flashcards);
+    
 
     return (
         <SafeAreaView style={libStyles.container}>

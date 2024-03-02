@@ -1,22 +1,20 @@
 // _layout.tsx
-import React, { useContext, useEffect } from 'react';
-import { NavigationContainer } from '@react-navigation/native';
+import React, { useContext, useEffect, useState } from 'react';
 import { createStackNavigator } from '@react-navigation/stack';
 import LibraryScreen from './pages/library'; // Update the path as needed
 import DeckPreview from './pages/deckprev'; // Update the path as needed
 import { View, Text, StyleSheet, SafeAreaView } from 'react-native';
 import PracticeScreen from './pages/practice';
 import { useFonts } from 'expo-font';
-import FontAwesome from '@expo/vector-icons/build/FontAwesome';
 import flashCards from './fakeData';
 import FlashcardContext from '@/Tools/Contexts/FlashcardContext';
+import { FlashCardType } from '@/Tools/types';
+import { NavigationContainer } from '@react-navigation/native';
+import FontAwesome from '@expo/vector-icons/build/FontAwesome';
 
 const Stack = createStackNavigator();
 
 export default function RootLayout() {
-  const {
-    flashcards
-} = useContext(FlashcardContext);
 
   
   const [loaded, error] = useFonts({
@@ -52,44 +50,47 @@ export default function RootLayout() {
     return <View style={styles.loadingContainer}></View>;
   }
 
+  
+
   const playlistData = [
     {
         name: "access-point", 
         title: "Someone's Study Set",
-        words: flashcards
+        words: flashCards
     },
     {
         name: "access-point", 
         title: "Someone's Study Set",
-        words: flashcards
+        words: flashCards
     },
     {
         name: "access-point", 
         title: "Someone's Study Set",
-        words: flashcards
+        words: flashCards
     },
 ];
   
   return (
-    <Stack.Navigator>
-      <Stack.Screen
-        name="pages/library"
-        component={LibraryScreen}
-        initialParams={{ playlistData }} // Pass the playlist data with flashcards from context
-        options={{ header: libraryHeader }}
-      />
-      <Stack.Screen
-        name="pages/deckprev"
-        component={DeckPreview}
-        options={{ headerShown: false }}
-      />
-      <Stack.Screen
-        name="pages/practice"
-        component={PracticeScreen}
-        options={{ headerShown: false }}
-      />
-      {/* Add other screens here */}
-    </Stack.Navigator>
+    
+        <Stack.Navigator>
+          <Stack.Screen
+            name="pages/library"
+            component={LibraryScreen}
+            initialParams={{ playlistData }} // Pass the playlist data with flashcards from context
+            options={{ header: libraryHeader }}
+          />
+          <Stack.Screen
+            name="pages/deckprev"
+            component={DeckPreview}
+            options={{ headerShown: false }}
+          />
+          <Stack.Screen
+            name="pages/practice"
+            component={PracticeScreen}
+            options={{ headerShown: false }}
+          />
+          {/* Add other screens here */}
+        </Stack.Navigator>
   
   );
 }
