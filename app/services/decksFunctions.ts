@@ -12,7 +12,8 @@ export const addNewDeck = async (uid: String, deckInput: String) => {
     new DeckSchema(deckInput, doc(db, "/users/" + uid), [])
   );
 
-  // TODO: add deck reference to user array
+  // TODO: when auth is set up, add deck reference to user array
+
   console.log("Document written with ID: ", docRef.id);
 }
 
@@ -25,7 +26,6 @@ export const getAllDecks = async (setDeckList: any) => {
       id: doc.id,
     }));
 
-    // console.log("decks\n", filteredData);
     setDeckList(filteredData);
   }
   catch (err) {

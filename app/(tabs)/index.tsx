@@ -18,13 +18,9 @@ export default function TabOneScreen() {
   const [userUpdateInput, setUserUpdateInput] = useState('');
   const [deckUpdateInput, setDeckUpdateInput] = useState('');
 
-  const getUsersList = async () => {
-    getAllUsers(setUserList);
-  }
-
-  const getDecksList = async () => {
-    getAllDecks(setDeckList);
-  }
+  // READ function and set them locally 
+  const getUsersList = async () => await getAllUsers(setUserList); 
+  const getDecksList = async () => await getAllDecks(setDeckList);
 
   useEffect(() => {
     getUsersList();
@@ -32,44 +28,43 @@ export default function TabOneScreen() {
   }, [])
 
 
-  // writes to user
   const handleSubmitForUserInput = async () => {
-    addNewUser(userInput);
+    await addNewUser(userInput);
 
     getUsersList();
     setUserInput("")
   }
 
   const handleSubmitForDeckInput = async () => {
-    // TODO: add proper user when auth is set up
+    // TODO: when auth is set up, add proper user
     const testUserId = userList[0].id;  // TEST:: get the first user
-    addNewDeck(testUserId, deckInput);
+    await addNewDeck(testUserId, deckInput);
     
     getDecksList();
     setDeckInput("")
   }
 
   const handleUpdateUsername = async (uid: String) => {
-    updateUserById(uid, {username: userUpdateInput});
+    await updateUserById(uid, {username: userUpdateInput});
 
     setUserUpdateInput("")
     getUsersList();
   }
 
   const handleUpdateDeckName = async (did: String) => {
-    updateDeckById(did, {deckName: deckUpdateInput});
+    await updateDeckById(did, {deckName: deckUpdateInput});
 
     setDeckUpdateInput("")
     getDecksList();
   }
 
   const handleDeleteUser = async ( uid: String ) => {
-    deleteUserById(uid);
+    await deleteUserById(uid);
     getUsersList();
   }
 
   const handleDeleteDeck = async ( did: String ) => {
-    deleteDeckById(did);
+    await deleteDeckById(did);
     getDecksList();
   }
 
