@@ -5,9 +5,9 @@ import FlashcardContext from '@/Tools/Contexts/FlashcardContext';
 
 
 type FlashCardType = {
-  definition: string;
+  term: string;
   romanization: string;
-  translation: string;
+  definition: string;
 };
 
 type DeckPreviewProps = {
@@ -40,17 +40,17 @@ export default function DeckPreview({navigation, route}: any) {
         <TouchableOpacity >
             <View style={styles.listItem}>
                 <View style={styles.previewBadge}>
-                    <Text style={styles.previewBadgeText}>{item.definition.slice(0,1)}</Text>
+                    <Text style={styles.previewBadgeText}>{item.term.slice(0,1)}</Text>
                 </View>
                 <View style={styles.termContainer}>
+                    <Text style={styles.termText}>{item.term}</Text>
                     <Text style={styles.term}>{item.definition}</Text>
-                    <Text style={styles.definition}>{item.translation}</Text>
                 </View>
                 {/* <AntDesign name="play" size={36} color="#FFDF37"/> next sprint */}
             </View>
         </TouchableOpacity>
         )}
-        keyExtractor={item => `term-${item.definition}`}
+        keyExtractor={item => `term-${item.term}`}
       />
       
         <TouchableOpacity onPress={() => navigation.navigate('pages/practice')} style={styles.practiceButton}>
@@ -112,10 +112,10 @@ export const styles = StyleSheet.create({
     flexDirection: 'column',
     flex: 1,
   },
-  term: {
+  termText: {
     fontSize: 20,
   },
-  definition: {
+  term: {
     fontSize: 16,
     color: 'grey',
   },

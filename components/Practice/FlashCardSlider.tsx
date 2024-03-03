@@ -2,14 +2,14 @@ import React from 'react';
 import { StyleSheet, View, Text, Pressable } from 'react-native';
 
 type FlashCardProps = {
-  definition: string;
+  term: string;
   romanization: string;
-  translation: string;
+  definition: string;
   isFlipped: boolean;
 };
 
 // Renamed function from FlashCard to FlashCardSlider
-export default function FlashCardSlider({ definition, romanization, translation, isFlipped }: FlashCardProps) {
+export default function FlashCardSlider({ term, romanization, definition, isFlipped }: FlashCardProps) {
   // Removed animated logic and state
 
   return (
@@ -17,8 +17,8 @@ export default function FlashCardSlider({ definition, romanization, translation,
         {
             (!isFlipped)? 
             <View style={[styles.flashCardFront]}>
-            <View style={styles.definitionContainer}>
-              <Text style={styles.definition}>{definition}</Text>
+            <View style={styles.termContainer}>
+              <Text style={styles.term}>{term}</Text>
             </View>
             <View style={styles.romanizationContainer}>
               <Text style={styles.romanization}>{romanization}</Text>
@@ -27,7 +27,7 @@ export default function FlashCardSlider({ definition, romanization, translation,
           :
             
       <View style={[styles.flashCardBack, { position: 'absolute' }]}>
-      <Text style={styles.translation}>{translation}</Text>
+      <Text style={styles.definition}>{definition}</Text>
     </View>
         }
       
@@ -62,8 +62,8 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
   },
-  definitionContainer: {},
-  definition: {
+  termContainer: {},
+  term: {
     fontSize: 38,
     fontFamily: 'GeneralSans-Variable',
   },
@@ -73,7 +73,7 @@ const styles = StyleSheet.create({
     fontFamily: 'GeneralSans-Regular',
     color: "#A7A7A7"
   },
-  translation: {
+  definition: {
     fontSize: 34,
   },
 });

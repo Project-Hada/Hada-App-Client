@@ -4,18 +4,13 @@ import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { StackNavigationProp } from '@react-navigation/stack';
 import FlashcardContext from '@/Tools/Contexts/FlashcardContext';
 import flashCards from '../fakeData';
+import { FlashCardType } from '@/Tools/types';
 
-
-type FlashCardType = {
-    definition: string;
-    romanization: string;
-    translation: string;
-  };
   
   type PlaylistItemType = {
     name: string;
     title: string;
-    words: FlashCardType[];
+    playlist: FlashCardType[];
   };
 
   type LibraryScreenProps = {
@@ -46,7 +41,7 @@ export default function LibraryScreen({navigation, route}: any) {
                             </View>
                             <View style={libStyles.playlistInfo}>
                                 <Text style={libStyles.playlistName} >{item.title}</Text>
-                                <Text style={libStyles.playlistWordCount} >{item.words.length} words</Text>
+                                <Text style={libStyles.playlistWordCount} >{item.playlist.length} words</Text>
                             </View>
                         </TouchableOpacity>
                     )

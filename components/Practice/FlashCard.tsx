@@ -2,14 +2,14 @@ import React, { useEffect, useState } from 'react';
 import { StyleSheet, View, Text, Pressable, Animated } from 'react-native';
 
 type FlashCardProps = {
-  definition: string;
+  term: string;
   romanization: string;
-  translation: string;
+  definition: string;
   onFlip: () => void;
   resetFlip: boolean;
 };
 
-export default function FlashCard({ definition, romanization, translation, onFlip, resetFlip }: FlashCardProps) {
+export default function FlashCard({ term, romanization, definition, onFlip, resetFlip }: FlashCardProps) {
   const [flipAnim, setFlipAnim] = useState(new Animated.Value(0));
   const [isFlipped, setIsFlipped] = useState(false);
 
@@ -58,15 +58,15 @@ export default function FlashCard({ definition, romanization, translation, onFli
   return (
     <Pressable onPress={triggerFlip} style={styles.flashCardPressableContainer}>
       <Animated.View style={[styles.flashCard, frontAnimatedStyle]}>
-        <View style={styles.definitionContainer}>
-          <Text style={styles.definition}>{definition}</Text>
+        <View style={styles.termContainer}>
+          <Text style={styles.term}>{term}</Text>
         </View>
         <View style={styles.romanizationContainer}>
           <Text style={styles.romanization}>{romanization}</Text>
         </View>
       </Animated.View>
       <Animated.View style={[styles.flashCard, backAnimatedStyle, { position: 'absolute' }]}>
-        <Text style={styles.translation}>{translation}</Text>
+        <Text style={styles.definition}>{definition}</Text>
       </Animated.View>
     </Pressable>
   );
@@ -99,8 +99,8 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: 'black'
   },
-  definitionContainer: {},
-  definition: {
+  termContainer: {},
+  term: {
     fontSize: 38,
     fontFamily: 'GeneralSans-Variable',
   },
@@ -110,7 +110,7 @@ const styles = StyleSheet.create({
     fontFamily: 'GeneralSans-Regular',
     color: "#A7A7A7"
   },
-  translation: {
+  definition: {
     fontSize: 34,
   },
 });

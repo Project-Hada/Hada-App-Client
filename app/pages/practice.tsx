@@ -121,9 +121,9 @@ export default function PracticeScreen({navigation, route}: any) {
       </TouchableOpacity>
       <View style={styles.flashCardContainer}>
         <FlashCard
-          definition={flashcards[dynamicIndex].definition}
+          term={flashcards[dynamicIndex].term}
           romanization={flashcards[dynamicIndex].romanization}
-          translation={flashcards[dynamicIndex].translation}
+          definition={flashcards[dynamicIndex].definition}
           onFlip={() => setIsFlipped(!isFlipped)}
           resetFlip={resetFlip}
         />
@@ -131,9 +131,9 @@ export default function PracticeScreen({navigation, route}: any) {
         <View style={[styles.flashCardAnimated, {zIndex: sliderIndex, opacity: sliderIndex}]}>
           <Animated.View style={[cardStyle]}>
             <FlashCardSlider
-              definition={flashcards[currentIndex].definition}
+              term={flashcards[currentIndex].term}
               romanization={flashcards[currentIndex].romanization}
-              translation={flashcards[currentIndex].translation} 
+              definition={flashcards[currentIndex].definition} 
               isFlipped={wasFlipped || isFlipped}            
               />
           </Animated.View>

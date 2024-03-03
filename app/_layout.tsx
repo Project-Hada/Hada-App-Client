@@ -54,19 +54,16 @@ export default function RootLayout() {
 
   const playlistData = [
     {
-        name: "access-point", 
         title: "Someone's Study Set",
-        words: flashCards
+        playlist: flashCards
     },
     {
-        name: "access-point", 
         title: "Someone's Study Set",
-        words: flashCards
+        playlist: flashCards
     },
     {
-        name: "access-point", 
         title: "Someone's Study Set",
-        words: flashCards
+        playlist: flashCards
     },
 ];
   

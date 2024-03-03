@@ -2,79 +2,79 @@ import { FlashCardType } from "@/Tools/types";
 
 const flashCards: FlashCardType[] = [
     {
-      "definition": "나무",
+      "term": "나무",
       "romanization": "(namu)",
-      "translation": "tree"
+      "definition": "tree"
     },
     {
-      "definition": "사과",
+      "term": "사과",
       "romanization": "(sagwa)",
-      "translation": "apple"
+      "definition": "apple"
     },
     {
-      "definition": "바다",
+      "term": "바다",
       "romanization": "(bada)",
-      "translation": "sea"
+      "definition": "sea"
     },
     {
-      "definition": "햇볕",
+      "term": "햇볕",
       "romanization": "(haetbyeot)",
-      "translation": "sunlight"
+      "definition": "sunlight"
     },
     {
-      "definition": "비",
+      "term": "비",
       "romanization": "(bi)",
-      "translation": "rain"
+      "definition": "rain"
     },
     {
-      "definition": "바람",
+      "term": "바람",
       "romanization": "(baram)",
-      "translation": "wind"
+      "definition": "wind"
     },
     {
-      "definition": "하늘",
+      "term": "하늘",
       "romanization": "(haneul)",
-      "translation": "sky"
+      "definition": "sky"
     },
     {
-      "definition": "별",
+      "term": "별",
       "romanization": "(byeol)",
-      "translation": "star"
+      "definition": "star"
     },
     {
-      "definition": "눈",
+      "term": "눈",
       "romanization": "(nun)",
-      "translation": "snow"
+      "definition": "snow"
     },
     {
-      "definition": "구름",
+      "term": "구름",
       "romanization": "(gureum)",
-      "translation": "cloud"
+      "definition": "cloud"
     },
     {
-      "definition": "빗물",
+      "term": "빗물",
       "romanization": "(bitmul)",
-      "translation": "rainwater"
+      "definition": "rainwater"
     },
     {
-      "definition": "번개",
+      "term": "번개",
       "romanization": "(baen   gae)",
-      "translation": "lightning"
+      "definition": "lightning"
     },
     {
-      "definition": "무지개",
+      "term": "무지개",
       "romanization": "(mujigae)",
-      "translation": "rainbow"
+      "definition": "rainbow"
     },
     {
-      "definition": "바람막이",
+      "term": "바람막이",
       "romanization": "(barammaki)",
-      "translation": "windbreaker"
+      "definition": "windbreaker"
     },
     {
-      "definition": "태양",
+      "term": "태양",
       "romanization": "(taeyang)",
-      "translation": "sun"
+      "definition": "sun"
     }
   ]
 
