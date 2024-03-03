@@ -16,6 +16,7 @@ export default function FlashCard({ definition, romanization, translation, onFli
   const [isFlipped, setIsFlipped] = useState(false);
 
   const frontAnimatedStyle = {
+    zIndex: isFlipped ? 0 : 1,
     transform: [
       {
         rotateY: flipAnim.interpolate({
@@ -27,22 +28,12 @@ export default function FlashCard({ definition, romanization, translation, onFli
   };
 
   const backAnimatedStyle = {
+    zIndex: isFlipped ? 1 : 0,
     transform: [
       {
         rotateY: flipAnim.interpolate({
           inputRange: [0, 1],
           outputRange: ['180deg', '360deg'],
-        }),
-      },
-    ],
-  };
-
-  const audioAnimatedStyle = {
-    transform: [
-      {
-        rotateY: flipAnim.interpolate({
-          inputRange: [0, 1],
-          outputRange: ['0deg', '360deg'],
         }),
       },
     ],
@@ -83,15 +74,17 @@ export default function FlashCard({ definition, romanization, translation, onFli
         <View style={styles.romanizationContainer}>
           <Text style={styles.romanization}>{romanization}</Text>
         </View>
+        <TouchableOpacity style={styles.audioButton} onPress={handleAudio}>
+        <FontAwesome name="volume-up" size={36} color="black" />
+      </TouchableOpacity>
       </Animated.View>
 
       <Animated.View style={[styles.flashCard, backAnimatedStyle, { position: 'absolute' }]}>
         <Text style={styles.translation}>{translation}</Text>
-      </Animated.View>
-
-      <TouchableOpacity style={[styles.audioButton, audioAnimatedStyle]} onPress={handleAudio}>
+        <TouchableOpacity style={styles.audioButton} onPress={handleAudio}>
         <FontAwesome name="volume-up" size={36} color="black" />
       </TouchableOpacity>
+      </Animated.View>
     </Pressable>
   );
 }
@@ -141,6 +134,5 @@ const styles = StyleSheet.create({
     position: 'absolute',
     top: 15,
     right: 15,
-    zIndex: 10
   }
 });
