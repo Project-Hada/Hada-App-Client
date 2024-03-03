@@ -6,6 +6,7 @@ import { useState, useEffect } from 'react'
 
 import { addNewUser, getAllUsers, updateUserById, deleteUserById } from '../services/usersFunctions';
 import { addNewDeck, getAllDecks, updateDeckById, deleteDeckById } from '../services/decksFunctions';
+import React from 'react';
 
 export default function TabOneScreen() {
   // save database collection as state
