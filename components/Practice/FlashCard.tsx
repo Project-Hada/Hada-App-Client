@@ -37,6 +37,17 @@ export default function FlashCard({ definition, romanization, translation, onFli
     ],
   };
 
+  const audioAnimatedStyle = {
+    transform: [
+      {
+        rotateY: flipAnim.interpolate({
+          inputRange: [0, 1],
+          outputRange: ['0deg', '360deg'],
+        }),
+      },
+    ],
+  };
+
   const triggerFlip = () => {
     onFlip(); //notifies the parent
     Animated.timing(flipAnim, {
@@ -62,7 +73,7 @@ export default function FlashCard({ definition, romanization, translation, onFli
     const language = isFlipped ? 'en-US' : 'ko-KR';
     speak(textToSpeech, language);
   };
-
+  
   return (
     <Pressable onPress={triggerFlip} style={styles.flashCardPressableContainer}>
       <Animated.View style={[styles.flashCard, frontAnimatedStyle]}>
@@ -78,8 +89,8 @@ export default function FlashCard({ definition, romanization, translation, onFli
         <Text style={styles.translation}>{translation}</Text>
       </Animated.View>
 
-      <TouchableOpacity style={styles.audioButton} onPress={handleAudio}>
-        <FontAwesome name="volume-up" size={24} color="black" />
+      <TouchableOpacity style={[styles.audioButton, audioAnimatedStyle]} onPress={handleAudio}>
+        <FontAwesome name="volume-up" size={36} color="black" />
       </TouchableOpacity>
     </Pressable>
   );
