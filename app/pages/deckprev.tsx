@@ -14,6 +14,10 @@ type DeckPreviewProps = {
   flashCards: FlashCardType[];
 }
 
+const handleCreateCard = () => {
+  console.log("hellow")
+}
+
 export default function DeckPreview({navigation, route}: any) {
   const { flashCards } = route.params;
   return (
@@ -29,6 +33,10 @@ export default function DeckPreview({navigation, route}: any) {
                     <Text style={styles.wordCount}>{flashCards.length} words</Text>
                 </View>
             </View>
+        </View>
+
+        <View style={styles.utilContainer}>
+          <MaterialCommunityIcons size={44} name="card-plus-outline" color="#000000" onPress={handleCreateCard}/>
         </View>
         
       <FlatList
@@ -91,6 +99,15 @@ export const styles = StyleSheet.create({
     fontSize: 14,
     color: 'grey',
   },
+  utilContainer: {
+    flexDirection: 'row',
+    width: '100%',
+    justifyContent: 'flex-end',
+    alignItems: 'center',
+    paddingRight: 15,
+    marginVertical: 10,
+  },
+
   listItem: {
     flexDirection: 'row',
     alignItems: 'center',
