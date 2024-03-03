@@ -31,7 +31,7 @@ export default function DeckPreview({navigation, route}: any) {
             </View>
         </View>
         
-    <FlatList
+      <FlatList
         data={flashCards}
         renderItem={({ item }) => (
         <TouchableOpacity >

@@ -1,5 +1,5 @@
 import React, { JSXElementConstructor, ReactElement, ReactNode, ReactPortal } from 'react'
-import { useState } from 'react'
+import { useRef, useState } from 'react'
 import { View, Text, StyleSheet, ScrollView, SafeAreaView, TouchableOpacity } from 'react-native'
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { StackNavigationProp } from '@react-navigation/stack';
@@ -22,12 +22,35 @@ type FlashCardType = {
     navigation: any;
     playlistData: PlaylistItemType[];
   }
+
+  const handleFindDeck = () => {
+    console.log("find my deck");
+    // Sorts the deck by search input word
+    // Need to talk with Product owner how he wants to implement this
+  }
+
+  const handleCreateDeck = () => {
+    console.log("I want to create deck");
+    // Create new deck function
+    // Need to talk with Product owner how he wants to implement this
+  }
+
+  const handleUserInfo = () => {
+    console.log("I want my user profile");
+    // Opens the user info
+    // Need to talk with Product owner how he wants to implement this
+  }
+
 export default function LibraryScreen({navigation, route}: any) {
     const { playlistData } = route.params;
 
-
     return (
         <SafeAreaView style={libStyles.container}>
+            <View style={libStyles.utilContainer}>
+                <MaterialCommunityIcons size={44} name="magnify" color="#000000" onPress={handleFindDeck}/>
+                <MaterialCommunityIcons size={44} name="plus-box-outline" color="#000000" onPress={handleCreateDeck}/>
+                <MaterialCommunityIcons size={44} name="account-circle-outline" color="#000000" onPress={handleUserInfo}/>
+            </View>
             <ScrollView contentContainerStyle={libStyles.scrollView} >
                 {playlistData.map((item: any, i: any) => {
                     return(
@@ -75,6 +98,14 @@ export const libStyles = StyleSheet.create({
         padding: 0,
         margin: 0
     },
+    utilContainer: {
+        width: '100%',
+        paddingRight: 15,
+        marginBottom: 10,
+        flexDirection: 'row',
+        justifyContent: 'flex-end',
+        alignItems: 'center'
+    },
     headerContainer: {
         width: '100%',
         alignItems: 'center',
@@ -94,8 +125,9 @@ export const libStyles = StyleSheet.create({
         
         borderRadius: 8,
         borderWidth: 2,
-        shadowColor: colors.textColor,
-        shadowOffset: {width: 4, height: 4},
+        borderRightWidth: 4,
+        borderBottomWidth: 4,
+        borderColor: colors.textColor,
         
         paddingVertical: 10,
         marginBottom: 15,
