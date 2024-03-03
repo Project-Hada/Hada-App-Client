@@ -3,8 +3,8 @@ import { View, Text, StyleSheet, ScrollView, SafeAreaView, TouchableOpacity } fr
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { StackNavigationProp } from '@react-navigation/stack';
 import FlashcardContext from '@/Tools/Contexts/FlashcardContext';
-import flashCards from '../fakeData';
 import { FlashCardType } from '@/Tools/types';
+import flashCards from '@/components/fakeData';
 
   
   type PlaylistItemType = {
