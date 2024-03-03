@@ -23,10 +23,14 @@ export default function Configure() {
     'GeneralSans-Variable': require('../assets/fonts/GeneralSans-Variable.ttf'),
   });
 
-  const [first, setfirst] = useState("meep")
+  if (!loaded) {
+    // You can return a loading indicator here if you like
+    return <View style={styles.loadingContainer}></View>;
+  }
+
   return (
     <View style={{backgroundColor: '#F2E8E1'}}>
-      <Router meep={"skippy"} />
+      <Router/>
     </View>
   );
 }

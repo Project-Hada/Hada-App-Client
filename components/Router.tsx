@@ -2,10 +2,12 @@
 import React, { useContext, useEffect, useState } from 'react';
 import { createStackNavigator } from '@react-navigation/stack';
 import { Text, StyleSheet, SafeAreaView } from 'react-native';
-import LibraryScreen from '../pages/library';
-import DeckPreview from '../pages/deckprev';
-import PracticeScreen from '../pages/practice';
-import flashCards from './fakeData';
+import LibraryScreen from './pages/Library';
+import DeckPreview from './pages/DeckPreview';
+import { PracticeScreen } from './pages/Practice';
+import flashCards from '../Data/fakeData';
+import { NavigationContainer } from '@react-navigation/native';
+
 
 const playlistData = [
     {
@@ -58,10 +60,12 @@ const AppStack = () => {
     )  
 }
 
-export default function Router({meep}: any) {
+export default function Router() {
 
   return (
-    <AppStack/>
+    <NavigationContainer>
+        <AppStack/>
+    </NavigationContainer>
   );
 }
 
