@@ -5,31 +5,44 @@ import { Pressable, View, Text, TextInput, StyleSheet } from "react-native";
 interface AddCardModalProps {
   isVisible: boolean;
   onAdd: (koreanWord: string, englishWord: string) => void;
+  onUpdate?: (id: string, koreanWord: string, englishWord: string) => void;
+  onDelete?: (id: string) => void;
   onCancel: () => void;
   koreanWordInitial: string;
   englishWordInitial: string;
   isEditMode: boolean;
+  flashcardId?: string;
 }
 
 const AddCardModal: React.FC<AddCardModalProps> = ({
   isVisible,
   onAdd,
   onCancel,
+  onUpdate,
+  onDelete,
   koreanWordInitial = "",
   englishWordInitial = "",
   isEditMode = false,
+  flashcardId,
 }) => {
   const [koreanWord, setKoreanWord] = useState(koreanWordInitial);
   const [englishWord, setEnglishWord] = useState(englishWordInitial);
 
   const handleConfirm = () => {
-    if (isEditMode) {
-      // Logic for updating the flashcard will go here
+    if (isEditMode && flashcardId) {
+      onUpdate?.(flashcardId, koreanWord, englishWord);
     } else {
       onAdd(koreanWord, englishWord);
     }
     setKoreanWord("");
     setEnglishWord("");
+  };
+
+  const handleDelete = () => {
+    if (isEditMode && flashcardId) {
+      onDelete?.(flashcardId);
+    }
+    // Close modal
   };
 
   if (!isVisible) {
@@ -54,7 +67,10 @@ const AddCardModal: React.FC<AddCardModalProps> = ({
         keyboardType="default"
       />
       <View style={styles.addingButtonContainer}>
-        <Pressable style={styles.cancelButton} onPress={onCancel}>
+        <Pressable
+          style={styles.cancelButton}
+          onPress={!isEditMode ? onCancel : handleDelete}
+        >
           <Text style={styles.cancelButtonText}>
             {isEditMode ? "Delete" : "Cancel"}
           </Text>

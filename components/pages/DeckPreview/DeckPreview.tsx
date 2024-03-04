@@ -30,7 +30,9 @@ type DeckPreviewProps = {
 };
 
 export default function DeckPreview({ navigation, route }: any) {
-  const { currPlaylist, addFlashcard } = useContext(FlashcardContext);
+  const { currPlaylist, addFlashcard, updateFlashcard, deleteFlashcard } =
+    useContext(FlashcardContext);
+
   const flashcards = currPlaylist ? currPlaylist.playlist : [];
 
   // State to track the selected card for editing
@@ -79,7 +81,10 @@ export default function DeckPreview({ navigation, route }: any) {
 
   // Function to handle card press
   const handleCardPress = (cardId: string) => {
-    setSelectedCardId(selectedCardId === cardId ? null : cardId);
+    const card = flashcards.find((card) => card.id === cardId);
+    setSelectedCard(card || null);
+    setSelectedCardId(cardId);
+    setIsAddingVisible(true); // Open the modal in edit mode
   };
 
   return (
@@ -133,11 +138,13 @@ export default function DeckPreview({ navigation, route }: any) {
             />
             {selectedCardId === item.id && (
               <AddCardModal
-                isVisible={true}
-                onAdd={handleAdd}
+                isVisible={isAddingVisible}
+                onAdd={handleAdd} // Used for adding a new card
+                onUpdate={() => updateFlashcard}
+                onDelete={() => deleteFlashcard}
                 onCancel={handleCancel}
-                koreanWordInitial={item.term}
-                englishWordInitial={item.definition}
+                koreanWordInitial={selectedCard?.term || ""}
+                englishWordInitial={selectedCard?.definition || ""}
                 isEditMode={true}
               />
             )}

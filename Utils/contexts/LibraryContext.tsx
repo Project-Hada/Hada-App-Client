@@ -18,6 +18,12 @@ export interface PlaylistContextType {
   setLibrary: Dispatch<SetStateAction<LibraryState>>;
   addPlaylist: (newPlaylist: PlaylistType) => void;
   addFlashcard: (playlistId: string, newFlashcard: FlashCardType) => void;
+  updateFlashcard: (
+    playlistId: string,
+    flashcardId: string,
+    updatedFlashcard: FlashCardType
+  ) => void;
+  deleteFlashcard: (playlistId: string, flashcardId: string) => void;
 }
 
 const defaultState: PlaylistContextType = {
@@ -27,6 +33,8 @@ const defaultState: PlaylistContextType = {
   setLibrary: () => {},
   addPlaylist: () => {},
   addFlashcard: () => {},
+  updateFlashcard: () => {},
+  deleteFlashcard: () => {},
 };
 
 const LibraryContext = React.createContext<PlaylistContextType>(defaultState);
@@ -73,6 +81,71 @@ export const LibraryProvider: React.FC<PropsWithChildren<{}>> = ({
     }
   };
 
+  const updateFlashcard = (
+    playlistId: string,
+    flashcardId: string,
+    updatedFlashcard: FlashCardType
+  ) => {
+    // Access the playlist directly by ID
+    const playlistToUpdate = library[playlistId];
+
+    if (playlistToUpdate) {
+      // Map through the flashcards to find and update the specified one
+      const updatedFlashCards = playlistToUpdate.playlist.map((flashcard) =>
+        flashcard.id === flashcardId
+          ? { ...flashcard, ...updatedFlashcard }
+          : flashcard
+      );
+
+      // Create a new updated playlist
+      const updatedPlaylist = {
+        ...playlistToUpdate,
+        playlist: updatedFlashCards,
+      };
+
+      // Update the library with the new playlist
+      setLibrary((prevLibrary) => ({
+        ...prevLibrary,
+        [playlistId]: updatedPlaylist,
+      }));
+
+      // Also update the currPlaylist if it's the one being updated
+      if (currPlaylist?.id === playlistId) {
+        setCurrPlaylist(updatedPlaylist);
+      }
+    }
+  };
+
+  /** Delete a flashcard */
+  const deleteFlashcard = (playlistId: string, flashcardId: string) => {
+    // Access the playlist directly by ID
+    const playlistToUpdate = library[playlistId];
+
+    if (playlistToUpdate) {
+      // Filter out the flashcard to be deleted
+      const updatedFlashCards = playlistToUpdate.playlist.filter(
+        (flashcard) => flashcard.id !== flashcardId
+      );
+
+      // Create a new updated playlist
+      const updatedPlaylist = {
+        ...playlistToUpdate,
+        playlist: updatedFlashCards,
+      };
+
+      // Update the library with the new playlist
+      setLibrary((prevLibrary) => ({
+        ...prevLibrary,
+        [playlistId]: updatedPlaylist,
+      }));
+
+      // Also update the currPlaylist if it's the one being updated
+      if (currPlaylist?.id === playlistId) {
+        setCurrPlaylist(updatedPlaylist);
+      }
+    }
+  };
+
   return (
     <LibraryContext.Provider
       value={{
@@ -82,6 +155,8 @@ export const LibraryProvider: React.FC<PropsWithChildren<{}>> = ({
         setLibrary,
         addPlaylist,
         addFlashcard,
+        updateFlashcard,
+        deleteFlashcard,
       }}
     >
       {children}
