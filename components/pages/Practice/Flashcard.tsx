@@ -105,16 +105,11 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     backfaceVisibility: 'hidden',
-        shadowColor: '#171717',
-    shadowOffset: {
-      width: 4, // X offset
-      height: 4, // Y offset
-    },
-    shadowOpacity: 1, // Transparency (0 to 1)
-    shadowRadius: 0, // Blur radius
-    elevation: 5, // Android-specific elevation
+    shadowColor: '#171717',
     borderWidth: 1,
-    borderColor: 'black'
+    borderRightWidth: 4,
+    borderBottomWidth: 4,
+    borderColor: '#000000', 
   },
   termContainer: {},
   term: {
