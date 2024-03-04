@@ -14,10 +14,12 @@ import {
   MaterialIcons,
   AntDesign,
   Feather,
+  Foundation,
 } from "@expo/vector-icons";
 import FlashcardContext from "../../utils/contexts/LibraryContext";
 import speak from "../../utils/tts";
 import { TextInput } from "react-native-gesture-handler";
+import AddButton from "../AddButton";
 
 type FlashCardType = {
   term: string;
@@ -67,6 +69,21 @@ export default function DeckPreview({ navigation, route }: any) {
     setEnglishWord("");
   };
 
+  const AddCardButton = () => {
+    return (
+      <TouchableOpacity onPress={handleOpenAdd}>
+        <View style={styles.listItem}>
+          <View style={styles.previewBadge}>
+            <MaterialCommunityIcons name="plus-thick" size={30} color="white" />
+          </View>
+          <View style={styles.termContainer}>
+            <Text style={styles.addCardText}> Add Card </Text>
+          </View>
+        </View>
+      </TouchableOpacity>
+    );
+  };
+
   return (
     <SafeAreaView style={styles.container}>
       <View style={styles.header}>
@@ -88,15 +105,13 @@ export default function DeckPreview({ navigation, route }: any) {
               <Text style={styles.wordCount}>{flashcards.length} words</Text>
             </View>
           </View>
-          <MaterialCommunityIcons
-            name="note-edit-outline"
-            size={32}
-            color="#000000"
-            onPress={handleOpenAdd}
-          />
+          {/* <TouchableOpacity onPress={handleOpenAdd}>
+            <AddButton />
+          </TouchableOpacity> further discussion needed on adding this with the other add option*/}
         </View>
       </View>
 
+      {/* Adding new card modal */}
       {isAddingVisible && (
         <View style={styles.addingContainer}>
           <TextInput
@@ -124,6 +139,7 @@ export default function DeckPreview({ navigation, route }: any) {
           </View>
         </View>
       )}
+      {/* List of cards display */}
       <FlatList
         data={flashcards}
         renderItem={({ item }) => (
@@ -153,8 +169,10 @@ export default function DeckPreview({ navigation, route }: any) {
           </TouchableOpacity>
         )}
         keyExtractor={(item) => `term-${item.term}`}
+        ListHeaderComponent={AddCardButton} // Add the AddCardButton as the header component
       />
 
+      {/* Practice Button */}
       <TouchableOpacity
         onPress={() => navigation.navigate("PracticeScreen")}
         style={styles.practiceButton}
@@ -307,13 +325,14 @@ export const styles = StyleSheet.create({
     flex: 1,
   },
   termText: {
-    fontSize: 20,
+    fontSize: 22,
     fontFamily: "GeneralSans-Bold",
   },
   term: {
     fontSize: 16,
     color: "#A7A7A7",
     fontFamily: "GeneralSans-Medium",
+    marginTop: -4,
   },
   previewBadge: {
     width: 48,
@@ -348,4 +367,8 @@ export const styles = StyleSheet.create({
     fontFamily: "GeneralSans-Bold",
   },
   playButton: {},
+  addCardText: {
+    fontFamily: "GeneralSans-Semibold",
+    fontSize: 20,
+  },
 });

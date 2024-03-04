@@ -16,11 +16,17 @@ import {
   TextInput,
   Pressable,
 } from "react-native";
-import { MaterialCommunityIcons, MaterialIcons } from "@expo/vector-icons";
+import {
+  MaterialCommunityIcons,
+  MaterialIcons,
+  Octicons,
+} from "@expo/vector-icons";
 import { StackNavigationProp } from "@react-navigation/stack";
 import { FlashCardType } from "../../utils/types";
 import LibraryContext from "../../utils/contexts/LibraryContext";
 import flashCards from "../../Data/fakeData";
+import { styles } from "./DeckPreview";
+import AddButton from "../AddButton";
 
 type PlaylistItemType = {
   name: string;
@@ -60,14 +66,11 @@ export default function LibraryScreen({ navigation, route }: any) {
   return (
     <SafeAreaView style={libStyles.container}>
       <View style={libStyles.headerContainer}>
-        <Text style={libStyles.addIcon}> </Text>
+        <View />
         <Text style={libStyles.headerText}>Library</Text>
-        <MaterialCommunityIcons
-          name="note-edit-outline"
-          style={libStyles.addIcon}
-          color="#000000"
-          onPress={handleOpenAdd}
-        />
+        <TouchableOpacity onPress={handleOpenAdd}>
+          <AddButton />
+        </TouchableOpacity>
       </View>
       <ScrollView contentContainerStyle={libStyles.scrollView}>
         {isAddingVisible && (
@@ -152,9 +155,6 @@ export const libStyles = StyleSheet.create({
   headerText: {
     fontFamily: "GeneralSans-Bold",
     fontSize: 30,
-  },
-  addIcon: {
-    fontSize: 32,
   },
   scrollView: {
     width: "100%",
