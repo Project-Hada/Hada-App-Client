@@ -3,7 +3,7 @@ import React from "react";
 import { createStackNavigator } from "@react-navigation/stack";
 import { Text, StyleSheet, SafeAreaView, Platform } from "react-native";
 import LibraryScreen from "./pages/Library";
-import DeckPreview from "./pages/DeckPreview";
+import DeckPreview from "./pages/DeckPreview/DeckPreview";
 import { PracticeScreen } from "./pages/Practice";
 import { NavigationContainer } from "@react-navigation/native";
 

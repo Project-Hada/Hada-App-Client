@@ -16,12 +16,13 @@ import {
   Feather,
   Foundation,
 } from "@expo/vector-icons";
-import FlashcardContext from "../../utils/contexts/LibraryContext";
-import speak from "../../utils/tts";
+import FlashcardContext from "../../../utils/contexts/LibraryContext";
+import speak from "../../../utils/tts";
 import { TextInput } from "react-native-gesture-handler";
-import AddButton from "../AddButton";
-import generateId from "../../utils/idGenerator";
-import AddCardModal from "../AddCardModal";
+import AddButton from "../../AddButton";
+import generateId from "../../../utils/idGenerator";
+import AddCardModal from "./AddCardModal";
+import PreviewCard from "./PreviewCard";
 
 type FlashCardType = {
   term: string;
@@ -31,10 +32,6 @@ type FlashCardType = {
 
 type DeckPreviewProps = {
   navigation: any;
-};
-
-const handleAudio = (text: string, language: string) => {
-  speak(text, language);
 };
 
 export default function DeckPreview({ navigation, route }: any) {
@@ -121,30 +118,7 @@ export default function DeckPreview({ navigation, route }: any) {
       <FlatList
         data={flashcards}
         renderItem={({ item }) => (
-          <TouchableOpacity>
-            <View style={styles.listItem}>
-              <View style={styles.previewBadge}>
-                <Text style={styles.previewBadgeText}>
-                  {item.term.slice(0, 1)}
-                </Text>
-              </View>
-              <View style={styles.termContainer}>
-                <Text style={styles.termText}>{item.term}</Text>
-                <Text style={styles.term}>{item.definition}</Text>
-              </View>
-              <TouchableOpacity
-                style={styles.playButton}
-                onPress={() => {
-                  handleAudio(item.term, "ko-KR");
-                  handleAudio(item.definition, "en-US");
-                }}
-              >
-                <View style={styles.playButtonContainer}>
-                  <Feather name="play" size={24} color="black" />
-                </View>
-              </TouchableOpacity>
-            </View>
-          </TouchableOpacity>
+          <PreviewCard term={item.term} definition={item.definition} />
         )}
         keyExtractor={(item) => item.id} // Use the unique id of each flashcard for the keyExtractor
         ListHeaderComponent={AddCardButton}

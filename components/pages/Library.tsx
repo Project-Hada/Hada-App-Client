@@ -25,7 +25,7 @@ import { StackNavigationProp } from "@react-navigation/stack";
 import { FlashCardType } from "../../utils/types";
 import LibraryContext from "../../utils/contexts/LibraryContext";
 import flashCards from "../../Data/fakeData";
-import { styles } from "./DeckPreview";
+import { styles } from "./DeckPreview/DeckPreview";
 import AddButton from "../AddButton";
 import generateId from "../../utils/idGenerator";
 
