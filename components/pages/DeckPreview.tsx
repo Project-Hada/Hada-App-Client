@@ -91,7 +91,7 @@ export default function DeckPreview({ navigation, route }: any) {
           style={styles.backIcon}
           onPress={() => navigation.goBack()}
         >
-          <MaterialIcons name="arrow-back-ios" size={24} color="gray" />
+          <MaterialIcons name="arrow-back-ios" size={28} color="#777777" />
         </TouchableOpacity>
         <View style={styles.headerContent}>
           <View style={styles.headerInfo}>
@@ -99,8 +99,8 @@ export default function DeckPreview({ navigation, route }: any) {
             <View style={styles.subHeader}>
               <MaterialCommunityIcons
                 name="cards-variant"
-                size={18}
-                color="gray"
+                size={22}
+                color="#B6B6B6"
               />
               <Text style={styles.wordCount}>{flashcards.length} words</Text>
             </View>
@@ -232,7 +232,7 @@ export const styles = StyleSheet.create({
   wordCount: {
     fontFamily: "GeneralSans-Regular",
     fontSize: 14,
-    color: "grey",
+    color: "#B6B6B6",
     paddingLeft: 4,
   },
   addingContainer: {
