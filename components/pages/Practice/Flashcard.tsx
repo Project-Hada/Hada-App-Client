@@ -1,7 +1,14 @@
-import React, { useEffect, useState } from 'react';
-import { StyleSheet, View, Text, Pressable, Animated, TouchableOpacity } from 'react-native';
-import { FontAwesome } from '@expo/vector-icons';
-import speak from '../../../Utils/tts';
+import React, { useEffect, useState } from "react";
+import {
+  StyleSheet,
+  View,
+  Text,
+  Pressable,
+  Animated,
+  TouchableOpacity,
+} from "react-native";
+import { FontAwesome } from "@expo/vector-icons";
+import speak from "../../../utils/tts";
 
 type FlashCardProps = {
   term: string;
@@ -11,7 +18,13 @@ type FlashCardProps = {
   resetFlip: boolean;
 };
 
-export default function FlashCard({ term, romanization, definition, onFlip, resetFlip }: FlashCardProps) {
+export default function FlashCard({
+  term,
+  romanization,
+  definition,
+  onFlip,
+  resetFlip,
+}: FlashCardProps) {
   const [flipAnim, setFlipAnim] = useState(new Animated.Value(0));
   const [isFlipped, setIsFlipped] = useState(false);
 
@@ -21,7 +34,7 @@ export default function FlashCard({ term, romanization, definition, onFlip, rese
       {
         rotateY: flipAnim.interpolate({
           inputRange: [0, 1],
-          outputRange: ['0deg', '180deg'],
+          outputRange: ["0deg", "180deg"],
         }),
       },
     ],
@@ -33,7 +46,7 @@ export default function FlashCard({ term, romanization, definition, onFlip, rese
       {
         rotateY: flipAnim.interpolate({
           inputRange: [0, 1],
-          outputRange: ['180deg', '360deg'],
+          outputRange: ["180deg", "360deg"],
         }),
       },
     ],
@@ -51,20 +64,18 @@ export default function FlashCard({ term, romanization, definition, onFlip, rese
   };
 
   useEffect(() => {
-      flipAnim.setValue(0); // Resets to face up without animation
-      setIsFlipped(false);
+    flipAnim.setValue(0); // Resets to face up without animation
+    setIsFlipped(false);
   }, [resetFlip]);
 
-  const reset = () => {
-
-  }
+  const reset = () => {};
 
   const handleAudio = () => {
     const textToSpeech = isFlipped ? definition : term;
-    const language = isFlipped ? 'en-US' : 'ko-KR';
+    const language = isFlipped ? "en-US" : "ko-KR";
     speak(textToSpeech, language);
   };
-  
+
   return (
     <Pressable onPress={triggerFlip} style={styles.flashCardPressableContainer}>
       <Animated.View style={[styles.flashCard, frontAnimatedStyle]}>
@@ -75,15 +86,17 @@ export default function FlashCard({ term, romanization, definition, onFlip, rese
           <Text style={styles.romanization}>{romanization}</Text>
         </View>
         <TouchableOpacity style={styles.audioButton} onPress={handleAudio}>
-        <FontAwesome name="volume-up"  size={36} color="black" />
-      </TouchableOpacity>
+          <FontAwesome name="volume-up" size={36} color="black" />
+        </TouchableOpacity>
       </Animated.View>
 
-      <Animated.View style={[styles.flashCard, backAnimatedStyle, { position: 'absolute' }]}>
+      <Animated.View
+        style={[styles.flashCard, backAnimatedStyle, { position: "absolute" }]}
+      >
         <Text style={styles.definition}>{definition}</Text>
         <TouchableOpacity style={styles.audioButton} onPress={handleAudio}>
-        <FontAwesome name="volume-up" size={36} color="black" />
-      </TouchableOpacity>
+          <FontAwesome name="volume-up" size={36} color="black" />
+        </TouchableOpacity>
       </Animated.View>
     </Pressable>
   );
@@ -92,42 +105,41 @@ export default function FlashCard({ term, romanization, definition, onFlip, rese
 const styles = StyleSheet.create({
   flashCardPressableContainer: {
     flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
+    justifyContent: "center",
+    alignItems: "center",
     zIndex: 5,
- 
   },
   flashCard: {
-    width: '100%',
-    height: '100%',
-    borderRadius: 14 ,
-    backgroundColor: 'white',
-    justifyContent: 'center',
-    alignItems: 'center',
-    backfaceVisibility: 'hidden',
-    shadowColor: '#171717',
+    width: "100%",
+    height: "100%",
+    borderRadius: 14,
+    backgroundColor: "white",
+    justifyContent: "center",
+    alignItems: "center",
+    backfaceVisibility: "hidden",
+    shadowColor: "#171717",
     borderWidth: 1,
     borderRightWidth: 4,
     borderBottomWidth: 4,
-    borderColor: '#000000', 
+    borderColor: "#000000",
   },
   termContainer: {},
   term: {
     fontSize: 38,
-    fontFamily: 'GeneralSans-Variable',
+    fontFamily: "GeneralSans-Variable",
   },
   romanizationContainer: {},
   romanization: {
     fontSize: 28,
-    fontFamily: 'GeneralSans-Regular',
-    color: "#A7A7A7"
+    fontFamily: "GeneralSans-Regular",
+    color: "#A7A7A7",
   },
   definition: {
     fontSize: 34,
   },
   audioButton: {
-    position: 'absolute',
+    position: "absolute",
     top: 15,
     right: 15,
-  }
+  },
 });

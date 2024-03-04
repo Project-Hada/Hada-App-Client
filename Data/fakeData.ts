@@ -1,9 +1,8 @@
-import { FlashCardType, PlaylistType } from "../Utils/types";
+import { FlashCardType, PlaylistType } from "../utils/types";
 
 const flashCards1: FlashCardType[] = [
     {
       "term": "나무",
-      "romanization": "(namu)",
       "definition": "tree"
     },
     {

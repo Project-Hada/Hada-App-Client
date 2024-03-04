@@ -2,7 +2,6 @@
 export interface FlashCardType {
   term: string;
   definition: string;
-  romanization: string;
 }
   
 export interface PlaylistType {
