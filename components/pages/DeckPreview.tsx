@@ -53,7 +53,7 @@ export default function DeckPreview({navigation, route}: any) {
         keyExtractor={item => `term-${item.term}`}
       />
       
-        <TouchableOpacity onPress={() => navigation.navigate('pages/practice')} style={styles.practiceButton}>
+        <TouchableOpacity onPress={() => navigation.navigate('PracticeScreen')} style={styles.practiceButton}>
             <Text style={styles.practiceButtonText}>Practice</Text>
         </TouchableOpacity>
     </SafeAreaView>

@@ -38,20 +38,20 @@ const {Navigator, Screen} = createStackNavigator();
 
 const AppStack = () => {
     return (
-        <Navigator>
+        <Navigator initialRouteName='LibraryScreen'>
             <Screen
-            name="pages/library"
+            name="LibraryScreen"
             component={LibraryScreen}
             initialParams={{ playlistData }} // Pass the playlist data with flashcards from context
             options={{ header: libraryHeader }}
             />
             <Screen
-            name="pages/deckprev"
+            name="DeckPreview"
             component={DeckPreview}
             options={{ headerShown: false }}
             />
             <Screen
-            name="pages/practice"
+            name="PracticeSreen"
             component={PracticeScreen}
             options={{ headerShown: false }}
             />

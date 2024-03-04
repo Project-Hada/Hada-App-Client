@@ -19,10 +19,11 @@ import flashCards from '../../Data/fakeData';
   }
 export default function LibraryScreen({navigation, route}: any) {
     const { playlistData } = route.params;
-    const { flashcards, setFlashcards } = useContext(FlashcardContext);
+    // const { flashcards, setFlashcards } = useContext(FlashcardContext);
+   const flashcards = flashCards;
     console.log("faeouo", flashcards)
     console.log("aeou", flashCards);
-    setFlashcards(flashCards);
+    // setFlashcards(flashCards);
     console.log("oeauaoe", flashcards);
     
 
@@ -34,7 +35,7 @@ export default function LibraryScreen({navigation, route}: any) {
                         <TouchableOpacity 
                             key={`playlist-${i}`} 
                             style={libStyles.playlist} 
-                            onPress={() => navigation.navigate('pages/deckprev')}
+                            onPress={() => navigation.navigate('DeckPreview')}
                         >
                             <View style={libStyles.iconContainer}>
                                 <MaterialCommunityIcons size={44} name="access-point" color="black"/>

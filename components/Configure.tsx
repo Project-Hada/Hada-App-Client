@@ -29,9 +29,7 @@ export default function Configure() {
   }
 
   return (
-    <View style={{backgroundColor: '#F2E8E1'}}>
       <Router/>
-    </View>
   );
 }
 
