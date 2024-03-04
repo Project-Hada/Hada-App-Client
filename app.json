@@ -15,13 +15,15 @@
       "**/*"
     ],
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": true,
+      "bundleIdentifier": "com.neezacoto.HadaAppClient"
     },
     "android": {
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#ffffff"
-      }
+      },
+      "package": "com.neezacoto.HadaAppClient"
     },
     "web": {
       "favicon": "./assets/favicon.png"
@@ -38,6 +40,11 @@
           ]
         }
       ]
-    ]
+    ],
+    "extra": {
+      "eas": {
+        "projectId": "ad2cbcc4-885a-447f-b98b-fdf29a127620"
+      }
+    }
   }
 }
