@@ -28,7 +28,7 @@ export default function DeckPreview({navigation, route}: any) {
     const [koreanWord, setKoreanWord] = useState("");
     const [englishWord, setEnglishWord] = useState("");
 
-    const [isAddingVisible, setIsAddingVisible] = useState(true);
+    const [isAddingVisible, setIsAddingVisible] = useState(false);
 
     const handleCancel = () => {
       setIsAddingVisible(false);

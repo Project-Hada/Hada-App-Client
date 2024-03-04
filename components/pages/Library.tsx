@@ -1,6 +1,6 @@
 import React, { JSXElementConstructor, ReactElement, ReactNode, ReactPortal, useContext, useState } from 'react'
-import { View, Text, StyleSheet, ScrollView, SafeAreaView, TouchableOpacity } from 'react-native'
-import { MaterialCommunityIcons } from '@expo/vector-icons';
+import { View, Text, StyleSheet, ScrollView, SafeAreaView, TouchableOpacity, TextInput, Pressable } from 'react-native'
+import { MaterialCommunityIcons, MaterialIcons } from '@expo/vector-icons';
 import { StackNavigationProp } from '@react-navigation/stack';
 import { FlashCardType } from '../../Utils/types';
 import LibraryContext from '../../Utils/Contexts/LibraryContext';
@@ -28,9 +28,43 @@ export default function LibraryScreen({navigation, route}: any) {
         navigation.navigate('DeckPreview');
     }
 
+    const [playlistName, setPlaylistName] = useState(""); 
+
+    const [isAddingVisible, setIsAddingVisible] = useState(false);
+
+    const handleCancel = () => {
+      setIsAddingVisible(false);
+    }
+    const handleOpenAdd = () => {
+      setIsAddingVisible(true);
+    }
+    const handleAdd = () => {
+        
+        //clear
+        setPlaylistName(""); 
+    };
+
     return (
         <SafeAreaView style={libStyles.container}>
-            <ScrollView contentContainerStyle={libStyles.scrollView} >
+            <View style={libStyles.headerContainer}> 
+                <Text style={libStyles.addIcon}>    </Text>
+                <Text style={libStyles.headerText}>Library</Text>
+                <MaterialCommunityIcons name="note-edit-outline" style={libStyles.addIcon} color="#000000" onPress={handleOpenAdd}/>
+            </View>
+            <ScrollView contentContainerStyle={libStyles.scrollView} > 
+                {isAddingVisible && <View style={libStyles.addingContainer}>
+                <TextInput
+                    style={libStyles.addingKoreanText}
+                    onChangeText={(text) => setPlaylistName(text)} 
+                    value={playlistName}
+                    placeholder="Type Korean Word"
+                    keyboardType="default"
+                />
+                <View style={libStyles.addingButtonContainer}>
+                    <Pressable style={libStyles.cancelButton} onPress={ handleCancel }><Text>Cancel</Text></Pressable>
+                    <Pressable style={libStyles.addButton} onPress={ handleAdd }><Text>Add</Text></Pressable>
+                </View>
+                </View>}
                 {library.map((item: any, i: any) => {
                     return(
                         <TouchableOpacity 
@@ -78,11 +112,18 @@ export const libStyles = StyleSheet.create({
         margin: 0
     },
     headerContainer: {
+        paddingVertical: 30,
         width: '100%',
+        flexDirection: 'row',
+        justifyContent: 'space-between',
         alignItems: 'center',
-        justifyContent: 'center',
-        marginBottom: 40,
-        marginTop: 20,
+        paddingHorizontal: 15
+    },
+    headerText: {
+        fontSize: 30
+    },
+    addIcon: {
+        fontSize: 32
     },
     scrollView: {
         width: '100%',
@@ -94,11 +135,12 @@ export const libStyles = StyleSheet.create({
         
         backgroundColor: colors.playlistColor,
         
-        borderRadius: 8,
-        borderWidth: 2,
-        shadowColor: colors.textColor,
-        shadowOffset: {width: 4, height: 4},
-        
+        borderWidth: 1,
+        borderRightWidth: 4,
+        borderBottomWidth: 4,
+        borderRadius: 10,
+        borderColor: '#000000', 
+
         paddingVertical: 10,
         marginBottom: 15,
         marginHorizontal: 15,
@@ -116,12 +158,78 @@ export const libStyles = StyleSheet.create({
         flex: 5
     },
 
+    addingContainer: {
+        flexDirection: 'column',
+        padding: 20,
+        marginBottom: 15,
+        marginHorizontal: 15,
+        borderWidth: 1,
+        borderRightWidth: 4,
+        borderBottomWidth: 4,
+        borderRadius: 10,
+        borderColor: '#000000',
+        backgroundColor: 'white',
+    },
+    addingKoreanText: {
+        borderWidth: 1,
+        paddingVertical: 7,
+        marginVertical: 5, 
+        borderRadius: 4,
+        textAlign: 'left',
+        paddingLeft: 5,
+        fontWeight: 'bold'
+    },
+    addingEnglishText: {
+        borderWidth: 1,
+        marginVertical: 5, 
+        paddingVertical: 4,
+        borderRadius: 4,
+        textAlign: 'left',
+        paddingLeft: 5,
+    },
+    addingButtonContainer: {
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        alignItems: 'center',
+        width: '100%',
+        marginTop: 20, 
+    },
+    cancelButton: {
+        width: '30%',
+        backgroundColor: 'red',
+        textAlign: 'center',
+        flexDirection: 'row',
+        justifyContent: 'center',
+        alignItems: 'center',
+        paddingVertical: 10,
+        borderWidth: 1,
+        borderRightWidth: 4,
+        borderBottomWidth: 4,
+        borderRadius: 10,
+        borderColor: '#000000',
+    },
+    addButton: {
+        width: '65%',
+        backgroundColor: 'green',
+        textAlign: 'center',
+        flexDirection: 'row',
+        justifyContent: 'center',
+        alignItems: 'center',
+        paddingVertical: 10,
+        borderWidth: 1,
+        borderRightWidth: 4,
+        borderBottomWidth: 4,
+        borderRadius: 10,
+        borderColor: '#000000',
+    },
+
     headertitle: {
         fontFamily: fonts.fontFamiliy,
         fontSize: fonts.headerTitleSize,
         color: colors.textColor,
         fontWeight: "bold",
     },
+
     playlistName: {
         fontFamily: fonts.fontFamiliy,
         fontSize: fonts.playlistTitleSize,
