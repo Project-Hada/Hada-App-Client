@@ -7,15 +7,20 @@ import speak from "../../../utils/tts";
 interface PreviewCardProps {
   term: string;
   definition: string;
+  onPress: () => void;
 }
 
 const handleAudio = (text: string, language: string) => {
   speak(text, language);
 };
 
-const PreviewCard: React.FC<PreviewCardProps> = ({ term, definition }) => {
+const PreviewCard: React.FC<PreviewCardProps> = ({
+  term,
+  definition,
+  onPress,
+}) => {
   return (
-    <TouchableOpacity>
+    <TouchableOpacity onPress={onPress}>
       <View style={styles.listItem}>
         <View style={styles.previewBadge}>
           <Text style={styles.previewBadgeText}>{term.slice(0, 1)}</Text>

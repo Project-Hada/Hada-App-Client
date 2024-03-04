@@ -23,12 +23,7 @@ import AddButton from "../../AddButton";
 import generateId from "../../../utils/idGenerator";
 import AddCardModal from "./AddCardModal";
 import PreviewCard from "./PreviewCard";
-
-type FlashCardType = {
-  term: string;
-  romanization: string;
-  definition: string;
-};
+import { FlashCardType } from "../../../utils/types";
 
 type DeckPreviewProps = {
   navigation: any;
@@ -38,10 +33,13 @@ export default function DeckPreview({ navigation, route }: any) {
   const { currPlaylist, addFlashcard } = useContext(FlashcardContext);
   const flashcards = currPlaylist ? currPlaylist.playlist : [];
 
+  // State to track the selected card for editing
+  const [selectedCard, setSelectedCard] = useState<FlashCardType | null>(null);
   const [isAddingVisible, setIsAddingVisible] = useState(false);
 
   const handleCancel = () => {
     setIsAddingVisible(false);
+    setSelectedCardId(null);
   };
   const handleOpenAdd = () => {
     setIsAddingVisible(true);
@@ -59,6 +57,7 @@ export default function DeckPreview({ navigation, route }: any) {
       // Close the modal and reset the form fields
       setIsAddingVisible(false);
     }
+    setSelectedCardId(null);
   };
 
   const AddCardButton = () => {
@@ -74,6 +73,13 @@ export default function DeckPreview({ navigation, route }: any) {
         </View>
       </TouchableOpacity>
     );
+  };
+
+  const [selectedCardId, setSelectedCardId] = useState<string | null>(null);
+
+  // Function to handle card press
+  const handleCardPress = (cardId: string) => {
+    setSelectedCardId(selectedCardId === cardId ? null : cardId);
   };
 
   return (
@@ -114,14 +120,32 @@ export default function DeckPreview({ navigation, route }: any) {
         isEditMode={false}
       />
       {/* List of cards display */}
-
       <FlatList
         data={flashcards}
         renderItem={({ item }) => (
-          <PreviewCard term={item.term} definition={item.definition} />
+          // The modal is now tied to the selectedCardId state.
+          // It will open for the card that was last pressed.
+          <View>
+            <PreviewCard
+              term={item.term}
+              definition={item.definition}
+              onPress={() => handleCardPress(item.id)}
+            />
+            {selectedCardId === item.id && (
+              <AddCardModal
+                isVisible={true}
+                onAdd={handleAdd}
+                onCancel={handleCancel}
+                koreanWordInitial={item.term}
+                englishWordInitial={item.definition}
+                isEditMode={true}
+              />
+            )}
+          </View>
         )}
-        keyExtractor={(item) => item.id} // Use the unique id of each flashcard for the keyExtractor
+        keyExtractor={(item) => item.id}
         ListHeaderComponent={AddCardButton}
+        extraData={selectedCardId} // Ensure FlatList re-renders when selectedCardId changes
       />
 
       {/* Practice Button */}
@@ -136,6 +160,9 @@ export default function DeckPreview({ navigation, route }: any) {
 }
 
 export const styles = StyleSheet.create({
+  pressableArea: {
+    flex: 1,
+  },
   playButtonContainer: {
     width: 41,
     height: 41,
