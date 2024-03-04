@@ -13,6 +13,7 @@ import {
   MaterialCommunityIcons,
   MaterialIcons,
   AntDesign,
+  Feather,
 } from "@expo/vector-icons";
 import FlashcardContext from "../../utils/contexts/LibraryContext";
 import speak from "../../utils/tts";
@@ -103,6 +104,7 @@ export default function DeckPreview({ navigation, route }: any) {
             onChangeText={(text) => setKoreanWord(text)}
             value={koreanWord}
             placeholder="Type Korean Word"
+            placeholderTextColor={"#000"}
             keyboardType="default"
           />
           <TextInput
@@ -114,10 +116,10 @@ export default function DeckPreview({ navigation, route }: any) {
           />
           <View style={styles.addingButtonContainer}>
             <Pressable style={styles.cancelButton} onPress={handleCancel}>
-              <Text>Cancel</Text>
+              <Text style={styles.cancelButtonText}>Cancel</Text>
             </Pressable>
             <Pressable style={styles.addButton} onPress={handleAdd}>
-              <Text>Add</Text>
+              <Text style={styles.addButtonText}>Add</Text>
             </Pressable>
           </View>
         </View>
@@ -143,7 +145,9 @@ export default function DeckPreview({ navigation, route }: any) {
                   handleAudio(item.definition, "en-US");
                 }}
               >
-                <AntDesign name="play" size={36} color="#FFDF37" />
+                <View style={styles.playButtonContainer}>
+                  <Feather name="play" size={24} color="black" />
+                </View>
               </TouchableOpacity>
             </View>
           </TouchableOpacity>
@@ -162,19 +166,30 @@ export default function DeckPreview({ navigation, route }: any) {
 }
 
 export const styles = StyleSheet.create({
+  playButtonContainer: {
+    width: 41,
+    height: 41,
+    backgroundColor: "#FFDF37",
+    alignItems: "center",
+    justifyContent: "center",
+    borderRadius: 100,
+    paddingLeft: 4,
+  },
   container: {
     flex: 1,
     backgroundColor: "#F2E8E1",
-    paddingHorizontal: 20,
+    paddingHorizontal: 4,
   },
   header: {
     flexDirection: "row",
-    alignItems: "center",
+    alignItems: "flex-start",
     justifyContent: "flex-start",
     padding: 20,
-    backgroundColor: "#F2E8E1",
+    backgroundColor: "transparent",
   },
-  backIcon: {},
+  backIcon: {
+    paddingTop: 4,
+  },
   headerContent: {
     width: "100%",
     flexDirection: "row",
@@ -187,6 +202,7 @@ export const styles = StyleSheet.create({
     justifyContent: "center",
   },
   headerTitle: {
+    fontFamily: "GeneralSans-Semibold",
     fontSize: 20,
     fontWeight: "bold",
     marginBottom: 4,
@@ -196,8 +212,10 @@ export const styles = StyleSheet.create({
     alignItems: "center",
   },
   wordCount: {
+    fontFamily: "GeneralSans-Regular",
     fontSize: 14,
     color: "grey",
+    paddingLeft: 4,
   },
   addingContainer: {
     flexDirection: "column",
@@ -212,21 +230,22 @@ export const styles = StyleSheet.create({
     backgroundColor: "white",
   },
   addingKoreanText: {
+    fontSize: 16,
     borderWidth: 1,
-    paddingVertical: 7,
+    paddingVertical: 9,
     marginVertical: 5,
     borderRadius: 4,
     textAlign: "left",
-    paddingLeft: 5,
+    paddingLeft: 13,
     fontWeight: "bold",
   },
   addingEnglishText: {
     borderWidth: 1,
     marginVertical: 5,
-    paddingVertical: 4,
+    paddingVertical: 7,
     borderRadius: 4,
     textAlign: "left",
-    paddingLeft: 5,
+    paddingLeft: 13,
   },
   addingButtonContainer: {
     flexDirection: "row",
@@ -235,9 +254,12 @@ export const styles = StyleSheet.create({
     width: "100%",
     marginTop: 20,
   },
+  cancelButtonText: {
+    fontFamily: "GeneralSans-Bold",
+  },
   cancelButton: {
     width: "30%",
-    backgroundColor: "red",
+    backgroundColor: "#FF454C",
     textAlign: "center",
     flexDirection: "row",
     justifyContent: "center",
@@ -249,9 +271,12 @@ export const styles = StyleSheet.create({
     borderRadius: 10,
     borderColor: "#000000",
   },
+  addButtonText: {
+    fontFamily: "GeneralSans-Bold",
+  },
   addButton: {
     width: "65%",
-    backgroundColor: "green",
+    backgroundColor: "#72DA4F",
     textAlign: "center",
     flexDirection: "row",
     justifyContent: "center",
@@ -267,7 +292,7 @@ export const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "space-between",
-    padding: 20,
+    padding: 12,
     marginVertical: 5,
     marginHorizontal: 20,
     borderWidth: 1,
@@ -283,22 +308,26 @@ export const styles = StyleSheet.create({
   },
   termText: {
     fontSize: 20,
+    fontFamily: "GeneralSans-Bold",
   },
   term: {
     fontSize: 16,
-    color: "grey",
+    color: "#A7A7A7",
+    fontFamily: "GeneralSans-Medium",
   },
   previewBadge: {
     width: 48,
     height: 48,
     borderRadius: 10,
-    marginRight: 10,
+    marginRight: 16,
     backgroundColor: "#7F9CEF",
     alignItems: "center",
     justifyContent: "center",
   },
   previewBadgeText: {
-    fontSize: 20,
+    paddingTop: 4,
+    fontFamily: "GeneralSans-Bold",
+    fontSize: 26,
     color: "white",
   },
   practiceButton: {
@@ -316,6 +345,7 @@ export const styles = StyleSheet.create({
   practiceButtonText: {
     fontSize: 20,
     fontWeight: "bold",
+    fontFamily: "GeneralSans-Bold",
   },
   playButton: {},
 });

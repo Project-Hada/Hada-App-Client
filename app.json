@@ -27,7 +27,17 @@
       "favicon": "./assets/favicon.png"
     },
     "plugins": [
-      "expo-font"
+      [
+        "expo-font",
+        {
+          "fonts": [
+            "./assets/fonts/GeneralSans-Bold.otf",
+            "./assets/fonts/GeneralSans-Regular.otf",
+            "./assets/fonts/GeneralSans-Medium.otf",
+            "./assets/fonts/GeneralSans-Variable.ttf"
+          ]
+        }
+      ]
     ]
   }
 }

@@ -126,7 +126,7 @@ const colors = {
 };
 
 const fonts = {
-  fontFamiliy: "GeneralSans-Regular",
+  fontFamily: "GeneralSans-Regular",
   headerTitleSize: 24,
   playlistTitleSize: 18,
   subTextSize: 14,
@@ -150,6 +150,7 @@ export const libStyles = StyleSheet.create({
     paddingHorizontal: 15,
   },
   headerText: {
+    fontFamily: "GeneralSans-Bold",
     fontSize: 30,
   },
   addIcon: {
@@ -253,21 +254,13 @@ export const libStyles = StyleSheet.create({
     borderColor: "#000000",
   },
 
-  headertitle: {
-    fontFamily: fonts.fontFamiliy,
-    fontSize: fonts.headerTitleSize,
-    color: colors.textColor,
-    fontWeight: "bold",
-  },
-
   playlistName: {
-    fontFamily: fonts.fontFamiliy,
     fontSize: fonts.playlistTitleSize,
     fontWeight: "bold",
     color: colors.textColor,
   },
   playlistWordCount: {
-    fontFamily: fonts.fontFamiliy,
+    fontFamily: "GeneralSans-Medium",
     fontSize: fonts.subTextSize,
     fontWeight: "normal",
     color: colors.subtextColor,

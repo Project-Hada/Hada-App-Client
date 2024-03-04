@@ -16,7 +16,7 @@
     "@typescript-eslint/eslint-plugin": "^6.21.0",
     "aromanize": "^0.1.5",
     "expo": "50.0.8",
-    "expo-font": "~11.10.3",
+    "expo-font": "^11.10.3",
     "expo-linking": "~6.2.2",
     "expo-router": "~3.4.8",
     "expo-speech": "^11.7.0",
@@ -54,6 +54,6 @@
     "hooks": {
       "pre-push": "npx --no -- husky-pre-push"
     }
-  }, 
+  },
   "private": true
 }
