@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { View, StyleSheet } from "react-native";
+import { View, StyleSheet, Text } from "react-native";
 import Router from "./Router";
 import { useFonts } from "expo-font";
 import { FontAwesome } from "@expo/vector-icons";
