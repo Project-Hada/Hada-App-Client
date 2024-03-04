@@ -1,20 +1,23 @@
 import React, { Dispatch, SetStateAction } from 'react';
 import { PlaylistType } from '../types';
 
-
-interface IContext {
+export interface PlaylistContextType {
+  currPlaylist: PlaylistType;
+  setCurrPlaylist: Dispatch<SetStateAction<PlaylistType>>;
   library: PlaylistType[];
-  setLibrary: Dispatch<SetStateAction<PlaylistType[]>>;
+  setLibrary: React.Dispatch<React.SetStateAction<PlaylistType[]>>;
 }
 
-const LibraryContext = React.createContext<IContext>({
+const LibraryContext = React.createContext<PlaylistContextType>({
+  currPlaylist: {
+    title: '',
+    playlist: []
+  },
+  setCurrPlaylist: () => {},
   library: [],
   setLibrary: () => {},
 })
 
-export interface PlaylistContextType {
-  library: PlaylistType[];
-  setLibrary: React.Dispatch<React.SetStateAction<PlaylistType[]>>;
-}
+
 
 export default LibraryContext;

@@ -19,9 +19,8 @@ type PracticeScreenProps = {
 };
 
 export default function PracticeScreen({navigation, route}: any) {
-  const {
-    flashcards
-  } = useContext(FlashcardContext);
+  const { currPlaylist } = useContext(FlashcardContext);
+  const flashcards = currPlaylist.playlist;
   const [currentIndex, setCurrentIndex] = useState(0);
   const [dynamicIndex, setDynamicIndex] = useState(currentIndex);
   const [nextIndex, setNextIndex] = useState(1); // Next card index

@@ -15,7 +15,8 @@ type DeckPreviewProps = {
 }
 
 export default function DeckPreview({navigation, route}: any) {
-    const { flashcards } = useContext(FlashcardContext);
+    const { currPlaylist } = useContext(FlashcardContext);
+    const flashcards = currPlaylist.playlist;
   return (
     <SafeAreaView style={styles.container}>
         <View style={styles.header}>

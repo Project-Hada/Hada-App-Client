@@ -10,6 +10,7 @@ import libraryData from '../Data/fakeData';
 export default function Configure() {
   // Always call useState at the top level
   const [library, setLibrary] = useState<PlaylistType[]>(libraryData);
+  const [currPlaylist, setCurrPlaylist] = useState<PlaylistType | {}>({});
 
   // Call useFonts at the top level
   const [loaded, error] = useFonts({
@@ -35,7 +36,7 @@ export default function Configure() {
   }
 
   return (
-    <LibraryContext.Provider value={{library, setLibrary }}>
+    <LibraryContext.Provider value={{library, setLibrary, currPlaylist, setCurrPlaylist }}>
       <Router/>
     </LibraryContext.Provider>
   );

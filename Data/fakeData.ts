@@ -256,11 +256,6 @@ const flashCards1: FlashCardType[] = [
       "definition": "Goodbye (when someone is leaving, formal)"
     },
     {
-      "term": "안녕히 계세요",
-      "romanization": "(annyeonghi gyeseyo)",
-      "definition": "Goodbye (when you are leaving, formal)"
-    },
-    {
       "term": "좋은 아침이에요",
       "romanization": "(joeun achimieyo)",
       "definition": "Good morning (formal)"
