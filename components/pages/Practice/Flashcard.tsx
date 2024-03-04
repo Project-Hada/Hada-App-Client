@@ -75,7 +75,7 @@ export default function FlashCard({ term, romanization, definition, onFlip, rese
           <Text style={styles.romanization}>{romanization}</Text>
         </View>
         <TouchableOpacity style={styles.audioButton} onPress={handleAudio}>
-        <FontAwesome name="volume-up" size={36} color="black" />
+        <FontAwesome name="volume-up"  size={36} color="black" />
       </TouchableOpacity>
       </Animated.View>
 
