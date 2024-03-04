@@ -20,6 +20,7 @@ import FlashcardContext from "../../utils/contexts/LibraryContext";
 import speak from "../../utils/tts";
 import { TextInput } from "react-native-gesture-handler";
 import AddButton from "../AddButton";
+import generateId from "../../utils/idGenerator";
 
 type FlashCardType = {
   term: string;
@@ -37,7 +38,7 @@ const handleAudio = (text: string, language: string) => {
 
 export default function DeckPreview({ navigation, route }: any) {
   const { currPlaylist, addFlashcard } = useContext(FlashcardContext);
-  const flashcards = currPlaylist.playlist;
+  const flashcards = currPlaylist ? currPlaylist.playlist : [];
 
   const [koreanWord, setKoreanWord] = useState("");
   const [englishWord, setEnglishWord] = useState("");
@@ -51,17 +52,20 @@ export default function DeckPreview({ navigation, route }: any) {
     setIsAddingVisible(true);
   };
   const handleAdd = () => {
-    const newFlashcard = {
-      term: koreanWord,
-      definition: englishWord,
-    };
+    if (currPlaylist && currPlaylist.id) {
+      const newFlashcard = {
+        id: generateId(), // Generate a unique ID for the new flashcard
+        term: koreanWord,
+        definition: englishWord,
+      };
 
-    addFlashcard(newFlashcard);
+      addFlashcard(currPlaylist.id, newFlashcard);
 
-    // Close the modal and reset the form fields
-    setIsAddingVisible(false);
-    setKoreanWord("");
-    setEnglishWord("");
+      // Close the modal and reset the form fields
+      setIsAddingVisible(false);
+      setKoreanWord("");
+      setEnglishWord("");
+    }
   };
 
   const AddCardButton = () => {
@@ -136,6 +140,7 @@ export default function DeckPreview({ navigation, route }: any) {
         </View>
       )}
       {/* List of cards display */}
+
       <FlatList
         data={flashcards}
         renderItem={({ item }) => (
@@ -164,8 +169,8 @@ export default function DeckPreview({ navigation, route }: any) {
             </View>
           </TouchableOpacity>
         )}
-        keyExtractor={(item) => `term-${item.term}`}
-        ListHeaderComponent={AddCardButton} // Add the AddCardButton as the header component
+        keyExtractor={(item) => item.id} // Use the unique id of each flashcard for the keyExtractor
+        ListHeaderComponent={AddCardButton}
       />
 
       {/* Practice Button */}
