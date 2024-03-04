@@ -21,6 +21,7 @@ import speak from "../../utils/tts";
 import { TextInput } from "react-native-gesture-handler";
 import AddButton from "../AddButton";
 import generateId from "../../utils/idGenerator";
+import AddCardModal from "../AddCardModal";
 
 type FlashCardType = {
   term: string;
@@ -40,9 +41,6 @@ export default function DeckPreview({ navigation, route }: any) {
   const { currPlaylist, addFlashcard } = useContext(FlashcardContext);
   const flashcards = currPlaylist ? currPlaylist.playlist : [];
 
-  const [koreanWord, setKoreanWord] = useState("");
-  const [englishWord, setEnglishWord] = useState("");
-
   const [isAddingVisible, setIsAddingVisible] = useState(false);
 
   const handleCancel = () => {
@@ -51,7 +49,7 @@ export default function DeckPreview({ navigation, route }: any) {
   const handleOpenAdd = () => {
     setIsAddingVisible(true);
   };
-  const handleAdd = () => {
+  const handleAdd = (koreanWord: string, englishWord: string) => {
     if (currPlaylist && currPlaylist.id) {
       const newFlashcard = {
         id: generateId(), // Generate a unique ID for the new flashcard
@@ -63,8 +61,6 @@ export default function DeckPreview({ navigation, route }: any) {
 
       // Close the modal and reset the form fields
       setIsAddingVisible(false);
-      setKoreanWord("");
-      setEnglishWord("");
     }
   };
 
@@ -112,33 +108,14 @@ export default function DeckPreview({ navigation, route }: any) {
       </View>
 
       {/* Adding new card modal */}
-      {isAddingVisible && (
-        <View style={styles.addingContainer}>
-          <TextInput
-            style={styles.addingKoreanText}
-            onChangeText={(text) => setKoreanWord(text)}
-            value={koreanWord}
-            placeholder="Type Korean Word"
-            placeholderTextColor={"#000"}
-            keyboardType="default"
-          />
-          <TextInput
-            style={styles.addingEnglishText}
-            onChangeText={(text) => setEnglishWord(text)}
-            value={englishWord}
-            placeholder="Enter English Word Here"
-            keyboardType="default"
-          />
-          <View style={styles.addingButtonContainer}>
-            <Pressable style={styles.cancelButton} onPress={handleCancel}>
-              <Text style={styles.cancelButtonText}>Cancel</Text>
-            </Pressable>
-            <Pressable style={styles.addButton} onPress={handleAdd}>
-              <Text style={styles.addButtonText}>Add</Text>
-            </Pressable>
-          </View>
-        </View>
-      )}
+      <AddCardModal
+        isVisible={isAddingVisible}
+        onAdd={handleAdd}
+        onCancel={handleCancel}
+        koreanWordInitial={""}
+        englishWordInitial={""}
+        isEditMode={false}
+      />
       {/* List of cards display */}
 
       <FlatList

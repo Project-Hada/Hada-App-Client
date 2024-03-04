@@ -27,6 +27,7 @@ import LibraryContext from "../../utils/contexts/LibraryContext";
 import flashCards from "../../Data/fakeData";
 import { styles } from "./DeckPreview";
 import AddButton from "../AddButton";
+import generateId from "../../utils/idGenerator";
 
 type PlaylistItemType = {
   name: string;
@@ -59,18 +60,24 @@ export default function LibraryScreen({ navigation, route }: any) {
     setIsAddingVisible(false);
   };
   const handleOpenAdd = () => {
+    // Generate a new ID for the playlist
+    const newPlaylistId = generateId();
+
+    // Create a new playlist object with the ID
     const newPlaylist = {
-      title: "New Playlist", // Consider a more dynamic approach for titles
+      id: newPlaylistId,
+      title: "New Playlist",
       playlist: [],
     };
 
+    // Add the new playlist to the context
     addPlaylist(newPlaylist);
-    setCurrPlaylist(newPlaylist); // Optionally navigate to DeckPreview here
-    navigation.navigate("DeckPreview");
-  };
-  const handleAdd = () => {
-    //clear
-    setPlaylistName("");
+
+    // Update the current playlist to the new one
+    setCurrPlaylist(newPlaylist);
+
+    // Navigate to DeckPreview with the new playlist's ID
+    navigation.navigate("DeckPreview", { playlistId: newPlaylistId });
   };
 
   return (
