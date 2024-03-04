@@ -105,9 +105,10 @@ export default function DeckPreview({ navigation, route }: any) {
               <Text style={styles.wordCount}>{flashcards.length} words</Text>
             </View>
           </View>
-          {/* <TouchableOpacity onPress={handleOpenAdd}>
+          <TouchableOpacity onPress={handleOpenAdd}>
             <AddButton />
-          </TouchableOpacity> further discussion needed on adding this with the other add option*/}
+          </TouchableOpacity>
+          {/* further discussion needed on adding this with the other add option */}
         </View>
       </View>
 
@@ -238,7 +239,7 @@ export const styles = StyleSheet.create({
   addingContainer: {
     flexDirection: "column",
     padding: 20,
-    marginVertical: 5,
+    marginBottom: 5,
     marginHorizontal: 20,
     borderWidth: 1,
     borderRightWidth: 4,
