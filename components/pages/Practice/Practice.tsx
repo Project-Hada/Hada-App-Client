@@ -1,6 +1,6 @@
 import React, { useState, useRef, useEffect, useContext } from 'react';
 import { StyleSheet, View, Text, TouchableOpacity, Animated, SafeAreaView, StyleProp, ViewStyle } from 'react-native';
-import FlashcardContext from '../../../utils/contexts/LibraryContext';
+import FlashcardContext from '../../../Utils/Contexts/LibraryContext';
 import { FlashCardType } from '../../../Utils/types';
 import { FontAwesome6 } from '@expo/vector-icons';
 import FlashCard from './Flashcard';

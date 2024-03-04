@@ -5,7 +5,7 @@ import { useFonts } from 'expo-font';
 import { FontAwesome } from '@expo/vector-icons';
 import { FlashCardType, PlaylistType } from '../Utils/types';
 import libraryData from '../Data/fakeData';
-import LibraryContext from '../utils/contexts/LibraryContext';
+import LibraryContext from '../Utils/Contexts/LibraryContext';
 
 export default function Configure() {
   // Always call useState at the top level

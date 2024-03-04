@@ -4,6 +4,6 @@ import Configure from './components/Configure';
 
 export default function App() {
   return (
-      <Configure />
+    <Configure />
   );
 }
