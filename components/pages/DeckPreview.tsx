@@ -36,7 +36,7 @@ const handleAudio = (text: string, language: string) => {
 };
 
 export default function DeckPreview({ navigation, route }: any) {
-  const { currPlaylist } = useContext(FlashcardContext);
+  const { currPlaylist, addFlashcard } = useContext(FlashcardContext);
   const flashcards = currPlaylist.playlist;
 
   const [koreanWord, setKoreanWord] = useState("");
@@ -51,20 +51,15 @@ export default function DeckPreview({ navigation, route }: any) {
     setIsAddingVisible(true);
   };
   const handleAdd = () => {
-    // Create a new flashcard object
     const newFlashcard = {
       term: koreanWord,
-      romanization: "", // You can add romanization if you have it
       definition: englishWord,
     };
 
-    // Update the playlist in the context or state
-    // Assuming currPlaylist is part of the context and you have a method to update it
-    const updatedPlaylist = [...currPlaylist.playlist, newFlashcard];
-    // call a method from your context or state update logic to update the playlist
-    // updateCurrPlaylist(updatedPlaylist);
+    addFlashcard(newFlashcard);
 
-    // Optionally, clear the input fields
+    // Close the modal and reset the form fields
+    setIsAddingVisible(false);
     setKoreanWord("");
     setEnglishWord("");
   };

@@ -43,9 +43,12 @@ export default function LibraryScreen({ navigation, route }: any) {
   const { library, setCurrPlaylist, addPlaylist } = useContext(LibraryContext);
   const flashcards = flashCards;
 
-  const handleNavigation = (key: number) => {
-    setCurrPlaylist(library[key]);
-    navigation.navigate("DeckPreview");
+  const handleNavigation = (playlistId: string) => {
+    const playlist = library[playlistId];
+    if (playlist) {
+      setCurrPlaylist(playlist);
+      navigation.navigate("DeckPreview");
+    }
   };
 
   const [playlistName, setPlaylistName] = useState("");
@@ -80,12 +83,12 @@ export default function LibraryScreen({ navigation, route }: any) {
         </TouchableOpacity>
       </View>
       <ScrollView contentContainerStyle={libStyles.scrollView}>
-        {library.map((item: any, i: any) => {
+        {Object.values(library).map((item, index) => {
           return (
             <TouchableOpacity
-              key={`playlist-${i}`}
+              key={`playlist-${item.id}`} // use the unique id as key
               style={libStyles.playlist}
-              onPress={() => handleNavigation(i)}
+              onPress={() => handleNavigation(item.id)} // pass the id to handle navigation
             >
               <View style={libStyles.iconContainer}>
                 <MaterialCommunityIcons

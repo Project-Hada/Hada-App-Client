@@ -5,25 +5,28 @@ import React, {
   createContext,
   useState,
 } from "react";
-import { PlaylistType } from "../types";
+import { FlashCardType, PlaylistType } from "../types";
+
+export interface LibraryState {
+  [id: string]: PlaylistType;
+}
 
 export interface PlaylistContextType {
-  currPlaylist: PlaylistType;
-  setCurrPlaylist: React.Dispatch<React.SetStateAction<PlaylistType>>;
-  library: PlaylistType[];
-  setLibrary: React.Dispatch<React.SetStateAction<PlaylistType[]>>;
+  currPlaylist: PlaylistType | null;
+  setCurrPlaylist: Dispatch<SetStateAction<PlaylistType | null>>;
+  library: LibraryState;
+  setLibrary: Dispatch<SetStateAction<LibraryState>>;
   addPlaylist: (newPlaylist: PlaylistType) => void;
+  addFlashcard: (playlistId: string, newFlashcard: FlashCardType) => void;
 }
 
 const defaultState: PlaylistContextType = {
-  currPlaylist: {
-    title: "",
-    playlist: [],
-  },
+  currPlaylist: null, // Since currPlaylist can be null now
   setCurrPlaylist: () => {},
-  library: [],
+  library: {}, // Initialize library as an empty object
   setLibrary: () => {},
   addPlaylist: () => {},
+  addFlashcard: () => {},
 };
 
 const LibraryContext = React.createContext<PlaylistContextType>(defaultState);
@@ -31,14 +34,43 @@ const LibraryContext = React.createContext<PlaylistContextType>(defaultState);
 export const LibraryProvider: React.FC<PropsWithChildren<{}>> = ({
   children,
 }: any) => {
-  const [library, setLibrary] = useState<PlaylistType[]>([]);
-  const [currPlaylist, setCurrPlaylist] = useState<PlaylistType>({
-    title: "",
-    playlist: [],
-  });
+  // Initialize currPlaylist as null because there might not be a current playlist selected
+  const [currPlaylist, setCurrPlaylist] = useState<PlaylistType | null>(null);
 
+  // Initialize the library as an empty object
+  const [library, setLibrary] = useState<LibraryState>({});
+
+  /**Adding a playlist */
   const addPlaylist = (newPlaylist: PlaylistType) => {
-    setLibrary((prevLibrary) => [...prevLibrary, newPlaylist]);
+    setLibrary((prevLibrary) => ({
+      ...prevLibrary,
+      [newPlaylist.id]: newPlaylist, // Add the new playlist to the library object using the playlist id as the key
+    }));
+  };
+
+  /**Adding a flashcard */
+  const addFlashcard = (playlistId: string, newFlashcard: FlashCardType) => {
+    // Access the playlist directly by ID
+    const playlistToUpdate = library[playlistId];
+
+    if (playlistToUpdate) {
+      // Create a new playlist with the new flashcard added at the start
+      const updatedPlaylist = {
+        ...playlistToUpdate,
+        playlist: [newFlashcard, ...playlistToUpdate.playlist],
+      };
+
+      // Update the library with the new playlist
+      setLibrary({
+        ...library,
+        [playlistId]: updatedPlaylist,
+      });
+
+      // If the currPlaylist is the one being updated, also set the new currPlaylist
+      if (currPlaylist && currPlaylist.id === playlistId) {
+        setCurrPlaylist(updatedPlaylist);
+      }
+    }
   };
 
   return (
@@ -49,6 +81,7 @@ export const LibraryProvider: React.FC<PropsWithChildren<{}>> = ({
         library,
         setLibrary,
         addPlaylist,
+        addFlashcard,
       }}
     >
       {children}
