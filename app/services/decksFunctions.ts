@@ -1,4 +1,4 @@
-import { collection, getDocs, addDoc, deleteDoc, doc, updateDoc } from 'firebase/firestore';
+import { collection, getDocs, addDoc, deleteDoc, doc, updateDoc, getDoc } from 'firebase/firestore';
 import { db } from "../data/firebaseConfig"
 
 import { DeckSchema, deckConverter } from '../collection/DeckSchema'
@@ -17,6 +17,15 @@ export const addNewDeck = async (uid: String, deckInput: String) => {
   console.log("Document written with ID: ", docRef.id);
 }
 
+export const addNewCardToDeck = async (did: String, cardFront: String, cardBack: String) => {
+  const currDeck = (await getOneDeckByDId(did)).data()
+  
+  if (currDeck) {
+    currDeck.cards.push({front: cardFront, back: cardBack})
+    updateDeckById(did, {cards: currDeck.cards})
+  }
+}
+
 /* READ Operations */
 export const getAllDecks = async (setDeckList: any) => {
   try {
@@ -33,12 +42,34 @@ export const getAllDecks = async (setDeckList: any) => {
   }
 }
 
+export const getOneDeckByDId = async (did: String) => {
+  return await getDoc(doc(db, "/decks/" + did))
+}
+
 /* UPDATE Operations */
 export const updateDeckById = async (did: String, newData: {}) => {
   await updateDoc(doc(db, "/decks/" + did), newData)
 }
 
+export const updateCardInDeck = async (did: String, cardIndex: number, 
+                                      newFront: String, newBack: String) => {
+  const currDeck = (await getOneDeckByDId(did)).data();
+  if (currDeck) {
+    currDeck.cards[cardIndex] = {front: newFront, back: newBack};
+    updateDeckById(did, {cards: currDeck.cards})
+  }
+}
+
 /* DELETE Operations */
 export const deleteDeckById = async (did: String) => {
   await deleteDoc(doc(db, "/decks/" + did));
+}
+
+export const deleteCardInDeck = async (did: String, cardIndex: number) => {
+  const currDeck = (await getOneDeckByDId(did)).data();
+
+  if (currDeck) {
+    currDeck.cards.splice(cardIndex, 1);
+    updateDeckById(did, {cards: currDeck.cards})
+  }
 }

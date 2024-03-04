@@ -5,7 +5,7 @@ import { Text, View } from '@/components/Themed';
 import { useState, useEffect } from 'react'
 
 import { addNewUser, getAllUsers, updateUserById, deleteUserById } from '../services/usersFunctions';
-import { addNewDeck, getAllDecks, updateDeckById, deleteDeckById } from '../services/decksFunctions';
+import { addNewDeck, getAllDecks, updateDeckById, deleteDeckById, addNewCardToDeck, deleteCardInDeck, updateCardInDeck } from '../services/decksFunctions';
 
 export default function TabOneScreen() {
   // save database collection as state
@@ -65,6 +65,23 @@ export default function TabOneScreen() {
 
   const handleDeleteDeck = async ( did: String ) => {
     await deleteDeckById(did);
+    getDecksList();
+  }
+
+  // TODO: update the inputs
+  const handleAddNewCard = async (did: String) => {
+    await addNewCardToDeck(did, "hereisthefront", "hereistheback");
+    getDecksList();
+  }
+
+  const handleDeleteCard = async (did: String, cardIndex: number) => {
+    await deleteCardInDeck(did, cardIndex);
+    getDecksList();
+  }
+
+  // TODO: update the inputs
+  const handleUpdateCard = async (did: String, cardIndex: number) => {
+    await updateCardInDeck(did, cardIndex, "thisIsNewFront", "thisIsNewBack");
     getDecksList();
   }
 
@@ -155,7 +172,21 @@ export default function TabOneScreen() {
               color="#f0e800"
               onPress={() => handleUpdateDeckName(deck.id)}
             />
-
+            <Button
+              title="Add Test Card"
+              color="green"
+              onPress={() => handleAddNewCard(deck.id)}
+            />
+            <Button
+              title="Update Last Card"
+              color="green"
+              onPress={() => handleUpdateCard(deck.id, deck.cards.length-1)}
+            />
+            <Button
+              title="Delete Last Card"
+              color="green"
+              onPress={() => handleDeleteCard(deck.id, -1)}
+            />
             <Text>
               {'-------------------------------------------------------\n'}
               deck name: {deck.deckName}
