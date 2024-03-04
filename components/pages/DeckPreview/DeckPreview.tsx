@@ -93,7 +93,7 @@ export default function DeckPreview({ navigation, route }: any) {
         </TouchableOpacity>
         <View style={styles.headerContent}>
           <View style={styles.headerInfo}>
-            <Text style={styles.headerTitle}>Someone’s Study Set</Text>
+            <Text style={styles.headerTitle}>{currPlaylist.title}</Text>
             <View style={styles.subHeader}>
               <MaterialCommunityIcons
                 name="cards-variant"
@@ -129,9 +129,10 @@ export default function DeckPreview({ navigation, route }: any) {
             <PreviewCard
               term={item.term}
               definition={item.definition}
-              onPress={() => handleCardPress(item.id)}
+              onPress={() => {}}
+              // onPress={() => handleCardPress(item.id)}
             />
-            {selectedCardId === item.id && (
+            {/* {selectedCardId === item.id && (
               <AddCardModal
                 isVisible={true}
                 onAdd={handleAdd}
@@ -140,7 +141,7 @@ export default function DeckPreview({ navigation, route }: any) {
                 englishWordInitial={item.definition}
                 isEditMode={true}
               />
-            )}
+            )} */}
           </View>
         )}
         keyExtractor={(item) => item.id}
