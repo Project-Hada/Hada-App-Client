@@ -1,6 +1,7 @@
 import React from 'react';
 import { StyleSheet, View, Text, FlatList, TouchableOpacity, SafeAreaView } from 'react-native';
 import { MaterialCommunityIcons, MaterialIcons, AntDesign } from '@expo/vector-icons';
+import speak from '@/utils/tts';
 
 
 type FlashCardType = {
@@ -13,6 +14,10 @@ type DeckPreviewProps = {
   navigation: any;
   flashCards: FlashCardType[];
 }
+
+const handleAudio = (text: string, language: string) => {
+  speak(text, language);
+};
 
 export default function DeckPreview({navigation, route}: any) {
   const { flashCards } = route.params;
@@ -43,7 +48,11 @@ export default function DeckPreview({navigation, route}: any) {
                     <Text style={styles.term}>{item.definition}</Text>
                     <Text style={styles.definition}>{item.translation}</Text>
                 </View>
-                {/* <AntDesign name="play" size={36} color="#FFDF37"/> next sprint */}
+                <TouchableOpacity style={styles.playButton} onPress={() => {
+                  handleAudio(item.definition, 'ko-KR');
+                  handleAudio(item.translation, 'en-US');}}>
+                  <AntDesign name="play" size={36} color="#FFDF37"/>
+                </TouchableOpacity>
             </View>
         </TouchableOpacity>
         )}
@@ -145,5 +154,8 @@ export const styles = StyleSheet.create({
     fontSize: 20,
     fontWeight: 'bold',
   },
+  playButton: {
+
+  }
 });
 
