@@ -2,6 +2,7 @@ import React, { useContext } from 'react';
 import { StyleSheet, View, Text, FlatList, TouchableOpacity, SafeAreaView } from 'react-native';
 import { MaterialCommunityIcons, MaterialIcons, AntDesign } from '@expo/vector-icons';
 import FlashcardContext from '../../Utils/Contexts/LibraryContext';
+import speak from '../../Utils/tts';
 
 
 type FlashCardType = {
@@ -13,6 +14,11 @@ type FlashCardType = {
 type DeckPreviewProps = {
   navigation: any;
 }
+
+const handleAudio = (text: string, language: string) => {
+    speak(text, language);
+  };
+  
 
 export default function DeckPreview({navigation, route}: any) {
     const { currPlaylist } = useContext(FlashcardContext);
@@ -44,7 +50,11 @@ export default function DeckPreview({navigation, route}: any) {
                     <Text style={styles.termText}>{item.term}</Text>
                     <Text style={styles.term}>{item.definition}</Text>
                 </View>
-                {/* <AntDesign name="play" size={36} color="#FFDF37"/> next sprint */}
+                <TouchableOpacity style={styles.playButton} onPress={() => {
+                  handleAudio(item.term, 'ko-KR');
+                  handleAudio(item.definition, 'en-US');}}>
+                  <AntDesign name="play" size={36} color="#FFDF37"/>
+                </TouchableOpacity>
             </View>
         </TouchableOpacity>
         )}
@@ -146,4 +156,7 @@ export const styles = StyleSheet.create({
     fontSize: 20,
     fontWeight: 'bold',
   },
+  playButton: {
+
+  }
 });
