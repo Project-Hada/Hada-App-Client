@@ -43,7 +43,7 @@ export default function DeckPreview({navigation, route}: any) {
                     <Text style={styles.term}>{item.definition}</Text>
                     <Text style={styles.definition}>{item.translation}</Text>
                 </View>
-                {/* <AntDesign name="play" size={36} color="#FFDF37"/> next sprint */}
+                <AntDesign name="play" size={36} color="#FFDF37"/>
             </View>
         </TouchableOpacity>
         )}
