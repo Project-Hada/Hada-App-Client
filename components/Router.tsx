@@ -5,24 +5,11 @@ import { Text, StyleSheet, SafeAreaView } from 'react-native';
 import LibraryScreen from './pages/Library';
 import DeckPreview from './pages/DeckPreview';
 import { PracticeScreen } from './pages/Practice';
-import flashCards from '../Data/fakeData';
 import { NavigationContainer } from '@react-navigation/native';
+import FlashcardContext from '../Utils/Contexts/FlashcardContext';
 
 
-const playlistData = [
-    {
-        title: "Someone's Study Set",
-        playlist: flashCards
-    },
-    {
-        title: "Someone's Study Set",
-        playlist: flashCards
-    },
-    {
-        title: "Someone's Study Set",
-        playlist: flashCards
-    },
-];
+
 
 const libraryHeader = () => {
     return (
@@ -37,6 +24,22 @@ const libraryHeader = () => {
 const {Navigator, Screen} = createStackNavigator();
 
 const AppStack = () => {
+    
+    const { flashcards } = useContext(FlashcardContext);
+    const playlistData = [
+        {
+            title: "Someone's Study Set",
+            playlist: flashcards
+        },
+        {
+            title: "Someone's Study Set",
+            playlist: flashcards
+        },
+        {
+            title: "Someone's Study Set",
+            playlist: flashcards
+        },
+    ];
     return (
         <Navigator initialRouteName='LibraryScreen'>
             <Screen
@@ -51,7 +54,7 @@ const AppStack = () => {
             options={{ headerShown: false }}
             />
             <Screen
-            name="PracticeSreen"
+            name="PracticeScreen"
             component={PracticeScreen}
             options={{ headerShown: false }}
             />

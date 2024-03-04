@@ -3,9 +3,15 @@ import { View, StyleSheet } from 'react-native';
 import Router from './Router';
 import { useFonts } from 'expo-font';
 import { FontAwesome } from '@expo/vector-icons';
+import FlashcardContext from '../Utils/Contexts/FlashcardContext';
+import { FlashCardType } from '../Utils/types';
+import flashCards from '../Data/fakeData';
 
 export default function Configure() {
+  // Always call useState at the top level
+  const [flashcards, setFlashcards] = useState<FlashCardType[]>(flashCards);
 
+  // Call useFonts at the top level
   const [loaded, error] = useFonts({
     SpaceMono: require('../assets/fonts/SpaceMono-Regular.ttf'),
     ...FontAwesome.font,
@@ -23,13 +29,15 @@ export default function Configure() {
     'GeneralSans-Variable': require('../assets/fonts/GeneralSans-Variable.ttf'),
   });
 
+  // You can handle the loading state inside your component's return statement or use a loader component
   if (!loaded) {
-    // You can return a loading indicator here if you like
     return <View style={styles.loadingContainer}></View>;
   }
 
   return (
+    <FlashcardContext.Provider value={{flashcards, setFlashcards }}>
       <Router/>
+    </FlashcardContext.Provider>
   );
 }
 
