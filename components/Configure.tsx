@@ -1,18 +1,18 @@
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { View, StyleSheet, Text } from "react-native";
 import Router from "./Router";
 import { useFonts } from "expo-font";
 import { FontAwesome } from "@expo/vector-icons";
-import { FlashCardType, PlaylistType } from "../utils/types";
-import libraryData from "../Data/fakeData";
-import LibraryContext from "../utils/contexts/LibraryContext";
+import LibraryContext, {
+  LibraryProvider,
+} from "../utils/contexts/LibraryContext";
+import playlistData from "../Data/fakeData";
 
 export default function Configure() {
   // Always call useState at the top level
-  const [library, setLibrary] = useState<PlaylistType[]>(libraryData);
-  const [currPlaylist, setCurrPlaylist] = useState<PlaylistType>(
-    libraryData[0]
-  );
+  // Calling Dummy data
+  const { setLibrary } = useContext(LibraryContext);
+  setLibrary(playlistData);
 
   // Call useFonts at the top level
   const [loaded, error] = useFonts({
@@ -37,13 +37,7 @@ export default function Configure() {
     return <View style={styles.loadingContainer}></View>;
   }
 
-  return (
-    <LibraryContext.Provider
-      value={{ library, setLibrary, currPlaylist, setCurrPlaylist }}
-    >
-      <Router />
-    </LibraryContext.Provider>
-  );
+  return <Router />;
 }
 
 const styles = StyleSheet.create({

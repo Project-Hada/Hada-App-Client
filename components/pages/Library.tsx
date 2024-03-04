@@ -39,8 +39,8 @@ type LibraryScreenProps = {
   playlistData: PlaylistItemType[];
 };
 export default function LibraryScreen({ navigation, route }: any) {
-  const { library, setCurrPlaylist } = useContext(LibraryContext);
-  // const { flashcards, setFlashcards } = useContext(FlashcardContext);
+  // Library Context
+  const { library, setCurrPlaylist, addPlaylist } = useContext(LibraryContext);
   const flashcards = flashCards;
 
   const handleNavigation = (key: number) => {
@@ -56,7 +56,14 @@ export default function LibraryScreen({ navigation, route }: any) {
     setIsAddingVisible(false);
   };
   const handleOpenAdd = () => {
-    setIsAddingVisible(true);
+    const newPlaylist = {
+      title: "New Playlist", // Consider a more dynamic approach for titles
+      playlist: [],
+    };
+
+    addPlaylist(newPlaylist);
+    setCurrPlaylist(newPlaylist); // Optionally navigate to DeckPreview here
+    navigation.navigate("DeckPreview");
   };
   const handleAdd = () => {
     //clear
@@ -73,25 +80,6 @@ export default function LibraryScreen({ navigation, route }: any) {
         </TouchableOpacity>
       </View>
       <ScrollView contentContainerStyle={libStyles.scrollView}>
-        {isAddingVisible && (
-          <View style={libStyles.addingContainer}>
-            <TextInput
-              style={libStyles.addingKoreanText}
-              onChangeText={(text) => setPlaylistName(text)}
-              value={playlistName}
-              placeholder="Type Korean Word"
-              keyboardType="default"
-            />
-            <View style={libStyles.addingButtonContainer}>
-              <Pressable style={libStyles.cancelButton} onPress={handleCancel}>
-                <Text>Cancel</Text>
-              </Pressable>
-              <Pressable style={libStyles.addButton} onPress={handleAdd}>
-                <Text>Add</Text>
-              </Pressable>
-            </View>
-          </View>
-        )}
         {library.map((item: any, i: any) => {
           return (
             <TouchableOpacity

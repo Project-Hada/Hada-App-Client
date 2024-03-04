@@ -515,12 +515,10 @@ const flashCards1: FlashCardType[] = [
     },
     {
       "term": "이메일",
-      "romanization": "(imeil)",
       "definition": "email"
     },
     {
       "term": "동료",
-      "romanization": "(donglyo)",
       "definition": "colleague"
     }
   ];

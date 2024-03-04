@@ -1,9 +1,11 @@
-import React from 'react';
-import { View } from 'react-native';
-import Configure from './components/Configure';
+import React from "react";
+import Configure from "./components/Configure";
+import { LibraryProvider } from "./utils/contexts/LibraryContext";
 
 export default function App() {
   return (
-    <Configure />
+    <LibraryProvider>
+      <Configure />
+    </LibraryProvider>
   );
 }
