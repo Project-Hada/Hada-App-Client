@@ -3,9 +3,9 @@ import { View, StyleSheet } from 'react-native';
 import Router from './Router';
 import { useFonts } from 'expo-font';
 import { FontAwesome } from '@expo/vector-icons';
-import LibraryContext from '../Utils/Contexts/LibraryContext';
 import { FlashCardType, PlaylistType } from '../Utils/types';
 import libraryData from '../Data/fakeData';
+import LibraryContext from '../utils/contexts/LibraryContext';
 
 export default function Configure() {
   // Always call useState at the top level

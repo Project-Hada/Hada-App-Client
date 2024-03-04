@@ -13,6 +13,7 @@
     "@react-navigation/native": "^6.0.2",
     "@react-navigation/stack": "^6.3.23",
     "@typescript-eslint/eslint-plugin": "^6.21.0",
+    "aromanize": "^0.1.5",
     "expo": "50.0.8",
     "expo-font": "~11.10.3",
     "expo-linking": "~6.2.2",

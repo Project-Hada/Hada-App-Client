@@ -3129,6 +3129,11 @@ argparse@^2.0.1:
   resolved "https://registry.yarnpkg.com/argparse/-/argparse-2.0.1.tgz#246f50f3ca78a3240f6c997e8a9bd1eac49e4b38"
   integrity sha512-8+9WqebbFzpX9OR+Wa6O29asIogeRMzcGtAINdpMHHyAg10f05aSFVBbcEqGf/PXw1EjAZ+q2/bEBg3DvurK3Q==
 
+aromanize@^0.1.5:
+  version "0.1.5"
+  resolved "https://registry.yarnpkg.com/aromanize/-/aromanize-0.1.5.tgz#377464fa08a4d9f0aebc61fadca64ce3faa954d3"
+  integrity sha512-fyFsbmpocja8wnYuYjwt2k7WRkBZftZKDDmLgX9tclV94TRn7b29skxU66tTDInNFZ3MwITPdNvb8bLg2rbbDA==
+
 array-buffer-byte-length@^1.0.1:
   version "1.0.1"
   resolved "https://registry.yarnpkg.com/array-buffer-byte-length/-/array-buffer-byte-length-1.0.1.tgz#1e5583ec16763540a27ae52eed99ff899223568f"

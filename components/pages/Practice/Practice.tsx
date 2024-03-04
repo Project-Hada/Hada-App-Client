@@ -1,10 +1,11 @@
 import React, { useState, useRef, useEffect, useContext } from 'react';
 import { StyleSheet, View, Text, TouchableOpacity, Animated, SafeAreaView, StyleProp, ViewStyle } from 'react-native';
-import FlashcardContext from '../../../Utils/Contexts/LibraryContext';
+import FlashcardContext from '../../../utils/contexts/LibraryContext';
 import { FlashCardType } from '../../../Utils/types';
 import { FontAwesome6 } from '@expo/vector-icons';
 import FlashCard from './Flashcard';
 import FlashCardSlider from './FlashcardSlider';
+import Aromanize from 'aromanize';
 
 
 
@@ -122,7 +123,7 @@ export default function PracticeScreen({navigation, route}: any) {
       <View style={styles.flashCardContainer}>
         <FlashCard
           term={flashcards[dynamicIndex].term}
-          romanization={flashcards[dynamicIndex].romanization}
+          romanization={`(${Aromanize.hangulToLatin(flashcards[dynamicIndex].term, 'rr-translit')})`}
           definition={flashcards[dynamicIndex].definition}
           onFlip={() => setIsFlipped(!isFlipped)}
           resetFlip={resetFlip}
