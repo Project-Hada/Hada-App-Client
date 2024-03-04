@@ -1,8 +1,8 @@
 import React, { useContext } from 'react';
 import { StyleSheet, View, Text, FlatList, TouchableOpacity, SafeAreaView } from 'react-native';
 import { MaterialCommunityIcons, MaterialIcons, AntDesign } from '@expo/vector-icons';
-import FlashcardContext from '../../Utils/Contexts/LibraryContext';
-import speak from '../../Utils/tts';
+import FlashcardContext from '../../utils/contexts/LibraryContext';
+import speak from '../../utils/tts';
 
 
 type FlashCardType = {
