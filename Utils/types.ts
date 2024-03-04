@@ -1,7 +1,12 @@
-// Define the FlashCard type
+//Type for flashcards
 export interface FlashCardType {
-    term: string;
-    definition: string;
-    romanization: string;
-  }
+  term: string;
+  definition: string;
+  romanization: string;
+}
   
+export interface PlaylistType {
+  title: string,
+  playlist: FlashCardType[]
+}
+

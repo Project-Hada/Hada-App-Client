@@ -1,12 +1,11 @@
 // _layout.tsx
-import React, { useContext, useEffect, useState } from 'react';
+import React from 'react';
 import { createStackNavigator } from '@react-navigation/stack';
 import { Text, StyleSheet, SafeAreaView } from 'react-native';
 import LibraryScreen from './pages/Library';
 import DeckPreview from './pages/DeckPreview';
 import { PracticeScreen } from './pages/Practice';
 import { NavigationContainer } from '@react-navigation/native';
-import FlashcardContext from '../Utils/Contexts/FlashcardContext';
 
 
 
@@ -25,27 +24,11 @@ const {Navigator, Screen} = createStackNavigator();
 
 const AppStack = () => {
     
-    const { flashcards } = useContext(FlashcardContext);
-    const playlistData = [
-        {
-            title: "Someone's Study Set",
-            playlist: flashcards
-        },
-        {
-            title: "Someone's Study Set",
-            playlist: flashcards
-        },
-        {
-            title: "Someone's Study Set",
-            playlist: flashcards
-        },
-    ];
     return (
         <Navigator initialRouteName='LibraryScreen'>
             <Screen
             name="LibraryScreen"
             component={LibraryScreen}
-            initialParams={{ playlistData }} // Pass the playlist data with flashcards from context
             options={{ header: libraryHeader }}
             />
             <Screen

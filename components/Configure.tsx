@@ -3,13 +3,13 @@ import { View, StyleSheet } from 'react-native';
 import Router from './Router';
 import { useFonts } from 'expo-font';
 import { FontAwesome } from '@expo/vector-icons';
-import FlashcardContext from '../Utils/Contexts/FlashcardContext';
-import { FlashCardType } from '../Utils/types';
-import flashCards from '../Data/fakeData';
+import LibraryContext from '../Utils/Contexts/LibraryContext';
+import { FlashCardType, PlaylistType } from '../Utils/types';
+import libraryData from '../Data/fakeData';
 
 export default function Configure() {
   // Always call useState at the top level
-  const [flashcards, setFlashcards] = useState<FlashCardType[]>(flashCards);
+  const [library, setLibrary] = useState<PlaylistType[]>(libraryData);
 
   // Call useFonts at the top level
   const [loaded, error] = useFonts({
@@ -35,9 +35,9 @@ export default function Configure() {
   }
 
   return (
-    <FlashcardContext.Provider value={{flashcards, setFlashcards }}>
+    <LibraryContext.Provider value={{library, setLibrary }}>
       <Router/>
-    </FlashcardContext.Provider>
+    </LibraryContext.Provider>
   );
 }
 

@@ -3,7 +3,7 @@ import { View, Text, StyleSheet, ScrollView, SafeAreaView, TouchableOpacity } fr
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { StackNavigationProp } from '@react-navigation/stack';
 import { FlashCardType } from '../../Utils/types';
-import FlashcardContext from '../../Utils/Contexts/FlashcardContext';
+import LibraryContext from '../../Utils/Contexts/LibraryContext';
 import flashCards from '../../Data/fakeData';
 
   
@@ -18,19 +18,16 @@ import flashCards from '../../Data/fakeData';
     playlistData: PlaylistItemType[];
   }
 export default function LibraryScreen({navigation, route}: any) {
-    const { playlistData } = route.params;
+    
+    const { library } = useContext(LibraryContext);
     // const { flashcards, setFlashcards } = useContext(FlashcardContext);
    const flashcards = flashCards;
-    console.log("faeouo", flashcards)
-    console.log("aeou", flashCards);
-    // setFlashcards(flashCards);
-    console.log("oeauaoe", flashcards);
     
 
     return (
         <SafeAreaView style={libStyles.container}>
             <ScrollView contentContainerStyle={libStyles.scrollView} >
-                {playlistData.map((item: any, i: any) => {
+                {library.map((item: any, i: any) => {
                     return(
                         <TouchableOpacity 
                             key={`playlist-${i}`} 
