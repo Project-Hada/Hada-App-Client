@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { StyleSheet, View, Text, Pressable, Animated, TouchableOpacity } from 'react-native';
 import { FontAwesome } from '@expo/vector-icons';
-import speak from '../../../utils/tts';
+import speak from '../../../Utils/tts';
 
 type FlashCardProps = {
   term: string;
