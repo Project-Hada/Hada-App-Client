@@ -1,3 +1,4 @@
+import React from 'react';
 import { Button, ScrollView, StyleSheet, TextInput } from 'react-native';
 
 import { Text, View } from '@/components/Themed';
@@ -6,6 +7,7 @@ import { useState, useEffect } from 'react'
 
 import { addNewUser, getAllUsers, updateUserById, deleteUserById } from '../services/usersFunctions';
 import { addNewDeck, getAllDecks, updateDeckById, deleteDeckById, addNewCardToDeck, deleteCardInDeck, updateCardInDeck } from '../services/decksFunctions';
+
 
 export default function TabOneScreen() {
   // save database collection as state
