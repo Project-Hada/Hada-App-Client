@@ -1,8 +1,9 @@
-import React, { useContext } from 'react';
-import { StyleSheet, View, Text, FlatList, TouchableOpacity, SafeAreaView } from 'react-native';
+import React, { useContext, useRef, useState } from 'react';
+import { StyleSheet, View, Text, FlatList, TouchableOpacity, SafeAreaView, Button, Pressable } from 'react-native';
 import { MaterialCommunityIcons, MaterialIcons, AntDesign } from '@expo/vector-icons';
-import FlashcardContext from '../../utils/contexts/LibraryContext';
-import speak from '../../utils/tts';
+import FlashcardContext from '../../Utils/Contexts/LibraryContext';
+import speak from '../../Utils/tts';
+import { TextInput } from 'react-native-gesture-handler';
 
 
 type FlashCardType = {
@@ -23,6 +24,37 @@ const handleAudio = (text: string, language: string) => {
 export default function DeckPreview({navigation, route}: any) {
     const { currPlaylist } = useContext(FlashcardContext);
     const flashcards = currPlaylist.playlist;
+
+    const [koreanWord, setKoreanWord] = useState("");
+    const [englishWord, setEnglishWord] = useState("");
+
+    const [isAddingVisible, setIsAddingVisible] = useState(true);
+
+    const handleCancel = () => {
+      setIsAddingVisible(false);
+    }
+    const handleOpenAdd = () => {
+      setIsAddingVisible(true);
+    }
+    const handleAdd = () => {
+      // Create a new flashcard object
+      const newFlashcard = {
+        term: koreanWord,
+        romanization: "", // You can add romanization if you have it
+        definition: englishWord
+      };
+    
+      // Update the playlist in the context or state
+      // Assuming currPlaylist is part of the context and you have a method to update it
+      const updatedPlaylist = [...currPlaylist.playlist, newFlashcard];
+      // call a method from your context or state update logic to update the playlist
+      // updateCurrPlaylist(updatedPlaylist);
+    
+      // Optionally, clear the input fields
+      setKoreanWord("");
+      setEnglishWord("");
+    };
+
   return (
     <SafeAreaView style={styles.container}>
         <View style={styles.header}>
@@ -30,14 +62,37 @@ export default function DeckPreview({navigation, route}: any) {
                 <MaterialIcons name="arrow-back-ios" size={24} color="gray"/>
             </TouchableOpacity>
             <View style={styles.headerContent}>
+              <View style={styles.headerInfo}>
                 <Text style={styles.headerTitle}>Someone’s Study Set</Text>
                 <View style={styles.subHeader}>
-                    <MaterialCommunityIcons name="cards-variant" size={18} color="gray"/>
-                    <Text style={styles.wordCount}>{flashcards.length} words</Text>
+                  <MaterialCommunityIcons name="cards-variant" size={18} color="gray"/>
+                  <Text style={styles.wordCount}>{flashcards.length} words</Text>
                 </View>
+              </View>
+              <MaterialCommunityIcons name="note-edit-outline" size={32} color="#000000" onPress={handleOpenAdd}/>
             </View>
         </View>
-        
+    
+    {isAddingVisible && <View style={styles.addingContainer}>
+      <TextInput
+        style={styles.addingKoreanText}
+        onChangeText={(text) => setKoreanWord(text)} 
+        value={koreanWord}
+        placeholder="Type Korean Word"
+        keyboardType="default"
+      />  
+      <TextInput
+        style={styles.addingEnglishText}
+        onChangeText={(text) => setEnglishWord(text)}
+        value={englishWord}
+        placeholder="Enter English Word Here"
+        keyboardType="default"
+      />  
+      <View style={styles.addingButtonContainer}>
+        <Pressable style={styles.cancelButton} onPress={ handleCancel }><Text>Cancel</Text></Pressable>
+        <Pressable style={styles.addButton} onPress={ handleAdd }><Text>Add</Text></Pressable>
+      </View>
+    </View>}
     <FlatList
         data={flashcards}
         renderItem={({ item }) => (
@@ -82,10 +137,15 @@ export const styles = StyleSheet.create({
     padding: 20,
     backgroundColor: '#F2E8E1',
   },
-  backIcon: {
-
-  },
+  backIcon: {},
   headerContent: {
+    width: '100%',
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems:'center',
+    paddingRight: 35,
+  },
+  headerInfo: {
     flexDirection: 'column',
     justifyContent: 'center',
   },
@@ -101,6 +161,70 @@ export const styles = StyleSheet.create({
   wordCount: {
     fontSize: 14,
     color: 'grey',
+  },
+  addingContainer: {
+    flexDirection: 'column',
+    padding: 20,
+    marginVertical: 5, 
+    marginHorizontal: 20,
+    borderWidth: 1,
+    borderRightWidth: 4,
+    borderBottomWidth: 4,
+    borderRadius: 10,
+    borderColor: '#000000',
+    backgroundColor: 'white',
+  },
+  addingKoreanText: {
+    borderWidth: 1,
+    paddingVertical: 7,
+    marginVertical: 5, 
+    borderRadius: 4,
+    textAlign: 'left',
+    paddingLeft: 5,
+    fontWeight: 'bold'
+  },
+  addingEnglishText: {
+    borderWidth: 1,
+    marginVertical: 5, 
+    paddingVertical: 4,
+    borderRadius: 4,
+    textAlign: 'left',
+    paddingLeft: 5,
+  },
+  addingButtonContainer: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    width: '100%',
+    marginTop: 20, 
+  },
+  cancelButton: {
+    width: '30%',
+    backgroundColor: 'red',
+    textAlign: 'center',
+    flexDirection: 'row',
+    justifyContent: 'center',
+    alignItems: 'center',
+    paddingVertical: 10,
+    borderWidth: 1,
+    borderRightWidth: 4,
+    borderBottomWidth: 4,
+    borderRadius: 10,
+    borderColor: '#000000',
+  },
+  addButton: {
+    width: '65%',
+    backgroundColor: 'green',
+    textAlign: 'center',
+    flexDirection: 'row',
+    justifyContent: 'center',
+    alignItems: 'center',
+    paddingVertical: 10,
+    borderWidth: 1,
+    borderRightWidth: 4,
+    borderBottomWidth: 4,
+    borderRadius: 10,
+    borderColor: '#000000',
   },
   listItem: {
     flexDirection: 'row',

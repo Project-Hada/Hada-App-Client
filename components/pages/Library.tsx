@@ -3,7 +3,7 @@ import { View, Text, StyleSheet, ScrollView, SafeAreaView, TouchableOpacity } fr
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { StackNavigationProp } from '@react-navigation/stack';
 import { FlashCardType } from '../../Utils/types';
-import LibraryContext from '../../utils/contexts/LibraryContext';
+import LibraryContext from '../../Utils/Contexts/LibraryContext';
 import flashCards from '../../Data/fakeData';
 
   
