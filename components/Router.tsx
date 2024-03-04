@@ -7,19 +7,6 @@ import DeckPreview from './pages/DeckPreview';
 import { PracticeScreen } from './pages/Practice';
 import { NavigationContainer } from '@react-navigation/native';
 
-
-
-
-const libraryHeader = () => {
-    return (
-      <SafeAreaView style={styles.headerContainer}>
-          <Text style={styles.headerTitle}>
-            Library
-          </Text>
-      </SafeAreaView>
-    )
-}
-
 const {Navigator, Screen} = createStackNavigator();
 
 const AppStack = () => {
@@ -29,7 +16,7 @@ const AppStack = () => {
             <Screen
             name="LibraryScreen"
             component={LibraryScreen}
-            options={{ header: libraryHeader }}
+            options={{ headerShown: false }}
             />
             <Screen
             name="DeckPreview"
