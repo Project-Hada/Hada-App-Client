@@ -1,5 +1,7 @@
-import React, { useContext, useEffect, useState } from 'react';
-import { StyleSheet, View, Text, Pressable, Animated } from 'react-native';
+import React, { useEffect, useState } from 'react';
+import { StyleSheet, View, Text, Pressable, Animated, TouchableOpacity } from 'react-native';
+import { FontAwesome } from '@expo/vector-icons';
+import speak from '../../../Utils/tts';
 
 type FlashCardProps = {
   term: string;
@@ -14,6 +16,7 @@ export default function FlashCard({ term, romanization, definition, onFlip, rese
   const [isFlipped, setIsFlipped] = useState(false);
 
   const frontAnimatedStyle = {
+    zIndex: isFlipped ? 0 : 1,
     transform: [
       {
         rotateY: flipAnim.interpolate({
@@ -25,6 +28,7 @@ export default function FlashCard({ term, romanization, definition, onFlip, rese
   };
 
   const backAnimatedStyle = {
+    zIndex: isFlipped ? 1 : 0,
     transform: [
       {
         rotateY: flipAnim.interpolate({
@@ -55,6 +59,12 @@ export default function FlashCard({ term, romanization, definition, onFlip, rese
 
   }
 
+  const handleAudio = () => {
+    const textToSpeech = isFlipped ? definition : term;
+    const language = isFlipped ? 'en-US' : 'ko-KR';
+    speak(textToSpeech, language);
+  };
+  
   return (
     <Pressable onPress={triggerFlip} style={styles.flashCardPressableContainer}>
       <Animated.View style={[styles.flashCard, frontAnimatedStyle]}>
@@ -64,9 +74,16 @@ export default function FlashCard({ term, romanization, definition, onFlip, rese
         <View style={styles.romanizationContainer}>
           <Text style={styles.romanization}>{romanization}</Text>
         </View>
+        <TouchableOpacity style={styles.audioButton} onPress={handleAudio}>
+        <FontAwesome name="volume-up" size={36} color="black" />
+      </TouchableOpacity>
       </Animated.View>
+
       <Animated.View style={[styles.flashCard, backAnimatedStyle, { position: 'absolute' }]}>
         <Text style={styles.definition}>{definition}</Text>
+        <TouchableOpacity style={styles.audioButton} onPress={handleAudio}>
+        <FontAwesome name="volume-up" size={36} color="black" />
+      </TouchableOpacity>
       </Animated.View>
     </Pressable>
   );
@@ -78,7 +95,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     zIndex: 5,
-    
+ 
   },
   flashCard: {
     width: '100%',
@@ -113,4 +130,9 @@ const styles = StyleSheet.create({
   definition: {
     fontSize: 34,
   },
+  audioButton: {
+    position: 'absolute',
+    top: 15,
+    right: 15,
+  }
 });

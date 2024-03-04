@@ -10,7 +10,7 @@ import libraryData from '../Data/fakeData';
 export default function Configure() {
   // Always call useState at the top level
   const [library, setLibrary] = useState<PlaylistType[]>(libraryData);
-  const [currPlaylist, setCurrPlaylist] = useState<PlaylistType | {}>({});
+  const [currPlaylist, setCurrPlaylist] = useState<PlaylistType >(libraryData[0]);
 
   // Call useFonts at the top level
   const [loaded, error] = useFonts({
