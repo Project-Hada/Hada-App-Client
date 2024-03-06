@@ -14,57 +14,72 @@ import {
   MaterialIcons,
   AntDesign,
   Feather,
+  Foundation,
 } from "@expo/vector-icons";
-import FlashcardContext from "../../utils/contexts/LibraryContext";
-import speak from "../../utils/tts";
+import FlashcardContext from "../../../utils/contexts/LibraryContext";
+import speak from "../../../utils/tts";
 import { TextInput } from "react-native-gesture-handler";
-
-type FlashCardType = {
-  term: string;
-  romanization: string;
-  definition: string;
-};
+import AddButton from "../../AddButton";
+import generateId from "../../../utils/idGenerator";
+import AddCardModal from "./AddCardModal";
+import PreviewCard from "./PreviewCard";
+import { FlashCardType } from "../../../utils/types";
 
 type DeckPreviewProps = {
   navigation: any;
 };
 
-const handleAudio = (text: string, language: string) => {
-  speak(text, language);
-};
-
 export default function DeckPreview({ navigation, route }: any) {
-  const { currPlaylist } = useContext(FlashcardContext);
-  const flashcards = currPlaylist.playlist;
+  const { currPlaylist, addFlashcard } = useContext(FlashcardContext);
+  const flashcards = currPlaylist ? currPlaylist.playlist : [];
 
-  const [koreanWord, setKoreanWord] = useState("");
-  const [englishWord, setEnglishWord] = useState("");
-
+  // State to track the selected card for editing
+  const [selectedCard, setSelectedCard] = useState<FlashCardType | null>(null);
   const [isAddingVisible, setIsAddingVisible] = useState(false);
 
   const handleCancel = () => {
     setIsAddingVisible(false);
+    setSelectedCardId(null);
   };
   const handleOpenAdd = () => {
     setIsAddingVisible(true);
   };
-  const handleAdd = () => {
-    // Create a new flashcard object
-    const newFlashcard = {
-      term: koreanWord,
-      romanization: "", // You can add romanization if you have it
-      definition: englishWord,
-    };
+  const handleAdd = (koreanWord: string, englishWord: string) => {
+    if (currPlaylist && currPlaylist.id) {
+      const newFlashcard = {
+        id: generateId(), // Generate a unique ID for the new flashcard
+        term: koreanWord,
+        definition: englishWord,
+      };
 
-    // Update the playlist in the context or state
-    // Assuming currPlaylist is part of the context and you have a method to update it
-    const updatedPlaylist = [...currPlaylist.playlist, newFlashcard];
-    // call a method from your context or state update logic to update the playlist
-    // updateCurrPlaylist(updatedPlaylist);
+      addFlashcard(currPlaylist.id, newFlashcard);
 
-    // Optionally, clear the input fields
-    setKoreanWord("");
-    setEnglishWord("");
+      // Close the modal and reset the form fields
+      setIsAddingVisible(false);
+    }
+    setSelectedCardId(null);
+  };
+
+  const AddCardButton = () => {
+    return (
+      <TouchableOpacity onPress={handleOpenAdd}>
+        <View style={styles.listItem}>
+          <View style={styles.previewBadge}>
+            <MaterialCommunityIcons name="plus-thick" size={30} color="white" />
+          </View>
+          <View style={styles.termContainer}>
+            <Text style={styles.addCardText}> Add Card </Text>
+          </View>
+        </View>
+      </TouchableOpacity>
+    );
+  };
+
+  const [selectedCardId, setSelectedCardId] = useState<string | null>(null);
+
+  // Function to handle card press
+  const handleCardPress = (cardId: string) => {
+    setSelectedCardId(selectedCardId === cardId ? null : cardId);
   };
 
   return (
@@ -74,87 +89,67 @@ export default function DeckPreview({ navigation, route }: any) {
           style={styles.backIcon}
           onPress={() => navigation.goBack()}
         >
-          <MaterialIcons name="arrow-back-ios" size={24} color="gray" />
+          <MaterialIcons name="arrow-back-ios" size={28} color="#777777" />
         </TouchableOpacity>
         <View style={styles.headerContent}>
           <View style={styles.headerInfo}>
-            <Text style={styles.headerTitle}>Someone’s Study Set</Text>
+            <Text style={styles.headerTitle}>{currPlaylist.title}</Text>
             <View style={styles.subHeader}>
               <MaterialCommunityIcons
                 name="cards-variant"
-                size={18}
-                color="gray"
+                size={22}
+                color="#B6B6B6"
               />
               <Text style={styles.wordCount}>{flashcards.length} words</Text>
             </View>
           </View>
-          <MaterialCommunityIcons
-            name="note-edit-outline"
-            size={32}
-            color="#000000"
-            onPress={handleOpenAdd}
-          />
+          <TouchableOpacity onPress={handleOpenAdd}>
+            <AddButton />
+          </TouchableOpacity>
+          {/* further discussion needed on adding this with the other add option */}
         </View>
       </View>
 
-      {isAddingVisible && (
-        <View style={styles.addingContainer}>
-          <TextInput
-            style={styles.addingKoreanText}
-            onChangeText={(text) => setKoreanWord(text)}
-            value={koreanWord}
-            placeholder="Type Korean Word"
-            placeholderTextColor={"#000"}
-            keyboardType="default"
-          />
-          <TextInput
-            style={styles.addingEnglishText}
-            onChangeText={(text) => setEnglishWord(text)}
-            value={englishWord}
-            placeholder="Enter English Word Here"
-            keyboardType="default"
-          />
-          <View style={styles.addingButtonContainer}>
-            <Pressable style={styles.cancelButton} onPress={handleCancel}>
-              <Text style={styles.cancelButtonText}>Cancel</Text>
-            </Pressable>
-            <Pressable style={styles.addButton} onPress={handleAdd}>
-              <Text style={styles.addButtonText}>Add</Text>
-            </Pressable>
-          </View>
-        </View>
-      )}
+      {/* Adding new card modal */}
+      <AddCardModal
+        isVisible={isAddingVisible}
+        onAdd={handleAdd}
+        onCancel={handleCancel}
+        koreanWordInitial={""}
+        englishWordInitial={""}
+        isEditMode={false}
+      />
+      {/* List of cards display */}
       <FlatList
         data={flashcards}
         renderItem={({ item }) => (
-          <TouchableOpacity>
-            <View style={styles.listItem}>
-              <View style={styles.previewBadge}>
-                <Text style={styles.previewBadgeText}>
-                  {item.term.slice(0, 1)}
-                </Text>
-              </View>
-              <View style={styles.termContainer}>
-                <Text style={styles.termText}>{item.term}</Text>
-                <Text style={styles.term}>{item.definition}</Text>
-              </View>
-              <TouchableOpacity
-                style={styles.playButton}
-                onPress={() => {
-                  handleAudio(item.term, "ko-KR");
-                  handleAudio(item.definition, "en-US");
-                }}
-              >
-                <View style={styles.playButtonContainer}>
-                  <Feather name="play" size={24} color="black" />
-                </View>
-              </TouchableOpacity>
-            </View>
-          </TouchableOpacity>
+          // The modal is now tied to the selectedCardId state.
+          // It will open for the card that was last pressed.
+          <View>
+            <PreviewCard
+              term={item.term}
+              definition={item.definition}
+              onPress={() => {}}
+              // onPress={() => handleCardPress(item.id)}
+            />
+            {/* {selectedCardId === item.id && (
+              <AddCardModal
+                isVisible={true}
+                onAdd={handleAdd}
+                onCancel={handleCancel}
+                koreanWordInitial={item.term}
+                englishWordInitial={item.definition}
+                isEditMode={true}
+              />
+            )} */}
+          </View>
         )}
-        keyExtractor={(item) => `term-${item.term}`}
+        keyExtractor={(item) => item.id}
+        ListHeaderComponent={AddCardButton}
+        extraData={selectedCardId} // Ensure FlatList re-renders when selectedCardId changes
       />
 
+      {/* Practice Button */}
       <TouchableOpacity
         onPress={() => navigation.navigate("PracticeScreen")}
         style={styles.practiceButton}
@@ -166,6 +161,9 @@ export default function DeckPreview({ navigation, route }: any) {
 }
 
 export const styles = StyleSheet.create({
+  pressableArea: {
+    flex: 1,
+  },
   playButtonContainer: {
     width: 41,
     height: 41,
@@ -214,13 +212,13 @@ export const styles = StyleSheet.create({
   wordCount: {
     fontFamily: "GeneralSans-Regular",
     fontSize: 14,
-    color: "grey",
+    color: "#B6B6B6",
     paddingLeft: 4,
   },
   addingContainer: {
     flexDirection: "column",
     padding: 20,
-    marginVertical: 5,
+    marginBottom: 5,
     marginHorizontal: 20,
     borderWidth: 1,
     borderRightWidth: 4,
@@ -307,13 +305,14 @@ export const styles = StyleSheet.create({
     flex: 1,
   },
   termText: {
-    fontSize: 20,
+    fontSize: 22,
     fontFamily: "GeneralSans-Bold",
   },
   term: {
     fontSize: 16,
     color: "#A7A7A7",
     fontFamily: "GeneralSans-Medium",
+    marginTop: -4,
   },
   previewBadge: {
     width: 48,
@@ -348,4 +347,8 @@ export const styles = StyleSheet.create({
     fontFamily: "GeneralSans-Bold",
   },
   playButton: {},
+  addCardText: {
+    fontFamily: "GeneralSans-Semibold",
+    fontSize: 20,
+  },
 });

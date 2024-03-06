@@ -1,18 +1,18 @@
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { View, StyleSheet, Text } from "react-native";
 import Router from "./Router";
 import { useFonts } from "expo-font";
 import { FontAwesome } from "@expo/vector-icons";
-import { FlashCardType, PlaylistType } from "../utils/types";
+import LibraryContext, {
+  LibraryProvider,
+} from "../utils/contexts/LibraryContext";
+import playlistData from "../Data/fakeData";
 import libraryData from "../Data/fakeData";
-import LibraryContext from "../utils/contexts/LibraryContext";
 
 export default function Configure() {
   // Always call useState at the top level
-  const [library, setLibrary] = useState<PlaylistType[]>(libraryData);
-  const [currPlaylist, setCurrPlaylist] = useState<PlaylistType>(
-    libraryData[0]
-  );
+  // Calling Dummy data
+  const { setLibrary } = useContext(LibraryContext);
 
   // Call useFonts at the top level
   const [loaded, error] = useFonts({
@@ -32,18 +32,17 @@ export default function Configure() {
     "GeneralSans-Variable": require("../assets/fonts/GeneralSans-Variable.ttf"),
   });
 
+  useEffect(() => {
+    // This will set the library data when the component mounts
+    setLibrary(libraryData);
+  }, [setLibrary]); // Empty dependency array ensures this effect only runs once
+
   // You can handle the loading state inside your component's return statement or use a loader component
   if (!loaded) {
     return <View style={styles.loadingContainer}></View>;
   }
 
-  return (
-    <LibraryContext.Provider
-      value={{ library, setLibrary, currPlaylist, setCurrPlaylist }}
-    >
-      <Router />
-    </LibraryContext.Provider>
-  );
+  return <Router />;
 }
 
 const styles = StyleSheet.create({

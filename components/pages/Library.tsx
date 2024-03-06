@@ -16,11 +16,18 @@ import {
   TextInput,
   Pressable,
 } from "react-native";
-import { MaterialCommunityIcons, MaterialIcons } from "@expo/vector-icons";
+import {
+  MaterialCommunityIcons,
+  MaterialIcons,
+  Octicons,
+} from "@expo/vector-icons";
 import { StackNavigationProp } from "@react-navigation/stack";
 import { FlashCardType } from "../../utils/types";
 import LibraryContext from "../../utils/contexts/LibraryContext";
 import flashCards from "../../Data/fakeData";
+import { styles } from "./DeckPreview/DeckPreview";
+import AddButton from "../AddButton";
+import generateId from "../../utils/idGenerator";
 
 type PlaylistItemType = {
   name: string;
@@ -33,13 +40,16 @@ type LibraryScreenProps = {
   playlistData: PlaylistItemType[];
 };
 export default function LibraryScreen({ navigation, route }: any) {
-  const { library, setCurrPlaylist } = useContext(LibraryContext);
-  // const { flashcards, setFlashcards } = useContext(FlashcardContext);
+  // Library Context
+  const { library, setCurrPlaylist, addPlaylist } = useContext(LibraryContext);
   const flashcards = flashCards;
 
-  const handleNavigation = (key: number) => {
-    setCurrPlaylist(library[key]);
-    navigation.navigate("DeckPreview");
+  const handleNavigation = (playlistId: string) => {
+    const playlist = library[playlistId];
+    if (playlist) {
+      setCurrPlaylist(playlist);
+      navigation.navigate("DeckPreview");
+    }
   };
 
   const [playlistName, setPlaylistName] = useState("");
@@ -50,51 +60,42 @@ export default function LibraryScreen({ navigation, route }: any) {
     setIsAddingVisible(false);
   };
   const handleOpenAdd = () => {
-    setIsAddingVisible(true);
-  };
-  const handleAdd = () => {
-    //clear
-    setPlaylistName("");
+    // Generate a new ID for the playlist
+    const newPlaylistId = generateId();
+
+    // Create a new playlist object with the ID
+    const newPlaylist = {
+      id: newPlaylistId,
+      title: "New Playlist",
+      playlist: [],
+    };
+
+    // Add the new playlist to the context
+    addPlaylist(newPlaylist);
+
+    // Update the current playlist to the new one
+    setCurrPlaylist(newPlaylist);
+
+    // Navigate to DeckPreview with the new playlist's ID
+    navigation.navigate("DeckPreview", { playlistId: newPlaylistId });
   };
 
   return (
     <SafeAreaView style={libStyles.container}>
       <View style={libStyles.headerContainer}>
-        <Text style={libStyles.addIcon}> </Text>
+        <View />
         <Text style={libStyles.headerText}>Library</Text>
-        <MaterialCommunityIcons
-          name="note-edit-outline"
-          style={libStyles.addIcon}
-          color="#000000"
-          onPress={handleOpenAdd}
-        />
+        <TouchableOpacity onPress={handleOpenAdd}>
+          <AddButton />
+        </TouchableOpacity>
       </View>
       <ScrollView contentContainerStyle={libStyles.scrollView}>
-        {isAddingVisible && (
-          <View style={libStyles.addingContainer}>
-            <TextInput
-              style={libStyles.addingKoreanText}
-              onChangeText={(text) => setPlaylistName(text)}
-              value={playlistName}
-              placeholder="Type Korean Word"
-              keyboardType="default"
-            />
-            <View style={libStyles.addingButtonContainer}>
-              <Pressable style={libStyles.cancelButton} onPress={handleCancel}>
-                <Text>Cancel</Text>
-              </Pressable>
-              <Pressable style={libStyles.addButton} onPress={handleAdd}>
-                <Text>Add</Text>
-              </Pressable>
-            </View>
-          </View>
-        )}
-        {library.map((item: any, i: any) => {
+        {Object.values(library).map((item, index) => {
           return (
             <TouchableOpacity
-              key={`playlist-${i}`}
+              key={`playlist-${item.id}`} // use the unique id as key
               style={libStyles.playlist}
-              onPress={() => handleNavigation(i)}
+              onPress={() => handleNavigation(item.id)} // pass the id to handle navigation
             >
               <View style={libStyles.iconContainer}>
                 <MaterialCommunityIcons
@@ -152,9 +153,6 @@ export const libStyles = StyleSheet.create({
   headerText: {
     fontFamily: "GeneralSans-Bold",
     fontSize: 30,
-  },
-  addIcon: {
-    fontSize: 32,
   },
   scrollView: {
     width: "100%",

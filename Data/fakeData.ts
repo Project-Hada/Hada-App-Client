@@ -1,3 +1,4 @@
+import { LibraryState } from "../utils/contexts/LibraryContext";
 import { FlashCardType, PlaylistType } from "../utils/types";
 
 const flashCards1: FlashCardType[] = [
@@ -515,12 +516,10 @@ const flashCards1: FlashCardType[] = [
     },
     {
       "term": "이메일",
-      "romanization": "(imeil)",
       "definition": "email"
     },
     {
       "term": "동료",
-      "romanization": "(donglyo)",
       "definition": "colleague"
     }
   ];
@@ -546,4 +545,32 @@ const flashCards1: FlashCardType[] = [
     }
 ];
 
-export default playlistData;
+const generateId = () => Math.random().toString(36).substr(2, 9);
+
+const translateDataToNewFormat = (playlistArray: PlaylistType[]) => {
+  const libraryState: LibraryState = {};
+
+  playlistArray.forEach(playlist => {
+    // Generate a unique ID for each playlist
+    const playlistId = generateId();
+
+    // Map each flashcard in the playlist to include an id
+    const updatedFlashCards = playlist.playlist.map(flashCard => ({
+      ...flashCard,
+      id: generateId(), // Assign a unique ID to each flashcard
+    }));
+
+    // Add the playlist to the library object with the generated ID as the key
+    libraryState[playlistId] = {
+      ...playlist,
+      id: playlistId,
+      playlist: updatedFlashCards,
+    };
+  });
+
+  return libraryState;
+};
+
+const libraryData = translateDataToNewFormat(playlistData);
+
+export default libraryData;
