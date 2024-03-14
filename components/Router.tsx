@@ -2,11 +2,12 @@
 import React from "react";
 import { createStackNavigator } from "@react-navigation/stack";
 import { Text, StyleSheet, SafeAreaView, Platform } from "react-native";
+import { NavigationContainer } from "@react-navigation/native";
 import LibraryScreen from "./pages/Library";
 import DeckPreview from "./pages/DeckPreview/DeckPreview";
 import { PracticeScreen } from "./pages/Practice";
-import { NavigationContainer } from "@react-navigation/native";
 import { LoginScreen } from "./LoginScreen";
+import { RegisterScreen } from "./RegisterScreen";
 
 const { Navigator, Screen } = createStackNavigator();
 
@@ -17,6 +18,11 @@ const AppStack = () => {
         <Screen
           name="LoginScreen"
           component={LoginScreen}
+          options={{ headerShown: false }}
+        />
+        <Screen
+          name="RegisterScreen"
+          component={RegisterScreen}
           options={{ headerShown: false }}
         />
 

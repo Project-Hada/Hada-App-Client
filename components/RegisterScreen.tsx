@@ -2,15 +2,15 @@ import { AntDesign } from '@expo/vector-icons';
 import React from 'react';
 import { useState, useEffect } from 'react'
 import { Button, View, ScrollView, StyleSheet, TextInput, Pressable } from 'react-native';
-import { RegisterScreen } from './RegisterScreen';
 
-export function LoginScreen({ navigation, route }: any) {
+export function RegisterScreen({ navigation, route }: any) {
   const [usernameInput, setUsernameInput] = useState('');
   const [passwordInput, setPasswordInput] = useState('');
+  const [confirmPasswordInput, setConfirmPasswordInput] = useState('');
 
-  const handleSubmitForLogin = async () => {
+  const handleSubmitForRegister = async () => {
     // if valid credentials:
-    navigation.navigate("LibraryScreen")
+    navigation.navigate("LoginScreen")
     
     // else:
     //    on the same page throw an error
@@ -18,7 +18,7 @@ export function LoginScreen({ navigation, route }: any) {
 
   return (
     <View style={{paddingHorizontal: 20}}>
-      <h1> LOGIN </h1>
+      <h1> REGISTER </h1>
 
       {/* Custom Login */}
       <TextInput
@@ -36,17 +36,19 @@ export function LoginScreen({ navigation, route }: any) {
         placeholderTextColor="#D3D3D3" 
         value={passwordInput}
       />
+      <TextInput
+        secureTextEntry={true}
+        style={styles.input}
+        onChangeText={setConfirmPasswordInput}
+        placeholder='confirm your password'
+        placeholderTextColor="#D3D3D3" 
+        value={confirmPasswordInput}
+      />
 
       <Button
-        title="Login"
-        onPress={handleSubmitForLogin}
+        title="Register"
+        onPress={handleSubmitForRegister}
       />
-      TESTING ONLY: Press LOGIN to immediately navigate to LibraryScreen
-      
-      {/* Custom Register */}
-      <Pressable style={{ flexDirection: 'row', paddingTop: 20}} onPress={() => navigation.navigate("RegisterScreen")}>
-        <AntDesign name="plussquareo" size={24} color="black" /> Register
-      </Pressable>
     </View>
   )
 }
