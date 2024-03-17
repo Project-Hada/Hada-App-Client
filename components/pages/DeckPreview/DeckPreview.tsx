@@ -25,6 +25,7 @@ import AddCardModal from "./AddCardModal";
 import PreviewCard from "./PreviewCard";
 import { FlashCardType } from "../../../utils/types";
 
+// For Korean regex
 import * as Hangul from 'hangul-js'
 
 type DeckPreviewProps = {
@@ -62,14 +63,16 @@ export default function DeckPreview({ navigation, route }: any) {
     setSelectedCardId(null);
   };
 
-
+  // Storing the search term
   const [searchTerm, setSearchTerm] = useState('');
 
+    // set thing the search word
   const handleSearchWord = (term: string) => {
     {/* Search word feature here */}
     setSearchTerm(term)
   };
 
+  // Filtering Flashcard by korean / english search term
   const filterFlashcards = (flashcards: { term: any; definition:any;}) => {
     // Check if searchTerm is empty (show all in this case)
     if (!searchTerm) 
@@ -77,10 +80,13 @@ export default function DeckPreview({ navigation, route }: any) {
 
     
     // Check if the term or definition contains the searchTerm
-    // For Korean, use Hangul.search to respect character composition
+    // For Korean, use Hangul.search for korean regex
+    // Check out https://www.npmjs.com/package/hangul-js
     const koreanMatch = Hangul.search(flashcards.term, searchTerm) >= 0;
+    // English definition to search word match
     const englishMatch = flashcards.definition.toLowerCase().includes(searchTerm.toLowerCase());
-  
+
+    // return any matching term
     return koreanMatch || englishMatch;
   };
   
@@ -134,7 +140,7 @@ export default function DeckPreview({ navigation, route }: any) {
         </View>
       </View>
 
-      {/* Search word feature here */}
+      {/* Search word input */}
       <View style={styles.searchContainer}>
         <AntDesign name="search1" style={styles.searchIcon}/>
         <TextInput
@@ -157,7 +163,8 @@ export default function DeckPreview({ navigation, route }: any) {
       />
       {/* List of cards display */}
       <FlatList
-        data={flashcards.filter(filterFlashcards)}
+        // Filtering word using filter()
+        data={flashcards.filter(filterFlashcards)} 
         renderItem={({ item }) => (
           // The modal is now tied to the selectedCardId state.
           // It will open for the card that was last pressed.
