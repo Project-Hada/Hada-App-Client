@@ -2,6 +2,7 @@
 import React from "react";
 import { createStackNavigator } from "@react-navigation/stack";
 import { Text, StyleSheet, SafeAreaView, Platform } from "react-native";
+import ExploreScreen from "./pages/Explore";
 import LibraryScreen from "./pages/Library";
 import DeckPreview from "./pages/DeckPreview/DeckPreview";
 import { PracticeScreen } from "./pages/Practice";
@@ -12,7 +13,12 @@ const { Navigator, Screen } = createStackNavigator();
 const AppStack = () => {
   return (
     <SafeAreaView style={styles.droidSafeArea}>
-      <Navigator initialRouteName="LibraryScreen">
+      <Navigator initialRouteName="ExploreScreen">
+        <Screen
+          name="ExploreScreen"
+          component={ExploreScreen}
+          options={{ headerShown: false }}
+        />
         <Screen
           name="LibraryScreen"
           component={LibraryScreen}
