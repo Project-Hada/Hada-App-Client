@@ -47,6 +47,11 @@ export function LoginScreen({ navigation, route }: any) {
       <Pressable style={{ flexDirection: 'row', paddingTop: 20}} onPress={() => navigation.navigate("RegisterScreen")}>
         <AntDesign name="plussquareo" size={24} color="black" /> Register
       </Pressable>
+
+      {/* TESTING ONLY */}
+      <Pressable style={{ flexDirection: 'row', paddingTop: 20}} onPress={() => navigation.navigate("BackendDemo")}>
+        <AntDesign name="codesquareo" size={24} color="black" /> BackendDemo
+      </Pressable>
     </View>
   )
 }
