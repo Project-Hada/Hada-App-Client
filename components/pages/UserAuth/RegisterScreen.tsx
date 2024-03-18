@@ -2,31 +2,48 @@ import { AntDesign } from '@expo/vector-icons';
 import React from 'react';
 import { useState, useEffect } from 'react'
 import { Button, View, ScrollView, StyleSheet, TextInput, Pressable } from 'react-native';
+import { auth } from '../../../utils/firebaseConfig';
+import { createUserWithEmailAndPassword } from 'firebase/auth';
 
 export function RegisterScreen({ navigation, route }: any) {
-  const [usernameInput, setUsernameInput] = useState('');
+  const [emailInput, setEmailInput] = useState('');
   const [passwordInput, setPasswordInput] = useState('');
   const [confirmPasswordInput, setConfirmPasswordInput] = useState('');
 
+  const [error, setError] = useState('');
+
   const handleSubmitForRegister = async () => {
-    // if valid credentials:
-    navigation.navigate("LoginScreen")
-    
-    // else:
-    //    on the same page throw an error
+    try {
+      if (passwordInput != confirmPasswordInput) throw new Error("password mismatch")
+
+      const response = await createUserWithEmailAndPassword(auth, emailInput, passwordInput)
+      console.log(response)
+      navigation.navigate("LibraryScreen")
+    }
+    catch (error) {
+      console.log(error)
+      if (error instanceof Error) {
+        setError("Passwords are mismatched. Try again.")
+      }
+      else {
+        setError("Something went wrong. Try again.")
+      }
+    }
   }
 
   return (
     <View style={{paddingHorizontal: 20}}>
       <h1> REGISTER </h1>
 
+      {(error !== "") && <p>{error}</p>}
+
       {/* Custom Login */}
       <TextInput
         style={styles.input}
-        onChangeText={setUsernameInput}
-        placeholder='username'
+        onChangeText={setEmailInput}
+        placeholder='email'
         placeholderTextColor="#D3D3D3" 
-        value={usernameInput}
+        value={emailInput}
       />
       <TextInput
         secureTextEntry={true}
