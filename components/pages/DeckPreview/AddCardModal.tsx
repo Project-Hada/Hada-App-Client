@@ -6,26 +6,32 @@ import { useTheme } from "../../../utils/contexts/ThemeContext";
 interface AddCardModalProps {
   isVisible: boolean;
   onAdd: (koreanWord: string, englishWord: string) => void;
+  onUpdate?: (id: string, koreanWord: string, englishWord: string) => void;
+  onDelete?: (id: string) => void;
   onCancel: () => void;
   koreanWordInitial: string;
   englishWordInitial: string;
   isEditMode: boolean;
+  flashcardId?: string;
 }
 
 const AddCardModal: React.FC<AddCardModalProps> = ({
   isVisible,
   onAdd,
   onCancel,
+  onUpdate,
+  onDelete,
   koreanWordInitial = "",
   englishWordInitial = "",
   isEditMode = false,
+  flashcardId,
 }) => {
   const [koreanWord, setKoreanWord] = useState(koreanWordInitial);
   const [englishWord, setEnglishWord] = useState(englishWordInitial);
 
   const handleConfirm = () => {
-    if (isEditMode) {
-      // Logic for updating the flashcard will go here
+    if (isEditMode && flashcardId) {
+      onUpdate?.(flashcardId, koreanWord, englishWord);
     } else {
       onAdd(koreanWord, englishWord);
     }
@@ -33,11 +39,18 @@ const AddCardModal: React.FC<AddCardModalProps> = ({
     setEnglishWord("");
   };
 
+  const handleDelete = () => {
+    if (isEditMode && flashcardId) {
+      onDelete?.(flashcardId);
+    }
+    // Close modal
+  };
+
   if (!isVisible) {
     return null;
   }
 
-  const {theme} = useTheme();
+  const { theme } = useTheme();
 
   const styles = StyleSheet.create({
     playButtonContainer: {
@@ -241,7 +254,7 @@ const AddCardModal: React.FC<AddCardModalProps> = ({
         onChangeText={(text) => setKoreanWord(text)}
         value={koreanWord}
         placeholder="Type Korean Word"
-        placeholderTextColor={theme.colors.text}
+        placeholderTextColor={"#000"}
         keyboardType="default"
       />
       <TextInput
@@ -249,11 +262,13 @@ const AddCardModal: React.FC<AddCardModalProps> = ({
         onChangeText={(text) => setEnglishWord(text)}
         value={englishWord}
         placeholder="Enter English Word Here"
-        placeholderTextColor={"#A7A7A7"}
         keyboardType="default"
       />
       <View style={styles.addingButtonContainer}>
-        <Pressable style={styles.cancelButton} onPress={onCancel}>
+        <Pressable
+          style={styles.cancelButton}
+          onPress={!isEditMode ? onCancel : handleDelete}
+        >
           <Text style={styles.cancelButtonText}>
             {isEditMode ? "Delete" : "Cancel"}
           </Text>

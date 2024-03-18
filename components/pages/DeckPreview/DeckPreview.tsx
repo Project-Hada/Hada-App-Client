@@ -27,14 +27,16 @@ import { FlashCardType } from "../../../utils/types";
 import { useTheme } from "../../../utils/contexts/ThemeContext";
 
 // For Korean regex
-import * as Hangul from 'hangul-js'
+import * as Hangul from "hangul-js";
 
 type DeckPreviewProps = {
   navigation: any;
 };
 
 export default function DeckPreview({ navigation, route }: any) {
-  const { currPlaylist, addFlashcard } = useContext(FlashcardContext);
+  const { currPlaylist, addFlashcard, updateFlashcard, deleteFlashcard } =
+    useContext(FlashcardContext);
+
   const flashcards = currPlaylist ? currPlaylist.playlist : [];
 
   // State to track the selected card for editing
@@ -65,32 +67,34 @@ export default function DeckPreview({ navigation, route }: any) {
   };
 
   // Storing the search term
-  const [searchTerm, setSearchTerm] = useState('');
+  const [searchTerm, setSearchTerm] = useState("");
 
-    // set thing the search word
+  // set thing the search word
   const handleSearchWord = (term: string) => {
-    {/* Search word feature here */}
-    setSearchTerm(term)
+    {
+      /* Search word feature here */
+    }
+    setSearchTerm(term);
   };
 
   // Filtering Flashcard by korean / english search term
-  const filterFlashcards = (flashcards: { term: any; definition:any;}) => {
+  const filterFlashcards = (flashcards: { term: any; definition: any }) => {
     // Check if searchTerm is empty (show all in this case)
-    if (!searchTerm) 
-      return true;
+    if (!searchTerm) return true;
 
-    
     // Check if the term or definition contains the searchTerm
     // For Korean, use Hangul.search for korean regex
     // Check out https://www.npmjs.com/package/hangul-js
     const koreanMatch = Hangul.search(flashcards.term, searchTerm) >= 0;
     // English definition to search word match
-    const englishMatch = flashcards.definition.toLowerCase().includes(searchTerm.toLowerCase());
+    const englishMatch = flashcards.definition
+      .toLowerCase()
+      .includes(searchTerm.toLowerCase());
 
     // return any matching term
     return koreanMatch || englishMatch;
   };
-  
+
   const AddCardButton = () => {
     return (
       <TouchableOpacity onPress={handleOpenAdd}>
@@ -112,7 +116,6 @@ export default function DeckPreview({ navigation, route }: any) {
   const handleCardPress = (cardId: string) => {
     setSelectedCardId(selectedCardId === cardId ? null : cardId);
   };
-
 
   const { theme } = useTheme();
 
@@ -339,10 +342,10 @@ export default function DeckPreview({ navigation, route }: any) {
       </View>
 
       {/* Search word input */}
-      <View style={styles.searchContainer}>
-        <AntDesign name="search1" style={styles.searchIcon}/>
+      <View style={OldStyles.searchContainer}>
+        <AntDesign name="search1" style={OldStyles.searchIcon} />
         <TextInput
-          style={styles.searchInput}
+          style={OldStyles.searchInput}
           onChangeText={handleSearchWord}
           value={searchTerm}
           placeholder="Search"
@@ -362,7 +365,7 @@ export default function DeckPreview({ navigation, route }: any) {
       {/* List of cards display */}
       <FlatList
         // Filtering word using filter()
-        data={flashcards.filter(filterFlashcards)} 
+        data={flashcards.filter(filterFlashcards)}
         renderItem={({ item }) => (
           // The modal is now tied to the selectedCardId state.
           // It will open for the card that was last pressed.
@@ -370,9 +373,21 @@ export default function DeckPreview({ navigation, route }: any) {
             <PreviewCard
               term={item.term}
               definition={item.definition}
-              onPress={() => {}}
-              // onPress={() => handleCardPress(item.id)}
+              onPress={() => handleCardPress(item.id)}
             />
+
+            {selectedCardId === item.id && (
+              <AddCardModal
+                isVisible={isAddingVisible}
+                onAdd={handleAdd} // Used for adding a new card
+                onUpdate={() => updateFlashcard}
+                onDelete={() => deleteFlashcard}
+                onCancel={handleCancel}
+                koreanWordInitial={selectedCard?.term || ""}
+                englishWordInitial={selectedCard?.definition || ""}
+                isEditMode={true}
+              />
+            )}
           </View>
         )}
         keyExtractor={(item) => item.id}
@@ -391,36 +406,8 @@ export default function DeckPreview({ navigation, route }: any) {
   );
 }
 
-
-export const styles = StyleSheet.create({
-  searchContainer: {
-    paddingVertical: 5,
-    marginTop: 15,
-    marginBottom: 15,
-    marginHorizontal: 20,
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'flex-start',
-    backgroundColor: "#FFFFFF",
-    borderWidth: 1,
-    borderRightWidth: 4,
-    borderBottomWidth: 4,
-    borderRadius: 20,
-    borderColor: "#000000",
-  },
-  searchIcon: {
-      paddingLeft: 10,
-      fontSize: 20,
-      color: '#000000'
-  },
-  searchInput: {
-      width: '100%',
-      paddingLeft: 10,
-  },
-});
-
-
-{/* {selectedCardId === item.id && (
+{
+  /* {selectedCardId === item.id && (
               <AddCardModal
                 isVisible={true}
                 onAdd={handleAdd}
@@ -429,196 +416,221 @@ export const styles = StyleSheet.create({
                 englishWordInitial={item.definition}
                 isEditMode={true}
               />
-            )} */}
-// export const styles = StyleSheet.create({
-//   pressableArea: {
-//     flex: 1,
-//   },
-//   playButtonContainer: {
-//     width: 41,
-//     height: 41,
-//     backgroundColor: "#FFDF37",
-//     alignItems: "center",
-//     justifyContent: "center",
-//     borderRadius: 100,
-//     paddingLeft: 4,
-//   },
-//   container: {
-//     flex: 1,
-//     backgroundColor: "#F2E8E1",
-//     paddingHorizontal: 4,
-//   },
-//   header: {
-//     flexDirection: "row",
-//     alignItems: "flex-start",
-//     justifyContent: "flex-start",
-//     padding: 20,
-//     backgroundColor: "transparent",
-//   },
-//   backIcon: {
-//     paddingTop: 4,
-//   },
-//   headerContent: {
-//     width: "100%",
-//     flexDirection: "row",
-//     justifyContent: "space-between",
-//     alignItems: "center",
-//     paddingRight: 35,
-//   },
-//   headerInfo: {
-//     flexDirection: "column",
-//     justifyContent: "center",
-//   },
-//   headerTitle: {
-//     fontFamily: "GeneralSans-Semibold",
-//     fontSize: 20,
-//     fontWeight: "bold",
-//     marginBottom: 4,
-//   },
-//   subHeader: {
-//     flexDirection: "row",
-//     alignItems: "center",
-//   },
-//   wordCount: {
-//     fontFamily: "GeneralSans-Regular",
-//     fontSize: 14,
-//     color: "#B6B6B6",
-//     paddingLeft: 4,
-//   },
-//   addingContainer: {
-//     flexDirection: "column",
-//     padding: 20,
-//     marginBottom: 5,
-//     marginHorizontal: 20,
-//     borderWidth: 1,
-//     borderRightWidth: 4,
-//     borderBottomWidth: 4,
-//     borderRadius: 10,
-//     borderColor: "#000000",
-//     backgroundColor: "white",
-//   },
-//   addingKoreanText: {
-//     fontSize: 16,
-//     borderWidth: 1,
-//     paddingVertical: 9,
-//     marginVertical: 5,
-//     borderRadius: 4,
-//     textAlign: "left",
-//     paddingLeft: 13,
-//     fontWeight: "bold",
-//   },
-//   addingEnglishText: {
-//     borderWidth: 1,
-//     marginVertical: 5,
-//     paddingVertical: 7,
-//     borderRadius: 4,
-//     textAlign: "left",
-//     paddingLeft: 13,
-//   },
-//   addingButtonContainer: {
-//     flexDirection: "row",
-//     justifyContent: "space-between",
-//     alignItems: "center",
-//     width: "100%",
-//     marginTop: 20,
-//   },
-//   cancelButtonText: {
-//     fontFamily: "GeneralSans-Bold",
-//   },
-//   cancelButton: {
-//     width: "30%",
-//     backgroundColor: "#FF454C",
-//     textAlign: "center",
-//     flexDirection: "row",
-//     justifyContent: "center",
-//     alignItems: "center",
-//     paddingVertical: 10,
-//     borderWidth: 1,
-//     borderRightWidth: 4,
-//     borderBottomWidth: 4,
-//     borderRadius: 10,
-//     borderColor: "#000000",
-//   },
-//   addButtonText: {
-//     fontFamily: "GeneralSans-Bold",
-//   },
-//   addButton: {
-//     width: "65%",
-//     backgroundColor: "#72DA4F",
-//     textAlign: "center",
-//     flexDirection: "row",
-//     justifyContent: "center",
-//     alignItems: "center",
-//     paddingVertical: 10,
-//     borderWidth: 1,
-//     borderRightWidth: 4,
-//     borderBottomWidth: 4,
-//     borderRadius: 10,
-//     borderColor: "#000000",
-//   },
-//   listItem: {
-//     flexDirection: "row",
-//     alignItems: "center",
-//     justifyContent: "space-between",
-//     padding: 12,
-//     marginVertical: 5,
-//     marginHorizontal: 20,
-//     borderWidth: 1,
-//     borderRightWidth: 4,
-//     borderBottomWidth: 4,
-//     borderRadius: 10,
-//     borderColor: "#000000",
-//     backgroundColor: "white",
-//   },
-//   termContainer: {
-//     flexDirection: "column",
-//     flex: 1,
-//   },
-//   termText: {
-//     fontSize: 22,
-//     fontFamily: "GeneralSans-Bold",
-//   },
-//   term: {
-//     fontSize: 16,
-//     color: "#A7A7A7",
-//     fontFamily: "GeneralSans-Medium",
-//     marginTop: -4,
-//   },
-//   previewBadge: {
-//     width: 48,
-//     height: 48,
-//     borderRadius: 10,
-//     marginRight: 16,
-//     backgroundColor: "#7F9CEF",
-//     alignItems: "center",
-//     justifyContent: "center",
-//   },
-//   previewBadgeText: {
-//     paddingTop: 4,
-//     fontFamily: "GeneralSans-Bold",
-//     fontSize: 26,
-//     color: "white",
-//   },
-//   practiceButton: {
-//     margin: 20,
-//     padding: 20,
-//     borderWidth: 1,
-//     borderBottomWidth: 4,
-//     borderRightWidth: 4,
-//     borderRadius: 10,
-//     borderColor: "#000000",
-//     backgroundColor: "#FFDF37",
-//     alignItems: "center",
-//     justifyContent: "center",
-//   },
-//   practiceButtonText: {
-//     fontSize: 20,
-//     fontWeight: "bold",
-//     fontFamily: "GeneralSans-Bold",
-//   },
-//   playButton: {},
-//   addCardText: {
-//     fontFamily: "GeneralSans-Semibold",
-//     fontSize: 20,
-//   },
-// });
+            )} */
+}
+export const OldStyles = StyleSheet.create({
+  searchContainer: {
+    paddingVertical: 5,
+    marginTop: 15,
+    marginBottom: 15,
+    marginHorizontal: 20,
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "flex-start",
+    backgroundColor: "#FFFFFF",
+    borderWidth: 1,
+    borderRightWidth: 4,
+    borderBottomWidth: 4,
+    borderRadius: 20,
+    borderColor: "#000000",
+  },
+  searchIcon: {
+    paddingLeft: 10,
+    fontSize: 20,
+    color: "#000000",
+  },
+  searchInput: {
+    width: "100%",
+    paddingLeft: 10,
+  },
+  pressableArea: {
+    flex: 1,
+  },
+  playButtonContainer: {
+    width: 41,
+    height: 41,
+    backgroundColor: "#FFDF37",
+    alignItems: "center",
+    justifyContent: "center",
+    borderRadius: 100,
+    paddingLeft: 4,
+  },
+  container: {
+    flex: 1,
+    backgroundColor: "#F2E8E1",
+    paddingHorizontal: 4,
+  },
+  header: {
+    flexDirection: "row",
+    alignItems: "flex-start",
+    justifyContent: "flex-start",
+    padding: 20,
+    backgroundColor: "transparent",
+  },
+  backIcon: {
+    paddingTop: 4,
+  },
+  headerContent: {
+    width: "100%",
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+    paddingRight: 35,
+  },
+  headerInfo: {
+    flexDirection: "column",
+    justifyContent: "center",
+  },
+  headerTitle: {
+    fontFamily: "GeneralSans-Semibold",
+    fontSize: 20,
+    fontWeight: "bold",
+    marginBottom: 4,
+  },
+  subHeader: {
+    flexDirection: "row",
+    alignItems: "center",
+  },
+  wordCount: {
+    fontFamily: "GeneralSans-Regular",
+    fontSize: 14,
+    color: "#B6B6B6",
+    paddingLeft: 4,
+  },
+  addingContainer: {
+    flexDirection: "column",
+    padding: 20,
+    marginBottom: 5,
+    marginHorizontal: 20,
+    borderWidth: 1,
+    borderRightWidth: 4,
+    borderBottomWidth: 4,
+    borderRadius: 10,
+    borderColor: "#000000",
+    backgroundColor: "white",
+  },
+  addingKoreanText: {
+    fontSize: 16,
+    borderWidth: 1,
+    paddingVertical: 9,
+    marginVertical: 5,
+    borderRadius: 4,
+    textAlign: "left",
+    paddingLeft: 13,
+    fontWeight: "bold",
+  },
+  addingEnglishText: {
+    borderWidth: 1,
+    marginVertical: 5,
+    paddingVertical: 7,
+    borderRadius: 4,
+    textAlign: "left",
+    paddingLeft: 13,
+  },
+  addingButtonContainer: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+    width: "100%",
+    marginTop: 20,
+  },
+  cancelButtonText: {
+    fontFamily: "GeneralSans-Bold",
+  },
+  cancelButton: {
+    width: "30%",
+    backgroundColor: "#FF454C",
+    textAlign: "center",
+    flexDirection: "row",
+    justifyContent: "center",
+    alignItems: "center",
+    paddingVertical: 10,
+    borderWidth: 1,
+    borderRightWidth: 4,
+    borderBottomWidth: 4,
+    borderRadius: 10,
+    borderColor: "#000000",
+  },
+  addButtonText: {
+    fontFamily: "GeneralSans-Bold",
+  },
+  addButton: {
+    width: "65%",
+    backgroundColor: "#72DA4F",
+    textAlign: "center",
+    flexDirection: "row",
+    justifyContent: "center",
+    alignItems: "center",
+    paddingVertical: 10,
+    borderWidth: 1,
+    borderRightWidth: 4,
+    borderBottomWidth: 4,
+    borderRadius: 10,
+    borderColor: "#000000",
+  },
+  listItem: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+    padding: 12,
+    marginVertical: 5,
+    marginHorizontal: 20,
+    borderWidth: 1,
+    borderRightWidth: 4,
+    borderBottomWidth: 4,
+    borderRadius: 10,
+    borderColor: "#000000",
+    backgroundColor: "white",
+  },
+  termContainer: {
+    flexDirection: "column",
+    flex: 1,
+  },
+  termText: {
+    fontSize: 22,
+    fontFamily: "GeneralSans-Bold",
+  },
+  term: {
+    fontSize: 16,
+    color: "#A7A7A7",
+    fontFamily: "GeneralSans-Medium",
+    marginTop: -4,
+  },
+  previewBadge: {
+    width: 48,
+    height: 48,
+    borderRadius: 10,
+    marginRight: 16,
+    backgroundColor: "#7F9CEF",
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  previewBadgeText: {
+    paddingTop: 4,
+    fontFamily: "GeneralSans-Bold",
+    fontSize: 26,
+    color: "white",
+  },
+  practiceButton: {
+    margin: 20,
+    padding: 20,
+    borderWidth: 1,
+    borderBottomWidth: 4,
+    borderRightWidth: 4,
+    borderRadius: 10,
+    borderColor: "#000000",
+    backgroundColor: "#FFDF37",
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  practiceButtonText: {
+    fontSize: 20,
+    fontWeight: "bold",
+    fontFamily: "GeneralSans-Bold",
+  },
+  playButton: {},
+  addCardText: {
+    fontFamily: "GeneralSans-Semibold",
+    fontSize: 20,
+  },
+});
