@@ -29,7 +29,7 @@ export default function App() {
       <LibraryProvider>
         <SafeAreaView style={{ flex: 1, backgroundColor: "#4E4E4E" }}>
           <StatusBar
-            barStyle="dark-content"
+            barStyle="light-content"
             backgroundColor={theme.colors.backgroundColor}
           />
           <Configure />

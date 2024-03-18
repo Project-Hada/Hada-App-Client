@@ -86,32 +86,36 @@ export const LibraryProvider: React.FC<PropsWithChildren<{}>> = ({
     flashcardId: string,
     updatedFlashcard: FlashCardType
   ) => {
-    // Access the playlist directly by ID
     const playlistToUpdate = library[playlistId];
 
     if (playlistToUpdate) {
-      // Map through the flashcards to find and update the specified one
-      const updatedFlashCards = playlistToUpdate.playlist.map((flashcard) =>
-        flashcard.id === flashcardId
-          ? { ...flashcard, ...updatedFlashcard }
-          : flashcard
+      // Find the index of the flashcard to update
+      const flashcardIndex = playlistToUpdate.playlist.findIndex(
+        (flashcard) => flashcard.id === flashcardId
       );
 
-      // Create a new updated playlist
-      const updatedPlaylist = {
-        ...playlistToUpdate,
-        playlist: updatedFlashCards,
-      };
+      if (flashcardIndex !== -1) {
+        // Create a copy of the current flashcards
+        const updatedFlashcards = [...playlistToUpdate.playlist];
+        // Update the specific flashcard at the found index
+        updatedFlashcards[flashcardIndex] = updatedFlashcard;
 
-      // Update the library with the new playlist
-      setLibrary((prevLibrary) => ({
-        ...prevLibrary,
-        [playlistId]: updatedPlaylist,
-      }));
+        // Create a new updated playlist with the updated flashcards array
+        const updatedPlaylist = {
+          ...playlistToUpdate,
+          playlist: updatedFlashcards,
+        };
 
-      // Also update the currPlaylist if it's the one being updated
-      if (currPlaylist?.id === playlistId) {
-        setCurrPlaylist(updatedPlaylist);
+        // Update the library with the new playlist
+        setLibrary((prevLibrary) => ({
+          ...prevLibrary,
+          [playlistId]: updatedPlaylist,
+        }));
+
+        // Also update the currPlaylist if it's the one being updated
+        if (currPlaylist?.id === playlistId) {
+          setCurrPlaylist(updatedPlaylist);
+        }
       }
     }
   };
