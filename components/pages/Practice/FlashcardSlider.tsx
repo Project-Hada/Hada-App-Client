@@ -1,5 +1,7 @@
 import React from "react";
 import { StyleSheet, View, Text, Pressable } from "react-native";
+import { useTheme } from "../../../utils/contexts/ThemeContext";
+import { typography } from "../../theme/Typography";
 
 type FlashCardProps = {
   term: string;
@@ -16,6 +18,45 @@ export default function FlashCardSlider({
   isFlipped,
 }: FlashCardProps) {
   // Removed animated logic and state
+  const { theme } = useTheme();
+  const styles = StyleSheet.create({
+    flashCardContainer: {
+      height: "100%",
+      justifyContent: "center",
+      alignItems: "center",
+      pointerEvents: "none",
+    },
+    flashCardFront: {
+      width: "100%",
+      height: "100%",
+      borderRadius: 13,
+      backgroundColor: theme.colors.container,
+      justifyContent: "center",
+      alignItems: "center",
+    },
+    flashCardBack: {
+      width: "100%",
+      height: "100%",
+      borderRadius: 13,
+      backgroundColor: theme.colors.container,
+      justifyContent: "center",
+      alignItems: "center",
+    },
+    termContainer: {},
+    term: {
+      fontSize: typography.flashcard.termSize,
+      fontFamily: typography.fonts.variableFont,
+    },
+    romanizationContainer: {},
+    romanization: {
+      fontSize: typography.flashcard.romanizationSize,
+      fontFamily: typography.fonts.regularFont,
+      color: theme.colors.subtext,
+    },
+    definition: {
+      fontSize: typography.flashcard.definitionSize,
+    },
+  });
 
   return (
     <View style={styles.flashCardContainer}>
@@ -43,41 +84,41 @@ export default function FlashCardSlider({
 </View> */
 }
 
-const styles = StyleSheet.create({
-  flashCardContainer: {
-    height: "100%",
-    justifyContent: "center",
-    alignItems: "center",
-    pointerEvents: "none",
-  },
-  flashCardFront: {
-    width: "100%",
-    height: "100%",
-    borderRadius: 13,
-    backgroundColor: "white",
-    justifyContent: "center",
-    alignItems: "center",
-  },
-  flashCardBack: {
-    width: "100%",
-    height: "100%",
-    borderRadius: 13,
-    backgroundColor: "white",
-    justifyContent: "center",
-    alignItems: "center",
-  },
-  termContainer: {},
-  term: {
-    fontSize: 38,
-    fontFamily: "GeneralSans-Variable",
-  },
-  romanizationContainer: {},
-  romanization: {
-    fontSize: 28,
-    fontFamily: "GeneralSans-Regular",
-    color: "#A7A7A7",
-  },
-  definition: {
-    fontSize: 34,
-  },
-});
+// const styles = StyleSheet.create({
+//   flashCardContainer: {
+//     height: "100%",
+//     justifyContent: "center",
+//     alignItems: "center",
+//     pointerEvents: "none",
+//   },
+//   flashCardFront: {
+//     width: "100%",
+//     height: "100%",
+//     borderRadius: 13,
+//     backgroundColor: "white",
+//     justifyContent: "center",
+//     alignItems: "center",
+//   },
+//   flashCardBack: {
+//     width: "100%",
+//     height: "100%",
+//     borderRadius: 13,
+//     backgroundColor: "white",
+//     justifyContent: "center",
+//     alignItems: "center",
+//   },
+//   termContainer: {},
+//   term: {
+//     fontSize: 38,
+//     fontFamily: "GeneralSans-Variable",
+//   },
+//   romanizationContainer: {},
+//   romanization: {
+//     fontSize: 28,
+//     fontFamily: "GeneralSans-Regular",
+//     color: "#A7A7A7",
+//   },
+//   definition: {
+//     fontSize: 34,
+//   },
+// });
