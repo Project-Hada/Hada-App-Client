@@ -26,6 +26,9 @@ import PreviewCard from "./PreviewCard";
 import { FlashCardType } from "../../../utils/types";
 import { useTheme } from "../../../utils/contexts/ThemeContext";
 
+// For Korean regex
+import * as Hangul from 'hangul-js'
+
 type DeckPreviewProps = {
   navigation: any;
 };
@@ -61,6 +64,33 @@ export default function DeckPreview({ navigation, route }: any) {
     setSelectedCardId(null);
   };
 
+  // Storing the search term
+  const [searchTerm, setSearchTerm] = useState('');
+
+    // set thing the search word
+  const handleSearchWord = (term: string) => {
+    {/* Search word feature here */}
+    setSearchTerm(term)
+  };
+
+  // Filtering Flashcard by korean / english search term
+  const filterFlashcards = (flashcards: { term: any; definition:any;}) => {
+    // Check if searchTerm is empty (show all in this case)
+    if (!searchTerm) 
+      return true;
+
+    
+    // Check if the term or definition contains the searchTerm
+    // For Korean, use Hangul.search for korean regex
+    // Check out https://www.npmjs.com/package/hangul-js
+    const koreanMatch = Hangul.search(flashcards.term, searchTerm) >= 0;
+    // English definition to search word match
+    const englishMatch = flashcards.definition.toLowerCase().includes(searchTerm.toLowerCase());
+
+    // return any matching term
+    return koreanMatch || englishMatch;
+  };
+  
   const AddCardButton = () => {
     return (
       <TouchableOpacity onPress={handleOpenAdd}>
@@ -291,7 +321,7 @@ export default function DeckPreview({ navigation, route }: any) {
         </TouchableOpacity>
         <View style={styles.headerContent}>
           <View style={styles.headerInfo}>
-            <Text style={styles.headerTitle}>{currPlaylist.title}</Text>
+            <Text style={styles.headerTitle}>{currPlaylist?.title}</Text>
             <View style={styles.subHeader}>
               <MaterialCommunityIcons
                 name="cards-variant"
@@ -308,6 +338,18 @@ export default function DeckPreview({ navigation, route }: any) {
         </View>
       </View>
 
+      {/* Search word input */}
+      <View style={styles.searchContainer}>
+        <AntDesign name="search1" style={styles.searchIcon}/>
+        <TextInput
+          style={styles.searchInput}
+          onChangeText={handleSearchWord}
+          value={searchTerm}
+          placeholder="Search"
+          keyboardType="default"
+        />
+      </View>
+
       {/* Adding new card modal */}
       <AddCardModal
         isVisible={isAddingVisible}
@@ -319,7 +361,8 @@ export default function DeckPreview({ navigation, route }: any) {
       />
       {/* List of cards display */}
       <FlatList
-        data={flashcards}
+        // Filtering word using filter()
+        data={flashcards.filter(filterFlashcards)} 
         renderItem={({ item }) => (
           // The modal is now tied to the selectedCardId state.
           // It will open for the card that was last pressed.
@@ -330,16 +373,6 @@ export default function DeckPreview({ navigation, route }: any) {
               onPress={() => {}}
               // onPress={() => handleCardPress(item.id)}
             />
-            {/* {selectedCardId === item.id && (
-              <AddCardModal
-                isVisible={true}
-                onAdd={handleAdd}
-                onCancel={handleCancel}
-                koreanWordInitial={item.term}
-                englishWordInitial={item.definition}
-                isEditMode={true}
-              />
-            )} */}
           </View>
         )}
         keyExtractor={(item) => item.id}
@@ -358,6 +391,45 @@ export default function DeckPreview({ navigation, route }: any) {
   );
 }
 
+
+export const styles = StyleSheet.create({
+  searchContainer: {
+    paddingVertical: 5,
+    marginTop: 15,
+    marginBottom: 15,
+    marginHorizontal: 20,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'flex-start',
+    backgroundColor: "#FFFFFF",
+    borderWidth: 1,
+    borderRightWidth: 4,
+    borderBottomWidth: 4,
+    borderRadius: 20,
+    borderColor: "#000000",
+  },
+  searchIcon: {
+      paddingLeft: 10,
+      fontSize: 20,
+      color: '#000000'
+  },
+  searchInput: {
+      width: '100%',
+      paddingLeft: 10,
+  },
+});
+
+
+{/* {selectedCardId === item.id && (
+              <AddCardModal
+                isVisible={true}
+                onAdd={handleAdd}
+                onCancel={handleCancel}
+                koreanWordInitial={item.term}
+                englishWordInitial={item.definition}
+                isEditMode={true}
+              />
+            )} */}
 // export const styles = StyleSheet.create({
 //   pressableArea: {
 //     flex: 1,
