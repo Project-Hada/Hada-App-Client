@@ -49,6 +49,7 @@ export default function DeckPreview({ navigation, route }: any) {
   };
   const handleOpenAdd = () => {
     setIsAddingVisible(true);
+    setSelectedCardId(null);
   };
   const handleAdd = (koreanWord: string, englishWord: string) => {
     if (currPlaylist && currPlaylist.id) {
@@ -115,6 +116,7 @@ export default function DeckPreview({ navigation, route }: any) {
   // Function to handle card press
   const handleCardPress = (cardId: string) => {
     setSelectedCardId(selectedCardId === cardId ? null : cardId);
+    setIsAddingVisible(false);
   };
 
   const { theme } = useTheme();
@@ -378,7 +380,7 @@ export default function DeckPreview({ navigation, route }: any) {
 
             {selectedCardId === item.id && (
               <AddCardModal
-                isVisible={isAddingVisible}
+                isVisible={selectedCardId !== null}
                 onAdd={handleAdd} // Used for adding a new card
                 onUpdate={() => updateFlashcard}
                 onDelete={() => deleteFlashcard}
