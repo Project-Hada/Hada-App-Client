@@ -2,31 +2,40 @@ import { AntDesign } from '@expo/vector-icons';
 import React from 'react';
 import { useState, useEffect } from 'react'
 import { Button, View, ScrollView, StyleSheet, TextInput, Pressable } from 'react-native';
-import { RegisterScreen } from './RegisterScreen';
+import { auth } from '../../../utils/firebaseConfig';
+import { signInWithEmailAndPassword } from 'firebase/auth';
 
 export function LoginScreen({ navigation, route }: any) {
-  const [usernameInput, setUsernameInput] = useState('');
+  const [emailInput, setEmailInput] = useState('');
   const [passwordInput, setPasswordInput] = useState('');
 
+  const [error, setError] = useState('');
+
   const handleSubmitForLogin = async () => {
-    // if valid credentials:
-    navigation.navigate("LibraryScreen")
-    
-    // else:
-    //    on the same page throw an error
+    try {
+      const response = await signInWithEmailAndPassword(auth, emailInput, passwordInput)
+      console.log(response)
+      navigation.navigate("LibraryScreen")
+    }
+    catch (error) {
+      console.log(error)
+      setError("Something went wrong. Try again.")
+    }
   }
 
   return (
     <View style={{paddingHorizontal: 20}}>
       <h1> LOGIN </h1>
 
+      {(error !== "") && <p>{error}</p>}
+
       {/* Custom Login */}
       <TextInput
         style={styles.input}
-        onChangeText={setUsernameInput}
-        placeholder='username'
+        onChangeText={setEmailInput}
+        placeholder='email'
         placeholderTextColor="#D3D3D3" 
-        value={usernameInput}
+        value={emailInput}
       />
       <TextInput
         secureTextEntry={true}
@@ -41,16 +50,16 @@ export function LoginScreen({ navigation, route }: any) {
         title="Login"
         onPress={handleSubmitForLogin}
       />
-      TESTING ONLY: Press LOGIN to immediately navigate to LibraryScreen
+      <span>TESTING ONLY: Press LOGIN to immediately navigate to LibraryScreen</span>
       
       {/* Custom Register */}
       <Pressable style={{ flexDirection: 'row', paddingTop: 20}} onPress={() => navigation.navigate("RegisterScreen")}>
-        <AntDesign name="plussquareo" size={24} color="black" /> Register
+        <AntDesign name="plussquareo" size={24} color="black" /><span>Register</span>
       </Pressable>
 
       {/* TESTING ONLY */}
       <Pressable style={{ flexDirection: 'row', paddingTop: 20}} onPress={() => navigation.navigate("BackendDemo")}>
-        <AntDesign name="codesquareo" size={24} color="black" /> BackendDemo
+        <AntDesign name="codesquareo" size={24} color="black" /><span>BackendDemo</span>
       </Pressable>
     </View>
   )
