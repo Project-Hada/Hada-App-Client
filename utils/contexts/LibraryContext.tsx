@@ -6,12 +6,15 @@ import React, {
   useState,
 } from "react";
 import { FlashCardType, PlaylistType } from "../types";
+import { User, onAuthStateChanged } from "firebase/auth";
+import { auth } from "../firebaseConfig";
 
 export interface LibraryState {
   [id: string]: PlaylistType;
 }
 
 export interface PlaylistContextType {
+  user: User | null
   currPlaylist: PlaylistType | null;
   setCurrPlaylist: Dispatch<SetStateAction<PlaylistType | null>>;
   library: LibraryState;
@@ -21,6 +24,7 @@ export interface PlaylistContextType {
 }
 
 const defaultState: PlaylistContextType = {
+  user: null,
   currPlaylist: null, // Since currPlaylist can be null now
   setCurrPlaylist: () => {},
   library: {}, // Initialize library as an empty object
@@ -73,9 +77,13 @@ export const LibraryProvider: React.FC<PropsWithChildren<{}>> = ({
     }
   };
 
+  const [user, setUser] = useState<User | null>(null);
+  onAuthStateChanged(auth, (user) => { setUser(user) })
+
   return (
     <LibraryContext.Provider
       value={{
+        user,
         currPlaylist,
         setCurrPlaylist,
         library,

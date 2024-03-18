@@ -41,7 +41,7 @@ type LibraryScreenProps = {
 };
 export default function LibraryScreen({ navigation, route }: any) {
   // Library Context
-  const { library, setCurrPlaylist, addPlaylist } = useContext(LibraryContext);
+  const { user, library, setCurrPlaylist, addPlaylist } = useContext(LibraryContext);
   const flashcards = flashCards;
 
   const handleNavigation = (playlistId: string) => {
@@ -90,6 +90,8 @@ export default function LibraryScreen({ navigation, route }: any) {
         </TouchableOpacity>
       </View>
       <ScrollView contentContainerStyle={libStyles.scrollView}>
+        <Text>Your Email: {user?.email}</Text>
+
         {Object.values(library).map((item, index) => {
           return (
             <TouchableOpacity
