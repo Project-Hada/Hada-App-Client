@@ -25,9 +25,11 @@ import { StackNavigationProp } from "@react-navigation/stack";
 import { FlashCardType } from "../../utils/types";
 import LibraryContext from "../../utils/contexts/LibraryContext";
 import flashCards from "../../Data/fakeData";
-import { styles } from "./DeckPreview/DeckPreview";
+// import { styles } from "./DeckPreview/DeckPreview";
 import AddButton from "../AddButton";
 import generateId from "../../utils/idGenerator";
+import { useTheme } from "../../utils/contexts/ThemeContext";
+import { typography } from "../theme/Typography";
 
 type PlaylistItemType = {
   name: string;
@@ -80,6 +82,137 @@ export default function LibraryScreen({ navigation, route }: any) {
     navigation.navigate("DeckPreview", { playlistId: newPlaylistId });
   };
 
+  const {theme} = useTheme();
+  const libStyles = StyleSheet.create({
+    container: {
+      flex: 1,
+      width: "100%",
+      height: "100%",
+      justifyContent: "center",
+      backgroundColor: theme.colors.backgroundColor,
+      padding: 0,
+      margin: 0,
+    },
+    headerContainer: {
+      paddingVertical: 30,
+      width: "100%",
+      flexDirection: "row",
+      justifyContent: "space-between",
+      alignItems: "center",
+      paddingHorizontal: 15,
+    },
+    headerText: {
+      fontFamily: typography.fonts.boldFont,
+      fontSize: 30,
+      color: theme.colors.text,
+    },
+    scrollView: {
+      width: "100%",
+      justifyContent: "center",
+    },
+    playlist: {
+      flexDirection: "row",
+      alignItems: "center",
+      backgroundColor: theme.colors.container,
+      borderWidth: 1,
+      borderRightWidth: 4,
+      borderBottomWidth: 4,
+      borderRadius: 10,
+      borderColor: theme.colors.border,
+      paddingVertical: 10,
+      marginBottom: 15,
+      marginHorizontal: 15,
+    },
+    iconContainer: {
+      justifyContent: "center",
+      alignItems: "center",
+      borderRadius: 3,
+      backgroundColor: theme.colors.icons,
+      marginHorizontal: 10,
+      width: 55,
+      height: 55,
+    },
+    playlistInfo: {
+      flex: 5,
+    },
+  
+    addingContainer: {
+      flexDirection: "column",
+      padding: 20,
+      marginBottom: 15,
+      marginHorizontal: 15,
+      borderWidth: 1,
+      borderRightWidth: 4,
+      borderBottomWidth: 4,
+      borderRadius: 10,
+      borderColor: theme.colors.border,
+      backgroundColor: theme.colors.container,
+    },
+    addingKoreanText: {
+      borderWidth: 1,
+      paddingVertical: 7,
+      marginVertical: 5,
+      borderRadius: 4,
+      textAlign: "left",
+      paddingLeft: 5,
+      fontWeight: "bold",
+    },
+    addingEnglishText: {
+      borderWidth: 1,
+      marginVertical: 5,
+      paddingVertical: 4,
+      borderRadius: 4,
+      textAlign: "left",
+      paddingLeft: 5,
+    },
+    addingButtonContainer: {
+      flexDirection: "row",
+      justifyContent: "space-between",
+      alignItems: "center",
+      width: "100%",
+      marginTop: 20,
+    },
+    cancelButton: {
+      width: "30%",
+      backgroundColor: "red",
+      textAlign: "center",
+      flexDirection: "row",
+      justifyContent: "center",
+      alignItems: "center",
+      paddingVertical: 10,
+      borderWidth: 1,
+      borderRightWidth: 4,
+      borderBottomWidth: 4,
+      borderRadius: 10,
+      borderColor: theme.colors.border,
+    },
+    addButton: {
+      width: "65%",
+      backgroundColor: "green",
+      textAlign: "center",
+      flexDirection: "row",
+      justifyContent: "center",
+      alignItems: "center",
+      paddingVertical: 10,
+      borderWidth: 1,
+      borderRightWidth: 4,
+      borderBottomWidth: 4,
+      borderRadius: 10,
+      borderColor: theme.colors.border,
+    },
+  
+    playlistName: {
+      fontFamily: typography.fonts.boldFont,
+      fontSize: typography.library.playlistTitleSize,
+      color: theme.colors.text,
+    },
+    playlistWordCount: {
+      fontFamily: typography.fonts.mediumFont,
+      fontSize: typography.library.subTextSize,
+      color: theme.colors.subtext,
+    },
+  });
+
   return (
     <SafeAreaView style={libStyles.container}>
       <View style={libStyles.headerContainer}>
@@ -118,149 +251,149 @@ export default function LibraryScreen({ navigation, route }: any) {
   );
 }
 
-const colors = {
-  backgroundThemeColor: "#F2E8E1",
-  iconBackground: "#7F9CEF",
-  playlistColor: "#FFFFFF",
-  textColor: "#000000",
-  subtextColor: "#A7A7A7",
-};
+// const colors = {
+//   backgroundThemeColor: "#F2E8E1",
+//   iconBackground: "#7F9CEF",
+//   playlistColor: "#FFFFFF",
+//   textColor: "#000000",
+//   subtextColor: "#A7A7A7",
+// };
 
-const fonts = {
-  fontFamily: "GeneralSans-Regular",
-  headerTitleSize: 24,
-  playlistTitleSize: 18,
-  subTextSize: 14,
-};
+// const fonts = {
+//   fontFamily: "GeneralSans-Regular",
+//   headerTitleSize: 24,
+//   playlistTitleSize: 18,
+//   subTextSize: 14,
+// };
 
-export const libStyles = StyleSheet.create({
-  container: {
-    flex: 1,
-    width: "100%",
-    justifyContent: "center",
-    backgroundColor: colors.backgroundThemeColor,
-    padding: 0,
-    margin: 0,
-  },
-  headerContainer: {
-    paddingVertical: 30,
-    width: "100%",
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
-    paddingHorizontal: 15,
-  },
-  headerText: {
-    fontFamily: "GeneralSans-Bold",
-    fontSize: 30,
-  },
-  scrollView: {
-    width: "100%",
-    justifyContent: "center",
-  },
-  playlist: {
-    flexDirection: "row",
-    alignItems: "center",
+// export const libStyles = StyleSheet.create({
+//   container: {
+//     flex: 1,
+//     width: "100%",
+//     justifyContent: "center",
+//     backgroundColor: colors.backgroundThemeColor,
+//     padding: 0,
+//     margin: 0,
+//   },
+//   headerContainer: {
+//     paddingVertical: 30,
+//     width: "100%",
+//     flexDirection: "row",
+//     justifyContent: "space-between",
+//     alignItems: "center",
+//     paddingHorizontal: 15,
+//   },
+//   headerText: {
+//     fontFamily: "GeneralSans-Bold",
+//     fontSize: 30,
+//   },
+//   scrollView: {
+//     width: "100%",
+//     justifyContent: "center",
+//   },
+//   playlist: {
+//     flexDirection: "row",
+//     alignItems: "center",
 
-    backgroundColor: colors.playlistColor,
+//     backgroundColor: colors.playlistColor,
 
-    borderWidth: 1,
-    borderRightWidth: 4,
-    borderBottomWidth: 4,
-    borderRadius: 10,
-    borderColor: "#000000",
+//     borderWidth: 1,
+//     borderRightWidth: 4,
+//     borderBottomWidth: 4,
+//     borderRadius: 10,
+//     borderColor: "#000000",
 
-    paddingVertical: 10,
-    marginBottom: 15,
-    marginHorizontal: 15,
-  },
-  iconContainer: {
-    justifyContent: "center",
-    alignItems: "center",
-    borderRadius: 3,
-    backgroundColor: colors.iconBackground,
-    marginHorizontal: 10,
-    width: 55,
-    height: 55,
-  },
-  playlistInfo: {
-    flex: 5,
-  },
+//     paddingVertical: 10,
+//     marginBottom: 15,
+//     marginHorizontal: 15,
+//   },
+//   iconContainer: {
+//     justifyContent: "center",
+//     alignItems: "center",
+//     borderRadius: 3,
+//     backgroundColor: colors.iconBackground,
+//     marginHorizontal: 10,
+//     width: 55,
+//     height: 55,
+//   },
+//   playlistInfo: {
+//     flex: 5,
+//   },
 
-  addingContainer: {
-    flexDirection: "column",
-    padding: 20,
-    marginBottom: 15,
-    marginHorizontal: 15,
-    borderWidth: 1,
-    borderRightWidth: 4,
-    borderBottomWidth: 4,
-    borderRadius: 10,
-    borderColor: "#000000",
-    backgroundColor: "white",
-  },
-  addingKoreanText: {
-    borderWidth: 1,
-    paddingVertical: 7,
-    marginVertical: 5,
-    borderRadius: 4,
-    textAlign: "left",
-    paddingLeft: 5,
-    fontWeight: "bold",
-  },
-  addingEnglishText: {
-    borderWidth: 1,
-    marginVertical: 5,
-    paddingVertical: 4,
-    borderRadius: 4,
-    textAlign: "left",
-    paddingLeft: 5,
-  },
-  addingButtonContainer: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
-    width: "100%",
-    marginTop: 20,
-  },
-  cancelButton: {
-    width: "30%",
-    backgroundColor: "red",
-    textAlign: "center",
-    flexDirection: "row",
-    justifyContent: "center",
-    alignItems: "center",
-    paddingVertical: 10,
-    borderWidth: 1,
-    borderRightWidth: 4,
-    borderBottomWidth: 4,
-    borderRadius: 10,
-    borderColor: "#000000",
-  },
-  addButton: {
-    width: "65%",
-    backgroundColor: "green",
-    textAlign: "center",
-    flexDirection: "row",
-    justifyContent: "center",
-    alignItems: "center",
-    paddingVertical: 10,
-    borderWidth: 1,
-    borderRightWidth: 4,
-    borderBottomWidth: 4,
-    borderRadius: 10,
-    borderColor: "#000000",
-  },
+//   addingContainer: {
+//     flexDirection: "column",
+//     padding: 20,
+//     marginBottom: 15,
+//     marginHorizontal: 15,
+//     borderWidth: 1,
+//     borderRightWidth: 4,
+//     borderBottomWidth: 4,
+//     borderRadius: 10,
+//     borderColor: "#000000",
+//     backgroundColor: "white",
+//   },
+//   addingKoreanText: {
+//     borderWidth: 1,
+//     paddingVertical: 7,
+//     marginVertical: 5,
+//     borderRadius: 4,
+//     textAlign: "left",
+//     paddingLeft: 5,
+//     fontWeight: "bold",
+//   },
+//   addingEnglishText: {
+//     borderWidth: 1,
+//     marginVertical: 5,
+//     paddingVertical: 4,
+//     borderRadius: 4,
+//     textAlign: "left",
+//     paddingLeft: 5,
+//   },
+//   addingButtonContainer: {
+//     flexDirection: "row",
+//     justifyContent: "space-between",
+//     alignItems: "center",
+//     width: "100%",
+//     marginTop: 20,
+//   },
+//   cancelButton: {
+//     width: "30%",
+//     backgroundColor: "red",
+//     textAlign: "center",
+//     flexDirection: "row",
+//     justifyContent: "center",
+//     alignItems: "center",
+//     paddingVertical: 10,
+//     borderWidth: 1,
+//     borderRightWidth: 4,
+//     borderBottomWidth: 4,
+//     borderRadius: 10,
+//     borderColor: "#000000",
+//   },
+//   addButton: {
+//     width: "65%",
+//     backgroundColor: "green",
+//     textAlign: "center",
+//     flexDirection: "row",
+//     justifyContent: "center",
+//     alignItems: "center",
+//     paddingVertical: 10,
+//     borderWidth: 1,
+//     borderRightWidth: 4,
+//     borderBottomWidth: 4,
+//     borderRadius: 10,
+//     borderColor: "#000000",
+//   },
 
-  playlistName: {
-    fontSize: fonts.playlistTitleSize,
-    fontWeight: "bold",
-    color: colors.textColor,
-  },
-  playlistWordCount: {
-    fontFamily: "GeneralSans-Medium",
-    fontSize: fonts.subTextSize,
-    fontWeight: "normal",
-    color: colors.subtextColor,
-  },
-});
+//   playlistName: {
+//     fontSize: fonts.playlistTitleSize,
+//     fontWeight: "bold",
+//     color: colors.textColor,
+//   },
+//   playlistWordCount: {
+//     fontFamily: "GeneralSans-Medium",
+//     fontSize: fonts.subTextSize,
+//     fontWeight: "normal",
+//     color: colors.subtextColor,
+//   },
+// });
