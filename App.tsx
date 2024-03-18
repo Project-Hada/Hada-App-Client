@@ -1,15 +1,14 @@
-import React, {useEffect} from "react";
+import React, { useEffect } from "react";
 import Configure from "./components/Configure";
 import { LibraryProvider } from "./utils/contexts/LibraryContext";
 import { StyleSheet, Text, View, Platform, SafeAreaView } from "react-native";
 import { Audio } from "expo-av";
 import { ThemeProvider, useTheme } from "./utils/contexts/ThemeContext";
-import { StatusBar } from 'react-native';
+import { StatusBar } from "react-native";
 import { colors } from "./components/theme/Colors";
 
-
 const soundObject = new Audio.Sound();
- 
+
 export default function App() {
   useEffect(() => {
     const enableSound = async () => {
@@ -23,13 +22,16 @@ export default function App() {
     };
     enableSound();
   });
- const {theme} = useTheme();
+  const { theme } = useTheme();
 
   return (
     <ThemeProvider>
       <LibraryProvider>
-      <SafeAreaView style={{ flex: 1, backgroundColor: theme.colors.backgroundColor }}>
-          <StatusBar barStyle="light-content" backgroundColor={theme.colors.backgroundColor} />
+        <SafeAreaView style={{ flex: 1, backgroundColor: "#4E4E4E" }}>
+          <StatusBar
+            barStyle="light-content"
+            backgroundColor={theme.colors.backgroundColor}
+          />
           <Configure />
         </SafeAreaView>
       </LibraryProvider>
