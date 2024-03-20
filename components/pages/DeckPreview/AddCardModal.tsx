@@ -1,43 +1,74 @@
 // AddCardModal.js
-import React, { useState } from "react";
+import React, { useContext, useState } from "react";
 import { Pressable, View, Text, TextInput, StyleSheet } from "react-native";
 import { useTheme } from "../../../utils/contexts/ThemeContext";
+import { FlashCardType } from "../../../utils/types";
+import FlashcardContext from "../../../utils/contexts/LibraryContext";
 
 interface AddCardModalProps {
   isVisible: boolean;
   onAdd: (koreanWord: string, englishWord: string) => void;
+  onUpdate?: (
+    playlistId: string,
+    flashcardId: string,
+    updatedFlashcard: FlashCardType
+  ) => void;
+  onDelete?: (playlistId: string, flashcardId: string) => void;
   onCancel: () => void;
   koreanWordInitial: string;
   englishWordInitial: string;
   isEditMode: boolean;
+  flashcardId?: string;
+  createdAt?: string;
 }
 
 const AddCardModal: React.FC<AddCardModalProps> = ({
   isVisible,
   onAdd,
   onCancel,
-  koreanWordInitial = "",
-  englishWordInitial = "",
+  onUpdate,
+  onDelete,
+  koreanWordInitial,
+  englishWordInitial,
   isEditMode = false,
+  flashcardId,
+  createdAt,
 }) => {
+  const { theme } = useTheme(); // this needs to be at the top
+
   const [koreanWord, setKoreanWord] = useState(koreanWordInitial);
   const [englishWord, setEnglishWord] = useState(englishWordInitial);
 
+  const { currPlaylist } = useContext(FlashcardContext);
+
   const handleConfirm = () => {
-    if (isEditMode) {
-      // Logic for updating the flashcard will go here
+    if (isEditMode && flashcardId) {
+      // Construct the updated flashcard object
+      const updatedFlashcard: FlashCardType = {
+        id: flashcardId,
+        term: koreanWord,
+        definition: englishWord,
+        createdAt,
+      };
+      // Assuming the playlist ID is available in this scope as `playlistId`
+      onUpdate!(currPlaylist!.id, flashcardId, updatedFlashcard);
     } else {
       onAdd(koreanWord, englishWord);
+      setKoreanWord("");
+      setEnglishWord("");
     }
-    setKoreanWord("");
-    setEnglishWord("");
+  };
+
+  const handleDelete = () => {
+    if (isEditMode && flashcardId) {
+      onDelete?.(currPlaylist!.id, flashcardId);
+    }
+    // Close modal
   };
 
   if (!isVisible) {
     return null;
   }
-
-  const {theme} = useTheme();
 
   const styles = StyleSheet.create({
     playButtonContainer: {
@@ -241,7 +272,7 @@ const AddCardModal: React.FC<AddCardModalProps> = ({
         onChangeText={(text) => setKoreanWord(text)}
         value={koreanWord}
         placeholder="Type Korean Word"
-        placeholderTextColor={theme.colors.text}
+        placeholderTextColor={"#000"}
         keyboardType="default"
       />
       <TextInput
@@ -249,11 +280,13 @@ const AddCardModal: React.FC<AddCardModalProps> = ({
         onChangeText={(text) => setEnglishWord(text)}
         value={englishWord}
         placeholder="Enter English Word Here"
-        placeholderTextColor={"#A7A7A7"}
         keyboardType="default"
       />
       <View style={styles.addingButtonContainer}>
-        <Pressable style={styles.cancelButton} onPress={onCancel}>
+        <Pressable
+          style={styles.cancelButton}
+          onPress={!isEditMode ? onCancel : handleDelete}
+        >
           <Text style={styles.cancelButtonText}>
             {isEditMode ? "Delete" : "Cancel"}
           </Text>

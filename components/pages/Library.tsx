@@ -82,7 +82,7 @@ export default function LibraryScreen({ navigation, route }: any) {
     navigation.navigate("DeckPreview", { playlistId: newPlaylistId });
   };
 
-  const {theme} = useTheme();
+  const { theme } = useTheme();
   const libStyles = StyleSheet.create({
     container: {
       flex: 1,
@@ -135,7 +135,7 @@ export default function LibraryScreen({ navigation, route }: any) {
     playlistInfo: {
       flex: 5,
     },
-  
+
     addingContainer: {
       flexDirection: "column",
       padding: 20,
@@ -200,7 +200,7 @@ export default function LibraryScreen({ navigation, route }: any) {
       borderRadius: 10,
       borderColor: theme.colors.border,
     },
-  
+
     playlistName: {
       fontFamily: typography.fonts.boldFont,
       fontSize: typography.library.playlistTitleSize,
@@ -240,7 +240,7 @@ export default function LibraryScreen({ navigation, route }: any) {
               <View style={libStyles.playlistInfo}>
                 <Text style={libStyles.playlistName}>{item.title}</Text>
                 <Text style={libStyles.playlistWordCount}>
-                  {item.playlist.length} words
+                  {Object.keys(item.playlist).length} words
                 </Text>
               </View>
             </TouchableOpacity>

@@ -23,6 +23,7 @@ export default function App() {
     enableSound();
   });
   const { theme } = useTheme();
+  // theme.colors.backgroundColor
 
   return (
     <ThemeProvider>
