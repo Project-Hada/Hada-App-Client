@@ -54,11 +54,55 @@ Hada is built using React Native with Expo for mobile app development and Fireba
 
 ## Getting Started
 
-(Instructions on how to set up the project locally, install dependencies, and any other necessary steps to get the project running.)
+## Getting Started
+
+This section provides a step-by-step guide to get your development environment set up and run the Hada app on your local machine.
+
+### Prerequisites
+
+Before you begin, ensure you have the following installed on your system:
+- Node.js: Required to run the JavaScript code. Download and install it from the (Node.js website)[https://nodejs.org/en].
+- Git: (git)[https://git-scm.com/downloads] is installed on your machine
+- Yarn: Used for managing the app's packages. After installing Node.js, install Yarn by running
+
+  `npm install -g yarn in your terminal`
+- Expo CLI: Necessary for running the app. Install it globally using Yarn with
+
+  `yarn global add expo-cli`
+
+### Installation
+
+1. Clone the repository to your local machine:
+   `git clone https://github.com/your/hada-app-client.git`
+
+2. Navigate to the project directory:
+   `cd hada-app-client`
+
+3. Install dependencies with Yarn:
+   `yarn install`
+
+### Running the App
+**To start you may simply run**: `yarn start` <--
+  
+  Then you may scan the QR code above with Expo Go (Android) or the Camera app (iOS)
+
+  - **Running on Android or iOS Emulator**:
+    - For Android, ensure you have an Android emulator running, or a device connected, and run:
+
+      `yarn android`
+
+    - For iOS, ensure you have Xcode installed and an iOS simulator set up, then run:
+   
+      `yarn ios`
+
+  - **Running on the Web**:
+
+  `yarn web`
+  This command will open up a web version of the app in your default browser.
 
 ## Contributing
 
-(Information on how others can contribute to the project. This could include code contributions, bug reports, or feature suggestions.)
+
 
 ## License
 
