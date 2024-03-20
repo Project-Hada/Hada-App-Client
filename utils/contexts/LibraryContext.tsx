@@ -59,22 +59,30 @@ export const LibraryProvider: React.FC<PropsWithChildren<{}>> = ({
   /**Adding a flashcard */
   const addFlashcard = (playlistId: string, newFlashcard: FlashCardType) => {
     // Access the playlist directly by ID
+    const newFlashcardWithTimestamp = {
+      ...newFlashcard,
+      createdAt: Date.now(), // Ensure every new flashcard has a current timestamp
+    };
+
     const playlistToUpdate = library[playlistId];
 
     if (playlistToUpdate) {
-      // Create a new playlist with the new flashcard added at the start
+      // Correctly use newFlashcardWithTimestamp when adding the flashcard
       const updatedPlaylist = {
         ...playlistToUpdate,
-        playlist: [newFlashcard, ...playlistToUpdate.playlist],
+        playlist: {
+          [newFlashcardWithTimestamp.id]: newFlashcardWithTimestamp, // Use the flashcard with timestamp
+          ...playlistToUpdate.playlist,
+        },
       };
 
-      // Update the library with the new playlist
-      setLibrary({
-        ...library,
+      // Update the library with the new playlist that includes the new flashcard
+      setLibrary((prevLibrary) => ({
+        ...prevLibrary,
         [playlistId]: updatedPlaylist,
-      });
+      }));
 
-      // If the currPlaylist is the one being updated, also set the new currPlaylist
+      // Update currPlaylist if it's the one being modified
       if (currPlaylist && currPlaylist.id === playlistId) {
         setCurrPlaylist(updatedPlaylist);
       }
@@ -87,63 +95,42 @@ export const LibraryProvider: React.FC<PropsWithChildren<{}>> = ({
     updatedFlashcard: FlashCardType
   ) => {
     const playlistToUpdate = library[playlistId];
+    if (playlistToUpdate && playlistToUpdate.playlist[flashcardId]) {
+      const updatedPlaylist = {
+        ...playlistToUpdate,
+        playlist: {
+          ...playlistToUpdate.playlist,
+          [flashcardId]: updatedFlashcard, // Directly update the flashcard
+        },
+      };
 
-    if (playlistToUpdate) {
-      // Find the index of the flashcard to update
-      const flashcardIndex = playlistToUpdate.playlist.findIndex(
-        (flashcard) => flashcard.id === flashcardId
-      );
+      setLibrary({
+        ...library,
+        [playlistId]: updatedPlaylist,
+      });
 
-      if (flashcardIndex !== -1) {
-        // Create a copy of the current flashcards
-        const updatedFlashcards = [...playlistToUpdate.playlist];
-        // Update the specific flashcard at the found index
-        updatedFlashcards[flashcardIndex] = updatedFlashcard;
-
-        // Create a new updated playlist with the updated flashcards array
-        const updatedPlaylist = {
-          ...playlistToUpdate,
-          playlist: updatedFlashcards,
-        };
-
-        // Update the library with the new playlist
-        setLibrary((prevLibrary) => ({
-          ...prevLibrary,
-          [playlistId]: updatedPlaylist,
-        }));
-
-        // Also update the currPlaylist if it's the one being updated
-        if (currPlaylist?.id === playlistId) {
-          setCurrPlaylist(updatedPlaylist);
-        }
+      if (currPlaylist?.id === playlistId) {
+        setCurrPlaylist(updatedPlaylist);
       }
     }
   };
 
   /** Delete a flashcard */
   const deleteFlashcard = (playlistId: string, flashcardId: string) => {
-    // Access the playlist directly by ID
     const playlistToUpdate = library[playlistId];
-
-    if (playlistToUpdate) {
-      // Filter out the flashcard to be deleted
-      const updatedFlashCards = playlistToUpdate.playlist.filter(
-        (flashcard) => flashcard.id !== flashcardId
-      );
-
-      // Create a new updated playlist
+    if (playlistToUpdate && playlistToUpdate.playlist[flashcardId]) {
+      const { [flashcardId]: _, ...restOfFlashcards } =
+        playlistToUpdate.playlist;
       const updatedPlaylist = {
         ...playlistToUpdate,
-        playlist: updatedFlashCards,
+        playlist: restOfFlashcards,
       };
 
-      // Update the library with the new playlist
-      setLibrary((prevLibrary) => ({
-        ...prevLibrary,
+      setLibrary({
+        ...library,
         [playlistId]: updatedPlaylist,
-      }));
+      });
 
-      // Also update the currPlaylist if it's the one being updated
       if (currPlaylist?.id === playlistId) {
         setCurrPlaylist(updatedPlaylist);
       }

@@ -550,26 +550,35 @@ const generateId = () => Math.random().toString(36).substr(2, 9);
 const translateDataToNewFormat = (playlistArray: PlaylistType[]) => {
   const libraryState: LibraryState = {};
 
-  playlistArray.forEach(playlist => {
-    // Generate a unique ID for each playlist
+  // Base timestamp for playlists to simulate creation times
+  const playlistBaseTimestamp = Date.now() - 10000000; // An arbitrary past timestamp for playlists
+
+  playlistArray.forEach((playlist, playlistIndex) => {
     const playlistId = generateId();
 
-    // Map each flashcard in the playlist to include an id
-    const updatedFlashCards = playlist.playlist.map(flashCard => ({
+    // Simulate playlist createdAt timestamp, with each subsequent playlist being "newer"
+    const playlistCreatedAt = playlistBaseTimestamp + playlistIndex * 100000; // 100 seconds apart for example
+
+    // Map each flashcard in the playlist to include an id and createdAt timestamp
+    const baseTimestamp = Date.now() - 1000000; // Arbitrary past timestamp for flashcards
+    const updatedFlashCards = playlist.playlist.map((flashCard, index) => ({
       ...flashCard,
       id: generateId(), // Assign a unique ID to each flashcard
+      createdAt: baseTimestamp + index * 1000, // Simulate timestamps 1 second apart
     }));
 
-    // Add the playlist to the library object with the generated ID as the key
+    // Add the updated playlist to the library object with the generated ID as the key
     libraryState[playlistId] = {
       ...playlist,
       id: playlistId,
       playlist: updatedFlashCards,
+      createdAt: playlistCreatedAt, // Assign the simulated playlist createdAt timestamp
     };
   });
 
   return libraryState;
 };
+
 
 const libraryData = translateDataToNewFormat(playlistData);
 

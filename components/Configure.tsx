@@ -3,10 +3,7 @@ import { View, StyleSheet, Text } from "react-native";
 import Router from "./Router";
 import { useFonts } from "expo-font";
 import { FontAwesome } from "@expo/vector-icons";
-import LibraryContext, {
-  LibraryProvider,
-} from "../utils/contexts/LibraryContext";
-import playlistData from "../Data/fakeData";
+import LibraryContext from "../utils/contexts/LibraryContext";
 import libraryData from "../Data/fakeData";
 
 export default function Configure() {

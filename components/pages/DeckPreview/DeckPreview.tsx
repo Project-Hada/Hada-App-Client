@@ -78,23 +78,25 @@ export default function DeckPreview({ navigation, route }: any) {
     setSearchTerm(term);
   };
 
+  const flashcardsArray = currPlaylist
+    ? Object.values(currPlaylist.playlist).sort(
+        (a, b) => b.createdAt - a.createdAt
+      )
+    : [];
+
   // Filtering Flashcard by korean / english search term
-  const filterFlashcards = (flashcards: { term: any; definition: any }) => {
-    // Check if searchTerm is empty (show all in this case)
-    if (!searchTerm) return true;
-
-    // Check if the term or definition contains the searchTerm
-    // For Korean, use Hangul.search for korean regex
-    // Check out https://www.npmjs.com/package/hangul-js
-    const koreanMatch = Hangul.search(flashcards.term, searchTerm) >= 0;
-    // English definition to search word match
-    const englishMatch = flashcards.definition
-      .toLowerCase()
-      .includes(searchTerm.toLowerCase());
-
-    // return any matching term
-    return koreanMatch || englishMatch;
+  const filterFlashcards = (flashcards: FlashCardType[]) => {
+    return flashcards.filter((flashcard) => {
+      const koreanMatch = Hangul.search(flashcard.term, searchTerm) >= 0;
+      const englishMatch = flashcard.definition
+        .toLowerCase()
+        .includes(searchTerm.toLowerCase());
+      return koreanMatch || englishMatch;
+    });
   };
+
+  // Use this filtered array for your FlatList:
+  const filteredFlashcards = filterFlashcards(flashcardsArray);
 
   const AddCardButton = () => {
     return (
@@ -333,7 +335,9 @@ export default function DeckPreview({ navigation, route }: any) {
                 size={22}
                 color="#B6B6B6"
               />
-              <Text style={styles.wordCount}>{flashcards.length} words</Text>
+              <Text style={styles.wordCount}>
+                {Object.keys(flashcards).length} words
+              </Text>
             </View>
           </View>
           <TouchableOpacity onPress={handleOpenAdd}>
@@ -365,9 +369,10 @@ export default function DeckPreview({ navigation, route }: any) {
         isEditMode={false}
       />
       {/* List of cards display */}
+
       <FlatList
         // Filtering word using filter()
-        data={flashcards.filter(filterFlashcards)}
+        data={filteredFlashcards}
         renderItem={({ item }) => (
           // The modal is now tied to the selectedCardId state.
           // It will open for the card that was last pressed.

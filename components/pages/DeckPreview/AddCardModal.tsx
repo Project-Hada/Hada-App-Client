@@ -26,6 +26,8 @@ const AddCardModal: React.FC<AddCardModalProps> = ({
   isEditMode = false,
   flashcardId,
 }) => {
+  const { theme } = useTheme(); // this needs to be at the top
+
   const [koreanWord, setKoreanWord] = useState(koreanWordInitial);
   const [englishWord, setEnglishWord] = useState(englishWordInitial);
 
@@ -49,8 +51,6 @@ const AddCardModal: React.FC<AddCardModalProps> = ({
   if (!isVisible) {
     return null;
   }
-
-  const { theme } = useTheme();
 
   const styles = StyleSheet.create({
     playButtonContainer: {
