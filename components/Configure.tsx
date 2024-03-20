@@ -7,7 +7,12 @@ import LibraryContext from "../utils/contexts/LibraryContext";
 import libraryData from "../Data/fakeData";
 
 export default function Configure() {
-  // Always call useState at the top level
+  /**
+   * VVV Always call useState at the top level VVV
+   * If you get a re-render issue make sure it correctly order your useStates
+   * Here it's important that setLibrary is called top level to avoid rerenders
+   */
+
   // Calling Dummy data
   const { setLibrary } = useContext(LibraryContext);
 

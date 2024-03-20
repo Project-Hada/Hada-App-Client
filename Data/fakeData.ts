@@ -574,6 +574,20 @@ const translateDataToNewFormat = (playlistArray: PlaylistType[]) => {
       playlist: updatedFlashCards,
       createdAt: playlistCreatedAt, // Assign the simulated playlist createdAt timestamp
     };
+
+    // Transform array of flashcards into an object keyed by flashcard id
+    const flashcardsObject = updatedFlashCards.reduce((acc, flashCard) => {
+      acc[flashCard.id] = flashCard;
+      return acc;
+    }, {} as {[key: string]: FlashCardType});
+
+    // Add the playlist with the flashcards object to the libraryState
+    libraryState[playlistId] = {
+      ...playlist,
+      id: playlistId,
+      playlist: flashcardsObject,
+      createdAt: playlistCreatedAt,
+    };
   });
 
   return libraryState;

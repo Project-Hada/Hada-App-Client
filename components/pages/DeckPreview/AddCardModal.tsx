@@ -1,18 +1,25 @@
 // AddCardModal.js
-import React, { useState } from "react";
+import React, { useContext, useState } from "react";
 import { Pressable, View, Text, TextInput, StyleSheet } from "react-native";
 import { useTheme } from "../../../utils/contexts/ThemeContext";
+import { FlashCardType } from "../../../utils/types";
+import FlashcardContext from "../../../utils/contexts/LibraryContext";
 
 interface AddCardModalProps {
   isVisible: boolean;
   onAdd: (koreanWord: string, englishWord: string) => void;
-  onUpdate?: (id: string, koreanWord: string, englishWord: string) => void;
-  onDelete?: (id: string) => void;
+  onUpdate?: (
+    playlistId: string,
+    flashcardId: string,
+    updatedFlashcard: FlashCardType
+  ) => void;
+  onDelete?: (playlistId: string, flashcardId: string) => void;
   onCancel: () => void;
   koreanWordInitial: string;
   englishWordInitial: string;
   isEditMode: boolean;
   flashcardId?: string;
+  createdAt?: string;
 }
 
 const AddCardModal: React.FC<AddCardModalProps> = ({
@@ -21,29 +28,40 @@ const AddCardModal: React.FC<AddCardModalProps> = ({
   onCancel,
   onUpdate,
   onDelete,
-  koreanWordInitial = "",
-  englishWordInitial = "",
+  koreanWordInitial,
+  englishWordInitial,
   isEditMode = false,
   flashcardId,
+  createdAt,
 }) => {
   const { theme } = useTheme(); // this needs to be at the top
 
   const [koreanWord, setKoreanWord] = useState(koreanWordInitial);
   const [englishWord, setEnglishWord] = useState(englishWordInitial);
 
+  const { currPlaylist } = useContext(FlashcardContext);
+
   const handleConfirm = () => {
     if (isEditMode && flashcardId) {
-      onUpdate?.(flashcardId, koreanWord, englishWord);
+      // Construct the updated flashcard object
+      const updatedFlashcard: FlashCardType = {
+        id: flashcardId,
+        term: koreanWord,
+        definition: englishWord,
+        createdAt,
+      };
+      // Assuming the playlist ID is available in this scope as `playlistId`
+      onUpdate!(currPlaylist!.id, flashcardId, updatedFlashcard);
     } else {
       onAdd(koreanWord, englishWord);
+      setKoreanWord("");
+      setEnglishWord("");
     }
-    setKoreanWord("");
-    setEnglishWord("");
   };
 
   const handleDelete = () => {
     if (isEditMode && flashcardId) {
-      onDelete?.(flashcardId);
+      onDelete?.(currPlaylist!.id, flashcardId);
     }
     // Close modal
   };

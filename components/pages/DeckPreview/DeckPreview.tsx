@@ -387,11 +387,13 @@ export default function DeckPreview({ navigation, route }: any) {
               <AddCardModal
                 isVisible={selectedCardId !== null}
                 onAdd={handleAdd} // Used for adding a new card
-                onUpdate={() => updateFlashcard}
-                onDelete={() => deleteFlashcard}
+                onUpdate={updateFlashcard}
+                onDelete={deleteFlashcard}
                 onCancel={handleCancel}
-                koreanWordInitial={selectedCard?.term || ""}
-                englishWordInitial={selectedCard?.definition || ""}
+                createdAt={item.createdAt}
+                koreanWordInitial={item.term}
+                englishWordInitial={item.definition}
+                flashcardId={item.id}
                 isEditMode={true}
               />
             )}
