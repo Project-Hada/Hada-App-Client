@@ -128,6 +128,7 @@ Additional project files and directories:
 - **`utils/types.ts`**: Contains the type definitions used across the project.
 - **`components/pages/`**: Contains the pages/components used within the app's navigation flow.
 
+to update build: `eas update`
 
 # License Agreement
 
