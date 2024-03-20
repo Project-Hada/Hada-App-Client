@@ -2,14 +2,15 @@ export interface FlashCardType {
   id: string;
   term: string;
   definition: string;
-  createdAt: number;
 }
 
 export interface PlaylistType {
   id: string;
   title: string;
-  playlist: FlashCardType[];
-  createdAt: number; // Add this line
+  playlist: {
+    [key: string]: FlashCardType;
+  };
+  createdAt?: number;
 }
 
 export interface LibraryState {
