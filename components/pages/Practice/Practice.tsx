@@ -29,11 +29,12 @@ type PracticeScreenProps = {
 
 export default function PracticeScreen({ navigation, route }: any) {
   const { currPlaylist } = useContext(FlashcardContext);
-  const flashcards = currPlaylist.playlist;
+  const flashcardsObject = currPlaylist!.playlist;
+  const flashcardsArray = Object.values(flashcardsObject); // Convert flashcards object to array
   const [currentIndex, setCurrentIndex] = useState(0);
   const [dynamicIndex, setDynamicIndex] = useState(currentIndex);
   const [nextIndex, setNextIndex] = useState(1); // Next card index
-  const [history, setHistory] = useState<HistoryItem[]>([]); // Track user actions for the back functionality
+  const [history, setHistory] = useState<HistoryItem[]>([]);
   const cardOffsetX = useRef(new Animated.Value(0)).current; // Animation for swiping
   const [isFlipped, setIsFlipped] = useState(false);
   const [sliderIndex, setSliderIndex] = useState(0);
@@ -41,7 +42,7 @@ export default function PracticeScreen({ navigation, route }: any) {
   const [resetFlip, setResetFlip] = useState(false);
 
   const renderProgressIndicators = () => {
-    return flashcards.map((card: any, index: any) => (
+    return flashcardsArray.map((card: any, index: any) => (
       <View
         key={`progress-${index}`}
         style={[
@@ -74,8 +75,8 @@ export default function PracticeScreen({ navigation, route }: any) {
       cardOffsetX.setValue(0); // Reset position
       // Save action to history
       setHistory([...history, { direction, currentIndex }]);
-      const newCurrentIndex = (currentIndex + 1) % flashcards.length;
-      const newNextIndex = (nextIndex + 1) % flashcards.length;
+      const newCurrentIndex = (currentIndex + 1) % flashcardsArray.length;
+      const newNextIndex = (nextIndex + 1) % flashcardsArray.length;
 
       // Update indices
       setCurrentIndex(newCurrentIndex);
@@ -96,7 +97,7 @@ export default function PracticeScreen({ navigation, route }: any) {
     setSliderIndex(999);
     const newCurrentIndex = history[historyLen].currentIndex;
     setCurrentIndex(newCurrentIndex);
-    setNextIndex((newCurrentIndex + 1) % flashcards.length);
+    setNextIndex((newCurrentIndex + 1) % flashcardsArray.length);
     setHistory(history.slice(0, historyLen));
 
     Animated.timing(cardOffsetX, {
@@ -203,7 +204,7 @@ export default function PracticeScreen({ navigation, route }: any) {
       flex: 1,
       height: 100,
       backgroundColor: theme.colors.inactiveProgessBar,
-  
+
       justifyContent: "center",
       alignItems: "center",
       borderRadius: 8,
@@ -248,9 +249,9 @@ export default function PracticeScreen({ navigation, route }: any) {
       </TouchableOpacity>
       <View style={styles.flashCardContainer}>
         <FlashCard
-          term={flashcards[dynamicIndex].term}
-          romanization={`(${Aromanize.hangulToLatin(flashcards[dynamicIndex].term, "rr-translit")})`}
-          definition={flashcards[dynamicIndex].definition}
+          term={flashcardsArray[dynamicIndex].term}
+          romanization={`(${Aromanize.hangulToLatin(flashcardsArray[dynamicIndex].term, "rr-translit")})`}
+          definition={flashcardsArray[dynamicIndex].definition}
           onFlip={() => setIsFlipped(!isFlipped)}
           resetFlip={resetFlip}
         />
@@ -263,9 +264,9 @@ export default function PracticeScreen({ navigation, route }: any) {
         >
           <Animated.View style={[cardStyle]}>
             <FlashCardSlider
-              term={flashcards[currentIndex].term}
-              romanization={flashcards[currentIndex].romanization}
-              definition={flashcards[currentIndex].definition}
+              term={flashcardsArray[currentIndex].term}
+              romanization={`(${Aromanize.hangulToLatin(flashcardsArray[dynamicIndex].term, "rr-translit")})`}
+              definition={flashcardsArray[currentIndex].definition}
               isFlipped={wasFlipped || isFlipped}
             />
           </Animated.View>
