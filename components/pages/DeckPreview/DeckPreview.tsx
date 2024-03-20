@@ -85,6 +85,7 @@ export default function DeckPreview({ navigation, route }: any) {
     : [];
 
   // Filtering Flashcard by korean / english search term
+
   const filterFlashcards = (flashcards: FlashCardType[]) => {
     return flashcards.filter((flashcard) => {
       const koreanMatch = Hangul.search(flashcard.term, searchTerm) >= 0;
@@ -348,6 +349,7 @@ export default function DeckPreview({ navigation, route }: any) {
       </View>
 
       {/* Search word input */}
+
       <View style={OldStyles.searchContainer}>
         <AntDesign name="search1" style={OldStyles.searchIcon} />
         <TextInput
@@ -372,6 +374,7 @@ export default function DeckPreview({ navigation, route }: any) {
 
       <FlatList
         // Filtering word using filter()
+
         data={filteredFlashcards}
         renderItem={({ item }) => (
           // The modal is now tied to the selectedCardId state.

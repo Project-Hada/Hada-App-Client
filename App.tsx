@@ -24,6 +24,7 @@ export default function App() {
   });
   const { theme } = useTheme();
   // theme.colors.backgroundColor
+
   return (
     <ThemeProvider>
       <LibraryProvider>
