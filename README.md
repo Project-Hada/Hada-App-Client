@@ -183,7 +183,7 @@ We may terminate or suspend access to our Software immediately, without prior no
 
 # Privacy Policy
 
-**Last updated: [Date]**
+**Last updated: 3/20/2024**
 
 At HADA, we are committed to protecting your privacy. This Privacy Policy applies to the HADA software and governs our data collection, processing, and usage practices.
 
