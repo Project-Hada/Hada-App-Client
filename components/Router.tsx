@@ -6,6 +6,7 @@ import LibraryScreen from "./pages/Library";
 import DeckPreview from "./pages/DeckPreview/DeckPreview";
 import { PracticeScreen } from "./pages/Practice";
 import { NavigationContainer } from "@react-navigation/native";
+import { useTheme } from "../utils/contexts/ThemeContext";
 
 const { Navigator, Screen } = createStackNavigator();
 
@@ -18,7 +19,12 @@ const AppStack = () => {
 
   return (
     <SafeAreaView style={styles.droidSafeArea}>
-      <Navigator initialRouteName="LibraryScreen">
+      <Navigator
+        screenOptions={{
+          cardStyle: { flex: 1, backgroundColor: "transparent" },
+        }}
+        initialRouteName="LibraryScreen"
+      >
         <Screen
           name="LibraryScreen"
           component={LibraryScreen}
@@ -62,7 +68,6 @@ const styles = StyleSheet.create({
   },
   droidSafeArea: {
     flex: 1,
-    backgroundColor: "transparent",
     paddingTop: Platform.OS === "android" ? 25 : 0,
   },
 });
