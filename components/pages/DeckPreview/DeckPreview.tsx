@@ -1,4 +1,4 @@
-import React, { useContext, useRef, useState } from "react";
+import React, { useContext, useState } from "react";
 import {
   StyleSheet,
   View,
@@ -6,18 +6,14 @@ import {
   FlatList,
   TouchableOpacity,
   SafeAreaView,
-  Button,
   Pressable,
 } from "react-native";
 import {
   MaterialCommunityIcons,
   MaterialIcons,
   AntDesign,
-  Feather,
-  Foundation,
 } from "@expo/vector-icons";
 import FlashcardContext from "../../../utils/contexts/LibraryContext";
-import speak from "../../../utils/tts";
 import { TextInput } from "react-native-gesture-handler";
 import AddButton from "../../AddButton";
 import generateId from "../../../utils/idGenerator";
@@ -40,7 +36,7 @@ export default function DeckPreview({ navigation, route }: any) {
   const flashcards = currPlaylist ? currPlaylist.playlist : [];
 
   // State to track the selected card for editing
-  const [selectedCard, setSelectedCard] = useState<FlashCardType | null>(null);
+  const [selectedCardId, setSelectedCardId] = useState<string | null>(null);
   const [isAddingVisible, setIsAddingVisible] = useState(false);
 
   const handleCancel = () => {
@@ -113,8 +109,6 @@ export default function DeckPreview({ navigation, route }: any) {
       </TouchableOpacity>
     );
   };
-
-  const [selectedCardId, setSelectedCardId] = useState<string | null>(null);
 
   // Function to handle card press
   const handleCardPress = (cardId: string) => {
@@ -318,8 +312,6 @@ export default function DeckPreview({ navigation, route }: any) {
     },
   });
 
-  const isPracticeDisabled = flashcards.length === 0;
-
   return (
     <SafeAreaView style={styles.container}>
       <View style={styles.header}>
@@ -412,7 +404,7 @@ export default function DeckPreview({ navigation, route }: any) {
       {/* Practice Button */}
       <TouchableOpacity
         onPress={() => {
-          if (!isPracticeDisabled) {
+          if (Object.keys(flashcards).length > 0) {
             navigation.navigate("PracticeScreen");
           } else {
             handleOpenAdd();
