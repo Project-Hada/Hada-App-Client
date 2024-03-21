@@ -41,6 +41,13 @@ export default function PracticeScreen({ navigation, route }: any) {
   const [wasFlipped, setWasFlipped] = useState(false);
   const [resetFlip, setResetFlip] = useState(false);
 
+  useEffect(() => {
+    // If there's only one flashcard, we don't need to set a next index
+    if (flashcardsArray.length === 1) {
+      setNextIndex(0); // There is no "next", so it's the same card
+    }
+  }, [flashcardsArray]);
+
   const renderProgressIndicators = () => {
     return flashcardsArray.map((card: any, index: any) => (
       <View
@@ -57,32 +64,34 @@ export default function PracticeScreen({ navigation, route }: any) {
 
   // Function to handle the card swipe animation
   const moveCard = (direction: string) => {
-    const newFlippedValue = isFlipped;
-    setWasFlipped(newFlippedValue);
-    setResetFlip(!resetFlip);
-    const moveTo = direction === "left" ? -1000 : 1000; // Determine direction based on 'X' or 'O'
-    setSliderIndex(999);
-    setDynamicIndex(nextIndex);
+    if (flashcardsArray.length > 1) {
+      const newFlippedValue = isFlipped;
+      setWasFlipped(newFlippedValue);
+      setResetFlip(!resetFlip);
+      const moveTo = direction === "left" ? -1000 : 1000; // Determine direction based on 'X' or 'O'
+      setSliderIndex(999);
+      setDynamicIndex(nextIndex);
 
-    Animated.timing(cardOffsetX, {
-      toValue: moveTo,
-      duration: 300,
-      useNativeDriver: true,
-    }).start(() => {
-      setWasFlipped(false);
-      setIsFlipped(false);
-      // After the animation, reset position and update card indices
-      cardOffsetX.setValue(0); // Reset position
-      // Save action to history
-      setHistory([...history, { direction, currentIndex }]);
-      const newCurrentIndex = (currentIndex + 1) % flashcardsArray.length;
-      const newNextIndex = (nextIndex + 1) % flashcardsArray.length;
+      Animated.timing(cardOffsetX, {
+        toValue: moveTo,
+        duration: 300,
+        useNativeDriver: true,
+      }).start(() => {
+        setWasFlipped(false);
+        setIsFlipped(false);
+        // After the animation, reset position and update card indices
+        cardOffsetX.setValue(0); // Reset position
+        // Save action to history
+        setHistory([...history, { direction, currentIndex }]);
+        const newCurrentIndex = (currentIndex + 1) % flashcardsArray.length;
+        const newNextIndex = (nextIndex + 1) % flashcardsArray.length;
 
-      // Update indices
-      setCurrentIndex(newCurrentIndex);
-      setNextIndex(newNextIndex);
-      setSliderIndex(0);
-    });
+        // Update indices
+        setCurrentIndex(newCurrentIndex);
+        setNextIndex(newNextIndex);
+        setSliderIndex(0);
+      });
+    }
   };
 
   // Function to handle the back action
@@ -255,22 +264,23 @@ export default function PracticeScreen({ navigation, route }: any) {
           onFlip={() => setIsFlipped(!isFlipped)}
           resetFlip={resetFlip}
         />
-
-        <View
-          style={[
-            styles.flashCardAnimated,
-            { zIndex: sliderIndex, opacity: sliderIndex },
-          ]}
-        >
-          <Animated.View style={[cardStyle]}>
-            <FlashCardSlider
-              term={flashcardsArray[currentIndex].term}
-              romanization={`(${Aromanize.hangulToLatin(flashcardsArray[dynamicIndex].term, "rr-translit")})`}
-              definition={flashcardsArray[currentIndex].definition}
-              isFlipped={wasFlipped || isFlipped}
-            />
-          </Animated.View>
-        </View>
+        {flashcardsArray.length > 1 && (
+          <View
+            style={[
+              styles.flashCardAnimated,
+              { zIndex: sliderIndex, opacity: sliderIndex },
+            ]}
+          >
+            <Animated.View style={[cardStyle]}>
+              <FlashCardSlider
+                term={flashcardsArray[currentIndex].term}
+                romanization={`(${Aromanize.hangulToLatin(flashcardsArray[dynamicIndex].term, "rr-translit")})`}
+                definition={flashcardsArray[currentIndex].definition}
+                isFlipped={wasFlipped || isFlipped}
+              />
+            </Animated.View>
+          </View>
+        )}
       </View>
 
       <TouchableOpacity onPress={bringBackCard} style={styles.centerControl}>

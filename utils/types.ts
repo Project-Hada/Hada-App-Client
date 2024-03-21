@@ -1,3 +1,4 @@
+//types for a flashcard
 export interface FlashCardType {
   createdAt: any;
   id: string;
@@ -5,6 +6,11 @@ export interface FlashCardType {
   definition: string;
 }
 
+/**
+ * types for a single playlist,
+ * in Configure.tsx from fakeData.ts
+ * an array of PlaylistTypes is held
+ */
 export interface PlaylistType {
   id: string;
   title: string;
@@ -14,6 +20,7 @@ export interface PlaylistType {
   createdAt?: number;
 }
 
+// this sets up id's for PlaylistType to be accessed in O(1) in LibraryContext.tsx
 export interface LibraryState {
   [id: string]: PlaylistType;
 }

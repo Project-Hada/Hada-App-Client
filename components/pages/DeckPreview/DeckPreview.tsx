@@ -318,6 +318,8 @@ export default function DeckPreview({ navigation, route }: any) {
     },
   });
 
+  const isPracticeDisabled = flashcards.length === 0;
+
   return (
     <SafeAreaView style={styles.container}>
       <View style={styles.header}>
@@ -409,7 +411,13 @@ export default function DeckPreview({ navigation, route }: any) {
 
       {/* Practice Button */}
       <TouchableOpacity
-        onPress={() => navigation.navigate("PracticeScreen")}
+        onPress={() => {
+          if (!isPracticeDisabled) {
+            navigation.navigate("PracticeScreen");
+          } else {
+            handleOpenAdd();
+          }
+        }}
         style={styles.practiceButton}
       >
         <Text style={styles.practiceButtonText}>Practice</Text>
@@ -469,7 +477,7 @@ export const OldStyles = StyleSheet.create({
   },
   container: {
     flex: 1,
-    backgroundColor: "#F2E8E1",
+    backgroundColor: "transparent",
     paddingHorizontal: 4,
   },
   header: {
