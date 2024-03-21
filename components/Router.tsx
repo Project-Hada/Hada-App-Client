@@ -10,23 +10,25 @@ import { NavigationContainer } from "@react-navigation/native";
 const { Navigator, Screen } = createStackNavigator();
 
 const AppStack = () => {
+  const options = {
+    headerShown: false,
+    presentation:
+      Platform.OS === "ios" ? ("card" as const) : ("modal" as const),
+  };
+
   return (
     <SafeAreaView style={styles.droidSafeArea}>
       <Navigator initialRouteName="LibraryScreen">
         <Screen
           name="LibraryScreen"
           component={LibraryScreen}
-          options={{ headerShown: false }}
+          options={options}
         />
-        <Screen
-          name="DeckPreview"
-          component={DeckPreview}
-          options={{ headerShown: false }}
-        />
+        <Screen name="DeckPreview" component={DeckPreview} options={options} />
         <Screen
           name="PracticeScreen"
           component={PracticeScreen}
-          options={{ headerShown: false }}
+          options={options}
         />
         {/* Add other screens here */}
       </Navigator>
