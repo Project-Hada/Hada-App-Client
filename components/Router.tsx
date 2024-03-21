@@ -47,7 +47,7 @@ const styles = StyleSheet.create({
     width: "100%",
     alignItems: "center",
     justifyContent: "center",
-    backgroundColor: "#F2E8E1",
+    backgroundColor: "transparent",
   },
   headerTitle: {
     fontFamily: "GeneralSans-Bold",
@@ -60,7 +60,7 @@ const styles = StyleSheet.create({
   },
   droidSafeArea: {
     flex: 1,
-    backgroundColor: "#F2E8E1",
+    backgroundColor: "transparent",
     paddingTop: Platform.OS === "android" ? 25 : 0,
   },
 });
