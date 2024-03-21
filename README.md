@@ -118,7 +118,7 @@ The application's flow is structured as follows (as of date):
 
 `App.tsx > Configure.tsx > Router > Library.tsx > DeckPreview.tsx > Practice.tsx`
 
-- **`App.tsx`**: The entry point of the application.
+- **`App.tsx`**: The entry point of the application. (**DO NOT** use hooks `App.tsx` they will not mount, use `Configure.tsx` instead)
 - **`Configure.tsx`**: Configures the application, preparing contexts and setting up top-level logic.
 - **`Router`**: Manages navigation within the app, leading to different pages the user can access.
 - **`Library.tsx`**: Houses the user's library, allowing access to individual decks or playlists.
