@@ -12,6 +12,8 @@ export const colors = {
         inactiveProgessBar: "#B2B2B2",
         container: "#FFFFFF",
         audioButton: "#000000", 
+        gearButton: "#000000",
+        listBackground: "#DBCCC1",
     },
     dark: {
         backgroundColor: "#4E4E4E",
@@ -26,5 +28,7 @@ export const colors = {
         inactiveProgessBar: "#B2B2B2",
         container: "#333333",
         audioButton: "#FFFFFF", 
+        gearButton: "#FFFFFF",
+        listBackground: "#3E3E3E",
     }
   };

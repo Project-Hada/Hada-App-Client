@@ -17,6 +17,7 @@ import {
   Pressable,
 } from "react-native";
 import {
+  AntDesign,
   MaterialCommunityIcons,
   MaterialIcons,
   Octicons,
@@ -30,6 +31,7 @@ import AddButton from "../AddButton";
 import generateId from "../../utils/idGenerator";
 import { useTheme } from "../../utils/contexts/ThemeContext";
 import { typography } from "../theme/Typography";
+import GearButton from "../GearButton";
 
 type PlaylistItemType = {
   name: string;
@@ -45,6 +47,17 @@ export default function LibraryScreen({ navigation, route }: any) {
   // Library Context
   const { library, setCurrPlaylist, addPlaylist } = useContext(LibraryContext);
   const flashcards = flashCards;
+
+  const [searchSet, setSearchSet] = useState('');
+  const handleSearch = (set: string) => {
+    setSearchSet(set);
+  };
+
+  const filteredLibrary = searchSet.trim() === ''
+  ? Object.values(library)
+  : Object.values(library).filter((playlist) =>
+      playlist.title.toLowerCase().includes(searchSet.toLowerCase())
+    );
 
   const handleNavigation = (playlistId: string) => {
     const playlist = library[playlistId];
@@ -82,6 +95,8 @@ export default function LibraryScreen({ navigation, route }: any) {
     navigation.navigate("DeckPreview", { playlistId: newPlaylistId });
   };
 
+  const profileColors = ["#D27FEF", "#38DAEF", "#FF454C", "#7F9CEF", "#FD9960", "#F3E565"];
+  
   const { theme } = useTheme();
   const libStyles = StyleSheet.create({
     container: {
@@ -94,41 +109,44 @@ export default function LibraryScreen({ navigation, route }: any) {
       margin: 0,
     },
     headerContainer: {
-      paddingVertical: 30,
       width: "100%",
       flexDirection: "row",
       justifyContent: "space-between",
-      alignItems: "center",
+      alignItems: "flex-start",
       paddingHorizontal: 15,
+      paddingVertical: 30,
+      paddingTop: 30, 
+      paddingBottom: 10,
     },
     headerText: {
-      fontFamily: typography.fonts.boldFont,
+      fontFamily: theme.typography.fonts.boldFont,
       fontSize: 30,
       color: theme.colors.text,
     },
     scrollView: {
       width: "100%",
       justifyContent: "center",
+      backgroundColor: theme.colors.listBackground,
     },
     playlist: {
       flexDirection: "row",
       alignItems: "center",
       backgroundColor: theme.colors.container,
-      borderWidth: 1,
-      borderRightWidth: 4,
-      borderBottomWidth: 4,
-      borderRadius: 10,
+      borderWidth: theme.spacing.borderWidth,
+      borderRightWidth: theme.spacing.borderRightWidth,
+      borderBottomWidth: theme.spacing.borderBottomWidth,
+      borderRadius: theme.spacing.borderRadius,
       borderColor: theme.colors.border,
-      paddingVertical: 10,
-      marginBottom: 15,
-      marginHorizontal: 15,
+      paddingVertical: theme.spacing.library.verticalPadding,
+      marginBottom: theme.spacing.library.marginBottom,
+      marginHorizontal: theme.spacing.library.marginHorizontal,
     },
     iconContainer: {
       justifyContent: "center",
       alignItems: "center",
-      borderRadius: 3,
+      borderRadius: theme.spacing.borderRadius,
       backgroundColor: theme.colors.icons,
-      marginHorizontal: 10,
+      marginHorizontal: theme.spacing.library.iconMarginHorizontal,
       width: 55,
       height: 55,
     },
@@ -139,12 +157,12 @@ export default function LibraryScreen({ navigation, route }: any) {
     addingContainer: {
       flexDirection: "column",
       padding: 20,
-      marginBottom: 15,
-      marginHorizontal: 15,
-      borderWidth: 1,
-      borderRightWidth: 4,
-      borderBottomWidth: 4,
-      borderRadius: 10,
+      marginBottom: theme.spacing.library.marginBottom,
+      marginHorizontal: theme.spacing.library.marginHorizontal,
+      borderWidth: theme.spacing.borderWidth,
+      borderRightWidth: theme.spacing.borderRightWidth,
+      borderBottomWidth: theme.spacing.borderBottomWidth,
+      borderRadius: theme.spacing.borderRadius,
       borderColor: theme.colors.border,
       backgroundColor: theme.colors.container,
     },
@@ -158,8 +176,8 @@ export default function LibraryScreen({ navigation, route }: any) {
       fontWeight: "bold",
     },
     addingEnglishText: {
-      borderWidth: 1,
-      marginVertical: 5,
+      borderWidth: theme.spacing.borderRadius,
+      marginVertical: theme.spacing.library.marginVertical,
       paddingVertical: 4,
       borderRadius: 4,
       textAlign: "left",
@@ -170,67 +188,140 @@ export default function LibraryScreen({ navigation, route }: any) {
       justifyContent: "space-between",
       alignItems: "center",
       width: "100%",
-      marginTop: 20,
+      marginTop: theme.spacing.library.marginTop,
     },
     cancelButton: {
       width: "30%",
-      backgroundColor: "red",
+      backgroundColor: theme.colors.redButton,
       textAlign: "center",
       flexDirection: "row",
       justifyContent: "center",
       alignItems: "center",
-      paddingVertical: 10,
-      borderWidth: 1,
-      borderRightWidth: 4,
-      borderBottomWidth: 4,
-      borderRadius: 10,
+      paddingVertical: theme.spacing.library.verticalPadding,
+      borderWidth: theme.spacing.borderWidth,
+      borderRightWidth: theme.spacing.borderRightWidth,
+      borderBottomWidth: theme.spacing.borderBottomWidth,
+      borderRadius: theme.spacing.borderRadius,
       borderColor: theme.colors.border,
     },
     addButton: {
       width: "65%",
-      backgroundColor: "green",
+      backgroundColor: theme.colors.greenButton,
       textAlign: "center",
       flexDirection: "row",
       justifyContent: "center",
       alignItems: "center",
-      paddingVertical: 10,
-      borderWidth: 1,
-      borderRightWidth: 4,
-      borderBottomWidth: 4,
-      borderRadius: 10,
+      paddingVertical: theme.spacing.library.verticalPadding,
+      borderWidth: theme.spacing.borderWidth,
+      borderRightWidth: theme.spacing.borderRightWidth,
+      borderBottomWidth: theme.spacing.borderRightWidth,
+      borderRadius: theme.spacing.borderRadius,
       borderColor: theme.colors.border,
     },
 
     playlistName: {
-      fontFamily: typography.fonts.boldFont,
-      fontSize: typography.library.playlistTitleSize,
+      fontFamily: theme.typography.fonts.boldFont,
+      fontSize: theme.typography.library.playlistTitleSize,
       color: theme.colors.text,
     },
     playlistWordCount: {
-      fontFamily: typography.fonts.mediumFont,
-      fontSize: typography.library.subTextSize,
+      fontFamily: theme.typography.fonts.mediumFont,
+      fontSize: theme.typography.library.subTextSize,
       color: theme.colors.subtext,
     },
+    searchContainer: {
+      paddingVertical: 5,
+      margin: 15,
+      flexDirection: "row",
+      alignItems: "center",
+      justifyContent: "flex-start",
+      backgroundColor: "#FFFFFF",
+      borderWidth: 1,
+      borderRightWidth: 4,
+      borderBottomWidth: 4,
+      borderRadius: 20,
+      borderColor: theme.colors.border,
+    },
+    searchIcon: {
+      paddingLeft: 10,
+      fontSize: 20,
+      color: "#000000",
+    },
+    searchInput: {
+      width: "100%",
+      paddingLeft: 10,
+    },
+    buttonGroup: {
+      flexDirection: 'row',
+      justifyContent: 'flex-end',
+      alignItems: 'center',
+    },
+    createPlaylistButton: {
+      margin: theme.spacing.library.playlistPadding,
+      marginTop: theme.spacing.library.marginTop,
+      padding: theme.spacing.library.playlistPadding,
+      borderWidth: theme.spacing.borderWidth,
+      borderBottomWidth: theme.spacing.borderBottomWidth,
+      borderRightWidth: theme.spacing.borderRightWidth,
+      borderRadius: theme.spacing.borderRadius,
+      borderColor: theme.colors.border,
+      backgroundColor: theme.colors.accent,
+      alignItems: "flex-start",
+      justifyContent: "center",
+    },
+    createPlaylistText: {
+      fontSize: theme.typography.library.createPlaylistSize,
+      fontFamily: theme.typography.fonts.boldFont,
+    },
+    bottomSection: {
+      flex: 1,
+      backgroundColor: theme.colors.listBackground, 
+    },
+    topSection: {
+      backgroundColor: theme.colors.backgroundColor,
+    }
   });
 
   return (
     <SafeAreaView style={libStyles.container}>
-      <View style={libStyles.headerContainer}>
-        <View />
+      <View style={libStyles.topSection}>
+        <View style={libStyles.headerContainer}>
         <Text style={libStyles.headerText}>Library</Text>
-        <TouchableOpacity onPress={handleOpenAdd}>
-          <AddButton />
-        </TouchableOpacity>
+        <View style={libStyles.buttonGroup}>
+          <TouchableOpacity onPress={handleOpenAdd}>
+            <AddButton />
+          </TouchableOpacity>
+          <GearButton />
+        </View>
+        </View> 
+     
+        <View style={libStyles.searchContainer}>
+          <AntDesign name="search1" style={libStyles.searchIcon} />
+          <TextInput
+            style={libStyles.searchInput}
+            onChangeText={handleSearch}
+            value={searchSet}
+            placeholder="Search"
+            keyboardType="default"
+          />
+        </View>
       </View>
-      <ScrollView contentContainerStyle={libStyles.scrollView}>
-        {Object.values(library).map((item, index) => {
+
+      <ScrollView style={libStyles.bottomSection} contentContainerStyle={libStyles.scrollView}>
+        <TouchableOpacity
+          onPress={handleOpenAdd}
+          style={libStyles.createPlaylistButton}>
+          <Text style={libStyles.createPlaylistText}>Create Playlist +</Text>
+        </TouchableOpacity>
+        {filteredLibrary.map((item, index) => {
+          const itemColor = profileColors[index % profileColors.length];
           return (
             <TouchableOpacity
               key={`playlist-${item.id}`} // use the unique id as key
               style={libStyles.playlist}
               onPress={() => handleNavigation(item.id)} // pass the id to handle navigation
             >
-              <View style={libStyles.iconContainer}>
+              <View style={[libStyles.iconContainer, { backgroundColor: itemColor }]}>
                 <MaterialCommunityIcons
                   size={44}
                   name="access-point"
@@ -250,150 +341,3 @@ export default function LibraryScreen({ navigation, route }: any) {
     </SafeAreaView>
   );
 }
-
-// const colors = {
-//   backgroundThemeColor: "#F2E8E1",
-//   iconBackground: "#7F9CEF",
-//   playlistColor: "#FFFFFF",
-//   textColor: "#000000",
-//   subtextColor: "#A7A7A7",
-// };
-
-// const fonts = {
-//   fontFamily: "GeneralSans-Regular",
-//   headerTitleSize: 24,
-//   playlistTitleSize: 18,
-//   subTextSize: 14,
-// };
-
-// export const libStyles = StyleSheet.create({
-//   container: {
-//     flex: 1,
-//     width: "100%",
-//     justifyContent: "center",
-//     backgroundColor: colors.backgroundThemeColor,
-//     padding: 0,
-//     margin: 0,
-//   },
-//   headerContainer: {
-//     paddingVertical: 30,
-//     width: "100%",
-//     flexDirection: "row",
-//     justifyContent: "space-between",
-//     alignItems: "center",
-//     paddingHorizontal: 15,
-//   },
-//   headerText: {
-//     fontFamily: "GeneralSans-Bold",
-//     fontSize: 30,
-//   },
-//   scrollView: {
-//     width: "100%",
-//     justifyContent: "center",
-//   },
-//   playlist: {
-//     flexDirection: "row",
-//     alignItems: "center",
-
-//     backgroundColor: colors.playlistColor,
-
-//     borderWidth: 1,
-//     borderRightWidth: 4,
-//     borderBottomWidth: 4,
-//     borderRadius: 10,
-//     borderColor: "#000000",
-
-//     paddingVertical: 10,
-//     marginBottom: 15,
-//     marginHorizontal: 15,
-//   },
-//   iconContainer: {
-//     justifyContent: "center",
-//     alignItems: "center",
-//     borderRadius: 3,
-//     backgroundColor: colors.iconBackground,
-//     marginHorizontal: 10,
-//     width: 55,
-//     height: 55,
-//   },
-//   playlistInfo: {
-//     flex: 5,
-//   },
-
-//   addingContainer: {
-//     flexDirection: "column",
-//     padding: 20,
-//     marginBottom: 15,
-//     marginHorizontal: 15,
-//     borderWidth: 1,
-//     borderRightWidth: 4,
-//     borderBottomWidth: 4,
-//     borderRadius: 10,
-//     borderColor: "#000000",
-//     backgroundColor: "white",
-//   },
-//   addingKoreanText: {
-//     borderWidth: 1,
-//     paddingVertical: 7,
-//     marginVertical: 5,
-//     borderRadius: 4,
-//     textAlign: "left",
-//     paddingLeft: 5,
-//     fontWeight: "bold",
-//   },
-//   addingEnglishText: {
-//     borderWidth: 1,
-//     marginVertical: 5,
-//     paddingVertical: 4,
-//     borderRadius: 4,
-//     textAlign: "left",
-//     paddingLeft: 5,
-//   },
-//   addingButtonContainer: {
-//     flexDirection: "row",
-//     justifyContent: "space-between",
-//     alignItems: "center",
-//     width: "100%",
-//     marginTop: 20,
-//   },
-//   cancelButton: {
-//     width: "30%",
-//     backgroundColor: "red",
-//     textAlign: "center",
-//     flexDirection: "row",
-//     justifyContent: "center",
-//     alignItems: "center",
-//     paddingVertical: 10,
-//     borderWidth: 1,
-//     borderRightWidth: 4,
-//     borderBottomWidth: 4,
-//     borderRadius: 10,
-//     borderColor: "#000000",
-//   },
-//   addButton: {
-//     width: "65%",
-//     backgroundColor: "green",
-//     textAlign: "center",
-//     flexDirection: "row",
-//     justifyContent: "center",
-//     alignItems: "center",
-//     paddingVertical: 10,
-//     borderWidth: 1,
-//     borderRightWidth: 4,
-//     borderBottomWidth: 4,
-//     borderRadius: 10,
-//     borderColor: "#000000",
-//   },
-
-//   playlistName: {
-//     fontSize: fonts.playlistTitleSize,
-//     fontWeight: "bold",
-//     color: colors.textColor,
-//   },
-//   playlistWordCount: {
-//     fontFamily: "GeneralSans-Medium",
-//     fontSize: fonts.subTextSize,
-//     fontWeight: "normal",
-//     color: colors.subtextColor,
-//   },
-// });

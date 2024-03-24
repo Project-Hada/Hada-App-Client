@@ -1,5 +1,5 @@
 import React, { createContext, useState, useContext, ReactNode, useEffect } from 'react';
-import { colors } from '../../components/theme/Colors'; 
+import { colors } from '../../components/theme/colors'; 
 import { spacing } from '../../components/theme/Spacing'; 
 import { typography } from '../../components/theme/Typography';
 
@@ -31,7 +31,7 @@ export const ThemeContext = createContext<ThemeContextType>(defaultThemeContext)
 
 // Create a provider component
 export const ThemeProvider = ({ children }: { children: ReactNode }) => {
-  const [themeMode, setThemeMode] = useState<ThemeMode>('dark');
+  const [themeMode, setThemeMode] = useState<ThemeMode>('light');
 
   const toggleTheme = () => {
     setThemeMode((prevMode) => (prevMode === 'light' ? 'dark' : 'light'));

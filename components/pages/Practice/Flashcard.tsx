@@ -73,8 +73,8 @@ export default function FlashCard({
     },
     audioButton: {
       position: "absolute",
-      top: 15,
-      right: 15,
+      top: theme.spacing.flashcard.audioButtonTop,
+      right: theme.spacing.flashcard.audioButtonRight,
     },
   });
 
@@ -152,44 +152,3 @@ export default function FlashCard({
   );
 }
 
-// const styles = StyleSheet.create({
-//   flashCardPressableContainer: {
-//     flex: 1,
-//     justifyContent: "center",
-//     alignItems: "center",
-//     zIndex: 5,
-//   },
-//   flashCard: {
-//     width: "100%",
-//     height: "100%",
-//     borderRadius: 14,
-//     backgroundColor: theme.colors.container,
-//     justifyContent: "center",
-//     alignItems: "center",
-//     backfaceVisibility: "hidden",
-//     shadowColor: "#171717",
-//     borderWidth: 1,
-//     borderRightWidth: 4,
-//     borderBottomWidth: 4,
-//     borderColor: theme.colors.border,
-//   },
-//   termContainer: {},
-//   term: {
-//     fontSize: 38,
-//     fontFamily: theme.typography.variableFont,
-//   },
-//   romanizationContainer: {},
-//   romanization: {
-//     fontSize: 28,
-//     fontFamily: theme.typography.regularFont,
-//     color: theme.colors.subtext,
-//   },
-//   definition: {
-//     fontSize: 34,
-//   },
-//   audioButton: {
-//     position: "absolute",
-//     top: 15,
-//     right: 15,
-//   },
-// });
