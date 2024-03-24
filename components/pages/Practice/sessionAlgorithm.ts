@@ -77,13 +77,33 @@ import FlashcardContext from "../../../utils/contexts/LibraryContext";
 const sessionAlgorithm = () => {
     const { currPlaylist } = useContext(FlashcardContext);
     
+    /**
+     * Creates the partition starting off with cards needed to learn
+     * And sprinkling in bleed cards from the queue
+     * @param n number of cards to add to partition
+     */
     const createPartition = (n: number) => {
-        // Create the partition logic here
+        
+        // the bleed index tells us how many cards the user has learned
+        // as the bleed array populates from the cards the user is learning
+        // this allows us to minimize the variables we are tracking
+        /**
+         * the idea follows 
+         * b: []
+         * p: [hi, bye, why]
+         * s: [hi, bye, why, cry, tie, dye, lie, my, sigh, wifi]
+         * after the partition gets cleared the bleed array will be updated
+         * b: [hi, bye, why] // len: 3, which is perfect to tell us where to insert
+         * p: [cry, tie, dye] <-- as 3, is the index of cry
+         * s: [hi, bye, why, cry, tie, dye, lie, my, sigh, wifi]
+         */
+        let bleedIndex: number = currPlaylist?.bleedArray.length || 0; 
+        const totalFlashcards = currPlaylist ? Object.keys(currPlaylist.playlist).length : 0;
         const partition = [];
-        // Assuming 's' is your source array of flashcards
-        for (let i = 0; i < n; i++) {
-            // Add logic to select flashcards and push them to the partition
-            const flashcard = currPlaylist?.playlist[i]; // Example logic
+
+
+        for (let i = 0;i < n && bleedIndex < totalFlashcards; i++) {
+            const flashcard = currPlaylist?.playlist[bleedIndex++];
             partition.push(flashcard);
         }
         return partition;
