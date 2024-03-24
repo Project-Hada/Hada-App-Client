@@ -71,73 +71,54 @@
  *
  */
 
-import { useContext } from "react";
+import React, { useContext } from "react";
 import FlashcardContext from "../../../utils/contexts/LibraryContext";
+import { FlashCardType, PlaylistType } from "../../../utils/types";
 
-const sessionAlgorithm = () => {
-    const { currPlaylist } = useContext(FlashcardContext);
-    
-    /**
-     * Creates the partition starting off with cards needed to learn
-     * And sprinkling in bleed cards from the queue
-     * @param n number of cards to add to partition
-     */
-    const createPartition = (n: number) => {
-        
-        // the bleed index tells us how many cards the user has learned
-        // as the bleed array populates from the cards the user is learning
-        // this allows us to minimize the variables we are tracking
-        /**
-         * the idea follows 
-         * b: []
-         * p: [hi, bye, why]
-         * s: [hi, bye, why, cry, tie, dye, lie, my, sigh, wifi]
-         * after the partition gets cleared the bleed array will be updated
-         * b: [hi, bye, why] // len: 3, which is perfect to tell us where to insert
-         * p: [cry, tie, dye] <-- as 3, is the index of cry
-         * s: [hi, bye, why, cry, tie, dye, lie, my, sigh, wifi]
-         */
-        let bleedIndex: number = currPlaylist?.bleedArray.length || 0; 
-        const totalFlashcards = currPlaylist ? Object.keys(currPlaylist.playlist).length : 0;
-        const partition = [];
+class SessionAlgorithm {
+  private currPlaylist: PlaylistType | null;
+  private partition: FlashCardType[] = [];
+  private bleedIndex: number = 0;
 
+  constructor() {
+    // Here, useContext wouldn't work as expected since it must be used within a component or another hook.
+    // Instead, the context value should be passed to the class when it's instantiated.
+    // You'd need to refactor how currPlaylist is obtained and passed to this class.
+    this.currPlaylist = useContext(FlashcardContext).currPlaylist;
+  }
 
-        for (let i = 0;i < n && bleedIndex < totalFlashcards; i++) {
-            const flashcard = currPlaylist?.playlist[bleedIndex++];
-            partition.push(flashcard);
-        }
-        return partition;
-    };
-    
-    const canGrade = () => {
-        // Assuming lastSession is a timestamp in milliseconds
-        const lastSession = currPlaylist?.lastSession || 0; // Replace with the actual way you get this timestamp
-        const currentTime = Date.now();
-      
-        // 16 hours in milliseconds
-        const sixteenHoursInMilliseconds = 16 * 60 * 60 * 1000;
-      
-        // Calculate the difference
-        const timeDifference = currentTime - lastSession;
-      
-        // Check if the difference is less than or equal to 16 hours
-        return timeDifference <= sixteenHoursInMilliseconds;
-    };
-      
-      
-    const isAbleToGrade = canGrade();
-    const n = 5; // The number of cards to study
-    let partition = [];
-    
-    //possible start for loop
-    if (!partition.length) {
-        partition = createPartition(n);
+  private canGrade(): boolean {
+    const lastSession = this.currPlaylist?.lastSession || 0;
+    const currentTime = Date.now();
+    const sixteenHoursInMilliseconds = 16 * 60 * 60 * 1000;
+    const timeDifference = currentTime - lastSession;
+    return timeDifference <= sixteenHoursInMilliseconds;
+  }
+
+  private createPartition(n: number): void {
+    this.bleedIndex = this.currPlaylist?.bleedArray.length || 0;
+    const totalFlashcards = Object.keys(this.currPlaylist.playlist).length;
+
+    for (let i = 0; i < n && this.bleedIndex < totalFlashcards; i++) {
+      const flashcardKey = Object.keys(this.currPlaylist.playlist)[this.bleedIndex];
+      const flashcard = this.currPlaylist.playlist[flashcardKey];
+      this.partition.push(flashcard);
+      this.bleedIndex++;
     }
+  }
 
+  public startSession(n: number): FlashCardType[] {
+    if (this.partition.length === 0) {
+      this.createPartition(n);
+    }
+    // Other logic to manage the session...
+    return this.partition;
+  }
+}
 
-    
-};
+// Usage example:
+// const sessionAlg = new SessionAlgorithm();
+// sessionAlg.startSession(5);
 
-export default sessionAlgorithm;
 
 
