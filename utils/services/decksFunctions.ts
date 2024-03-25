@@ -1,4 +1,4 @@
-import { collection, getDocs, addDoc, deleteDoc, doc, updateDoc, getDoc } from 'firebase/firestore';
+import { collection, getDocs, addDoc, deleteDoc, doc, updateDoc, getDoc, query, where } from 'firebase/firestore';
 import { db } from "../firebaseConfig"
 
 import { DeckSchema, deckConverter } from '../schemas/DeckSchema'
@@ -40,6 +40,16 @@ export const getAllDecks = async (setDeckList: any) => {
   catch (err) {
     console.log(err);
   }
+}
+
+export const getAllDecksByUser = async (uid : string, setDecks : any) => {
+  const q = await query(decksCollectionRef, where("author", "==", doc(db, "/users/", uid)));
+  const querySnapshot = await getDocs(q);
+  const filteredData = querySnapshot.docs.map((doc) => ({
+    ...doc.data(),
+    id: doc.id,
+  }));
+  setDecks(filteredData);
 }
 
 export const getOneDeckByDId = async (did: String) => {
