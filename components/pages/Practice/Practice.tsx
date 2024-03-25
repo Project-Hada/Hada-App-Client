@@ -54,8 +54,12 @@ export default function PracticeScreen({ navigation, route }: any) {
     const indicators = [];
     if (currentSession) {
       const partitionLength = currentSession.getPartitionLength(); // This should be fine now
-      const currentIndex = currentSession.getPartitionSize() - partitionLength;
-      for (let index = 0; index < partitionLength; index++) {
+      const currentIndex = currentSession.getBleedLength();
+      for (
+        let index = 0;
+        index < Object.keys(currPlaylist!.playlist).length;
+        index++
+      ) {
         indicators.push(
           <View
             key={`progress-${index}`}

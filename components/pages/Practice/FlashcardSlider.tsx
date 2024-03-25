@@ -56,6 +56,7 @@ export default function FlashCardSlider({
     },
     definition: {
       fontSize: typography.flashcard.definitionSize,
+      color: theme.colors.text,
     },
   });
 

@@ -94,7 +94,7 @@ import React, { useContext } from "react";
 import FlashcardContext from "../../../utils/contexts/LibraryContext";
 import { FlashCardType, PlaylistType } from "../../../utils/types";
 
-class CardNode {
+export class CardNode {
     card: FlashCardType | undefined;
     passes: number;
     fails: number;
@@ -160,7 +160,7 @@ class CardNode {
     this.currPlaylist = currPlaylist;
     this.partitionHead = new CardNode(); // Dummy head for partition
     this.partitionLength = 0;
-    this.partitionSize = 5;
+    this.partitionSize = 3;
     this.bleedQueue = new CardNode(); // Initialize bleedQueue with a dummy head
     this.bleedLength = 0;
   }
