@@ -30,6 +30,7 @@ type PracticeScreenProps = {
 export default function PracticeScreen({ navigation, route }: any) {
   const { currPlaylist } = useContext(FlashcardContext);
   const flashcardsObject = currPlaylist!.playlist;
+  //this is important v
   const flashcardsArray = Object.values(flashcardsObject); // Convert flashcards object to array
   const [currentIndex, setCurrentIndex] = useState(0);
   const [dynamicIndex, setDynamicIndex] = useState(currentIndex);

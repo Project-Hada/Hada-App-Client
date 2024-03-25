@@ -19,17 +19,21 @@
  * 3.) Cards studied well popped from partition[] pushed to the bleed[] array,
  *     Cards that are difficult stay in the partition[]
  *     Once the partition[] is empty we may create the next partition[]
- *          - Bleed[]: stacks a single partition, and queues each partition, i.e.,
+ *          
+ *     - Bleed[]: stacks a single partition, and queues each partition, i.e.,
  *            e.g., say our first sessions was [hi, bye, why], I had a hard time with 'hi' and did well with bye and why
  *            bleed[]: ["bye","why","hi"] //pushed in this order
  *            my next partition is [cry, tie, dye], I do well with 'cry' and 'dye' but have a hard time with 'tie'
  *            bleed[]: ['cry','dye',"bye","why",'tie',"hi"]
+ * 
  *            notice how cry and die go to the back of the queue while cry and dye move to the back.
  *            each partition will pop one element off from bleed
  *            bleed[] could be thought of as an importance heap queue
+ * 
  *            the difficult words staying closer near the front of the heap
  *            though it's important to have a good weight to each of the difficult words don't hog the front of the queue
  *            so that words studied well are also studied represented not to far from when they were last studied
+ *            
  *            bleed should exist as a heap that grows with next card that's needed to be studied. 
  *            so when the user comes back to a session where they've already studied all the cards, the importance heap
  *            will act as the set[]. set[] is used to populate bleed[] for which the partition[] will use to test the 
@@ -47,6 +51,21 @@
  * X.) There is a function that checks the last time studied and the time of today if >= 24 hours when the user enters the page
  *     the function applies a decay to the Grade calculation to each card, there is a floor parameter
  *     that can be altered to stop the decay from being too great
+ * Z.) Simple Implementation:
+ *          to determine a card's position during play
+ *          example [hi, bye, why, cry, tie, dye]
+ *          - hi.fail() send at most 3 spaces away
+ *          [bye, why, hi, cry, tie, dye]
+ *          - bye.pass() send at most 5 away 
+ *          [why, hi, cry, tie, dye, bye]
+ *          - why.pass()
+ *          ....
+ *          pass()
+ *              will mark a card, 3 passing marks in a row to be removed from queue
+ *              - pass: with 0 fails, send to back of queue
+ *                otherwise send 5 spaces away if possible
+ *          fail() allowed 3 strikes, if 3 strikes place at top of queue in bleed,
+ *                 each strike allows
  *
  * Algorithm Parameters:
  * s[]: contains the set of cards
@@ -75,18 +94,19 @@ import React, { useContext } from "react";
 import FlashcardContext from "../../../utils/contexts/LibraryContext";
 import { FlashCardType, PlaylistType } from "../../../utils/types";
 
-class SessionAlgorithm {
+class Session {
   private currPlaylist: PlaylistType | null;
   private partition: FlashCardType[] = [];
   private bleedIndex: number = 0;
 
   constructor() {
-    // Here, useContext wouldn't work as expected since it must be used within a component or another hook.
-    // Instead, the context value should be passed to the class when it's instantiated.
-    // You'd need to refactor how currPlaylist is obtained and passed to this class.
     this.currPlaylist = useContext(FlashcardContext).currPlaylist;
   }
 
+   /**
+   * Determines if the user is able to grade based on the time since the last session.
+   * @returns {boolean} True if grading is possible, false otherwise.
+   */
   private canGrade(): boolean {
     const lastSession = this.currPlaylist?.lastSession || 0;
     const currentTime = Date.now();
@@ -95,24 +115,55 @@ class SessionAlgorithm {
     return timeDifference <= sixteenHoursInMilliseconds;
   }
 
+    /**
+   * Creates a partition of flashcards to be studied in a session.
+   * @param n - The number of flashcards to include in the partition.
+   */
   private createPartition(n: number): void {
     this.bleedIndex = this.currPlaylist?.bleedArray.length || 0;
-    const totalFlashcards = Object.keys(this.currPlaylist.playlist).length;
+    const totalFlashcards = Object.keys(this.currPlaylist!.playlist).length;
 
     for (let i = 0; i < n && this.bleedIndex < totalFlashcards; i++) {
-      const flashcardKey = Object.keys(this.currPlaylist.playlist)[this.bleedIndex];
-      const flashcard = this.currPlaylist.playlist[flashcardKey];
+      const flashcardKey = Object.keys(this.currPlaylist!.playlist)[this.bleedIndex];
+      const flashcard = this.currPlaylist!.playlist[flashcardKey];
       this.partition.push(flashcard);
       this.bleedIndex++;
     }
   }
 
+   /**
+   * Starts a new practice session by creating an initial partition of flashcards.
+   * @param n - The number of flashcards to study in the session.
+   * @returns {FlashCardType[]} The partition of flashcards for the session.
+   */
   public startSession(n: number): FlashCardType[] {
-    if (this.partition.length === 0) {
-      this.createPartition(n);
-    }
-    // Other logic to manage the session...
+    this.createPartition(n);
     return this.partition;
+  }
+
+  /**
+   * e.g., say our first partition was [hi, bye, why], I had a hard time with 'hi' and did well with bye and why
+   *       bleed[]: ["bye","why","hi"] //pushed in this order
+   *       my next partition is [cry, tie, dye], I do well with 'cry' and 'dye' but have a hard time with 'tie'
+   *       bleed[]: ['cry','dye',"bye","why",'tie',"hi"]
+   * 
+   */
+
+  /**
+   * Scenario: [hi, bye, why] i: 0
+   * Check cards
+   *
+   */
+  public pass(i: number): void {
+    
+  }
+
+  public fail(i: number): void {
+
+  }
+
+  public next(): void {
+
   }
 }
 
