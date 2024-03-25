@@ -375,6 +375,32 @@ class CardNode {
     }
 
     /**
+    * Gets the length of the current partition.
+    * @returns {number} The number of cards in the current partition.
+    */
+    public getPartitionLength(): number {
+        return this.partitionLength;
+    }
+
+    /**
+     * Gets the length of the bleed queue.
+     * @returns {number} The number of cards in the bleed queue.
+     */
+    public getBleedLength(): number {
+        return this.bleedLength;
+    }
+
+    /**
+     * Gets the length of the partition size.
+     * @returns {number} The number of the partition size.
+     */
+    public getPartitionSize(): number {
+        return this.partitionSize;
+    }
+
+
+
+    /**
      * Generates a string representation of the current state of the SessionAlgorithm, including
      * the properties of interest and the contents of both the partition and the bleedQueue.
      * @returns A string detailing the current state and contents of the partition and bleedQueue.
