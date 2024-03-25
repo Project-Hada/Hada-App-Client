@@ -50,6 +50,13 @@ export default function PracticeScreen({ navigation, route }: any) {
     }
   }, [currPlaylist]);
 
+  // const partitionLength = currentSession.getPartitionLength(); // This should be fine now
+  //     const currentIndex = currentSession.getBleedLength();
+  //     for (
+  //       let index = 0;
+  //       index < Object.keys(currPlaylist!.playlist).length;
+  //       index++
+  //     ) {
   const renderProgressIndicators = () => {
     const indicators = [];
     if (currentSession) {

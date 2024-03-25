@@ -90,8 +90,6 @@
  *
  */
 
-import React, { useContext } from "react";
-import FlashcardContext from "../../../utils/contexts/LibraryContext";
 import { FlashCardType, PlaylistType } from "../../../utils/types";
 
 export class CardNode {
@@ -146,6 +144,11 @@ export class CardNode {
     private bleedQueue: CardNode; // Holds the nodes after passing, null if empty.
     private bleedLength: number; // Track the length of the bleedQueue.
     private partitionSize: number;
+    private failedQueueIncrement: number; // how far a failed card gets pushed in a queue
+    private passedQueueIncrement: number; // how far a passed card gets pushed in a partition
+    private numNewCardsPartition: number; //number of new cards per partition
+    private numOfStrikes: number; //number of strikes for bad grade and higher bleed queue priority
+    private numInARow: number; //number of times they get it in a row to pass the card for partition
     private partitionSnapshots: Array<{
         head: CardNode,
         length: number,
@@ -161,6 +164,11 @@ export class CardNode {
     this.partitionHead = new CardNode(); // Dummy head for partition
     this.partitionLength = 0;
     this.partitionSize = 3;
+    this.numOfStrikes = 3;
+    this.passedQueueIncrement = 4;
+    this.numNewCardsPartition = 2;
+    this.failedQueueIncrement = 2;
+    this.numInARow = 2;
     this.bleedQueue = new CardNode(); // Initialize bleedQueue with a dummy head
     this.bleedLength = 0;
   }
@@ -200,7 +208,7 @@ export class CardNode {
     
         let newCardsAdded = 0;
         // Add two new cards first
-        while (newCardsAdded < 2) {
+        while (newCardsAdded < this.numNewCardsPartition) {
             const flashcardKey = Object.keys(this.currPlaylist!.playlist)[this.bleedLength + newCardsAdded];
             if (flashcardKey) {
                 const flashcard = this.currPlaylist!.playlist[flashcardKey];
@@ -276,7 +284,7 @@ export class CardNode {
         passedCardNode.addActionToHistory('pass');
 
         // Check if the card has passed enough times to be moved to the bleedQueue.
-        if (passedCardNode.passes >= 3) {
+        if (passedCardNode.passes >= this.numInARow) {
             // If it has passed sufficiently, add it to the bleedQueue.
             this.addToBleedQueue(passedCardNode);
         } else {
@@ -284,7 +292,7 @@ export class CardNode {
             passedCardNode.passes++;
 
             // Reinsert the card into the partition.
-            this.reinsertNode(passedCardNode, 5);
+            this.reinsertNode(passedCardNode, this.passedQueueIncrement);
         }
 
         if(!this.partitionLength) {
@@ -308,11 +316,11 @@ export class CardNode {
         failedCardNode.passes = 0; // Reset the passes due to failure.
         failedCardNode.fails++; // Increment the fails.
 
-        if (failedCardNode.fails >= 3) {
+        if (failedCardNode.fails >= this.numOfStrikes) {
         // If the card has 3 fails, it moves to the front of the bleed queue.
         }
         // Otherwise, move it back by up to 3 spaces.
-        this.reinsertNode(failedCardNode, 3);
+        this.reinsertNode(failedCardNode, this.failedQueueIncrement);
     
     }
 
