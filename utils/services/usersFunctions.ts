@@ -1,4 +1,4 @@
-import { collection, getDocs, addDoc, deleteDoc, updateDoc, doc } from 'firebase/firestore';
+import { collection, getDocs, addDoc, deleteDoc, updateDoc, doc, setDoc } from 'firebase/firestore';
 import { db } from "../firebaseConfig"
 
 import { UserSchema, userConverter } from '../schemas/UserSchema'
@@ -18,6 +18,19 @@ export const addNewUser = async (userInput : String) => {
   );
 
   console.log("Document written with ID: ", docRef.id);
+}
+
+export const addNewUserWithID = async (uid : string, usernameInput : String) => {
+  const dateObj = new Date();
+  const year = dateObj.getFullYear()
+  const month = dateObj.getMonth()
+  const day = dateObj.getDate()
+
+  const docRef = await setDoc(doc(db, "users", uid), {
+    username: usernameInput,
+    dateJoined: String(`${month+1}/${day}/${year}`),
+    ownedDecks: []
+  });
 }
 
 /* READ Operations */

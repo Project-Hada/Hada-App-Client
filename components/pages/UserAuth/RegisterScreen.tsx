@@ -4,8 +4,10 @@ import { useState, useEffect } from 'react'
 import { Button, View, ScrollView, StyleSheet, TextInput, Pressable } from 'react-native';
 import { auth } from '../../../utils/firebaseConfig';
 import { createUserWithEmailAndPassword } from 'firebase/auth';
+import { addNewUserWithID } from '../../../utils/services/usersFunctions';
 
 export function RegisterScreen({ navigation, route }: any) {
+  const [usernameInput, setUsernameInput] = useState(''); 
   const [emailInput, setEmailInput] = useState('');
   const [passwordInput, setPasswordInput] = useState('');
   const [confirmPasswordInput, setConfirmPasswordInput] = useState('');
@@ -16,8 +18,11 @@ export function RegisterScreen({ navigation, route }: any) {
     try {
       if (passwordInput != confirmPasswordInput) throw new Error("password mismatch")
 
-      const response = await createUserWithEmailAndPassword(auth, emailInput, passwordInput)
-      console.log(response)
+      createUserWithEmailAndPassword(auth, emailInput, passwordInput).then(response => {
+        console.log(response);
+        addNewUserWithID(response.user.uid, usernameInput);
+      });
+      
       navigation.navigate("LibraryScreen")
     }
     catch (error) {
@@ -38,6 +43,13 @@ export function RegisterScreen({ navigation, route }: any) {
       {(error !== "") && <p>{error}</p>}
 
       {/* Custom Login */}
+      <TextInput
+        style={styles.input}
+        onChangeText={setUsernameInput}
+        placeholder='username'
+        placeholderTextColor="#D3D3D3" 
+        value={usernameInput}
+      />
       <TextInput
         style={styles.input}
         onChangeText={setEmailInput}

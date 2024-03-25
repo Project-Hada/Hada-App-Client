@@ -90,6 +90,7 @@ export default function LibraryScreen({ navigation, route }: any) {
         </TouchableOpacity>
       </View>
       <ScrollView contentContainerStyle={libStyles.scrollView}>
+        {/* User Info */}
         <Text>Your Email: {user?.email}</Text>
 
         {Object.values(library).map((item, index) => {
