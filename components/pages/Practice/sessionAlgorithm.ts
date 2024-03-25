@@ -286,6 +286,11 @@ class CardNode {
             // Reinsert the card into the partition.
             this.reinsertNode(passedCardNode, 5);
         }
+
+        if(!this.partitionLength) {
+            this.createPartition();
+        }
+
     }
 
     public fail(): void {
