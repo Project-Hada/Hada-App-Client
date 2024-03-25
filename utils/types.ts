@@ -4,7 +4,8 @@ export interface FlashCardType {
   id: string;
   term: string;
   definition: string;
-  grade: number;
+  passes: number;
+  fails: number;
 }
 
 // Defines a type for the bleedArray, which is an array of flashcard IDs

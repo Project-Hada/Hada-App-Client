@@ -51,7 +51,7 @@
  * X.) There is a function that checks the last time studied and the time of today if >= 24 hours when the user enters the page
  *     the function applies a decay to the Grade calculation to each card, there is a floor parameter
  *     that can be altered to stop the decay from being too great
- * Z.) Simple Implementation:
+ * Z.) Grading (Simple Implementation):
  *          to determine a card's position during play
  *          example [hi, bye, why, cry, tie, dye]
  *          - hi.fail() send at most 3 spaces away
@@ -61,12 +61,12 @@
  *          - why.pass()
  *          ....
  *          pass()
- *              will mark a card, 3 passing marks in a row to be removed from queue
+ *              will mark a card, 3 passing passes in a row to be removed from queue
  *              - pass: with 0 fails, send to back of queue
  *                otherwise send 5 spaces away if possible
- *          fail() allowed 3 strikes, if 3 strikes place at top of queue in bleed,
+ *          fail() allowed 3 fails, if 3 fails place at top of queue in bleed,
  *                 each strike allows
- *
+ *  
  * Algorithm Parameters:
  * s[]: contains the set of cards
  * p[]: partition
@@ -94,20 +94,72 @@ import React, { useContext } from "react";
 import FlashcardContext from "../../../utils/contexts/LibraryContext";
 import { FlashCardType, PlaylistType } from "../../../utils/types";
 
-class Session {
-  private currPlaylist: PlaylistType | null;
-  private partition: FlashCardType[] = [];
-  private bleedIndex: number = 0;
-
-  constructor() {
-    this.currPlaylist = useContext(FlashcardContext).currPlaylist;
+class CardNode {
+    card: FlashCardType | undefined;
+    passes: number;
+    fails: number;
+    next: CardNode | null;
+  
+    constructor(card?: FlashCardType, passes: number = 0, fails: number = 0, next: CardNode | null = null) {
+      this.card = card;
+      this.passes = passes;
+      this.fails = fails;
+      this.next = next;
+    }
   }
+  
+  
+  class SessionAlgorithm {
+    private currPlaylist: PlaylistType | null;
+    private partitionHead: CardNode; // Represents the fake head of the linked list for partition.
+    private partitionLength: number; // Tracks the number of nodes in the linked list, excluding the fake head.
+    private partitionSize: number;
+  
+    constructor(currPlaylist: PlaylistType | null) {
+      this.currPlaylist = currPlaylist;
+      this.partitionHead = new CardNode();
+      this.partitionLength = 0; // Initialize the length to 0.
+      this.partitionSize = 5;
+    }
+  
+    private addCardToPartition(card: FlashCardType): void {
+      const newNode = new CardNode(card);
+      let current = this.partitionHead;
+      while (current.next !== null) {
+        current = current.next;
+      }
+      current.next = newNode;
+      this.partitionLength++; // Increment the count when a new node is added.
+    }
+  
+    /**
+     * Creates a partition of flashcards to be studied in a session.
+     * @param n - The number of flashcards to include in the partition.
+     */
+    private createPartition(n: number): void {
+        let bleedIndex = this.currPlaylist?.bleedArray.length || 0;
+        const totalFlashcards = Object.keys(this.currPlaylist!.playlist).length;
+    
+        for (let i = 0; i < n && bleedIndex < totalFlashcards; i++) {
+            const flashcardKey = Object.keys(this.currPlaylist!.playlist)[bleedIndex++];
+            const flashcard = this.currPlaylist!.playlist[flashcardKey];
+            this.addCardToPartition(flashcard); // Add card to the linked list.
+        }
+    }
+    // Include methods to remove cards from the partition where you will decrement this.partitionLength accordingly.
+
+    public startSession(): CardNode {
+        // Reset the length when starting a new session.
+        this.partitionLength = 0;
+        this.createPartition(this.partitionSize); 
+        return this.partitionHead;
+    }
 
    /**
    * Determines if the user is able to grade based on the time since the last session.
    * @returns {boolean} True if grading is possible, false otherwise.
    */
-  private canGrade(): boolean {
+   private canGrade(): boolean {
     const lastSession = this.currPlaylist?.lastSession || 0;
     const currentTime = Date.now();
     const sixteenHoursInMilliseconds = 16 * 60 * 60 * 1000;
@@ -115,51 +167,71 @@ class Session {
     return timeDifference <= sixteenHoursInMilliseconds;
   }
 
-    /**
-   * Creates a partition of flashcards to be studied in a session.
-   * @param n - The number of flashcards to include in the partition.
+  /**
+   * Helper method to reinsert a node in the queue.
+   * @param node - The card node to reinsert.
+   * @param positions - The number of positions to move the card back in the queue.
    */
-  private createPartition(n: number): void {
-    this.bleedIndex = this.currPlaylist?.bleedArray.length || 0;
-    const totalFlashcards = Object.keys(this.currPlaylist!.playlist).length;
+  private reinsertNode(node: CardNode, positions: number): void {
+    // Ensure positions are within bounds.
+    positions = Math.min(positions, this.partitionLength);
 
-    for (let i = 0; i < n && this.bleedIndex < totalFlashcards; i++) {
-      const flashcardKey = Object.keys(this.currPlaylist!.playlist)[this.bleedIndex];
-      const flashcard = this.currPlaylist!.playlist[flashcardKey];
-      this.partition.push(flashcard);
-      this.bleedIndex++;
+    let current = this.partitionHead;
+    // Find the insertion point.
+    while (positions > 0 && current.next) {
+      current = current.next;
+      positions--;
     }
+
+    // Reinsert the node.
+    node.next = current.next;
+    current.next = node;
+    this.partitionLength++;
   }
 
-   /**
-   * Starts a new practice session by creating an initial partition of flashcards.
-   * @param n - The number of flashcards to study in the session.
-   * @returns {FlashCardType[]} The partition of flashcards for the session.
-   */
-  public startSession(n: number): FlashCardType[] {
-    this.createPartition(n);
-    return this.partition;
+  public pass(): void {
+    if (!this.partitionHead.next) {
+      return; // No cards to pass.
+    }
+
+    let passedCardNode = this.partitionHead.next; // The node to process.
+    this.partitionHead.next = passedCardNode.next; // Remove the node from its current position.
+    passedCardNode.next = null;
+    this.partitionLength--;
+
+    if (passedCardNode.passes >= 3) {
+      // The card is effectively removed if it has 3 passing passes.
+      // Place place at the start of the bleed queue
+      return;
+    }
+
+    // Determine how far to move the card back based on its passes.
+    let positions = passedCardNode.passes > 0 ? 5 : this.partitionLength;
+    // Reset the passes if no fails, otherwise increment.
+    passedCardNode.passes = passedCardNode.passes > 0 ? passedCardNode.passes + 1 : 1;
+
+    this.reinsertNode(passedCardNode, positions);
   }
 
-  /**
-   * e.g., say our first partition was [hi, bye, why], I had a hard time with 'hi' and did well with bye and why
-   *       bleed[]: ["bye","why","hi"] //pushed in this order
-   *       my next partition is [cry, tie, dye], I do well with 'cry' and 'dye' but have a hard time with 'tie'
-   *       bleed[]: ['cry','dye',"bye","why",'tie',"hi"]
-   * 
-   */
+  public fail(): void {
+    if (!this.partitionHead.next) {
+      return; // No cards to fail.
+    }
 
-  /**
-   * Scenario: [hi, bye, why] i: 0
-   * Check cards
-   *
-   */
-  public pass(i: number): void {
+    let failedCardNode = this.partitionHead.next; // The node to process.
+    this.partitionHead.next = failedCardNode.next; // Remove the node from its current position.
+    failedCardNode.next = null;
+    this.partitionLength--;
+
+    failedCardNode.passes = 0; // Reset the passes due to failure.
+    failedCardNode.fails++; // Increment the fails.
+
+    if (failedCardNode.fails >= 3) {
+      // If the card has 3 fails, it moves to the front of the bleed queue.
+    }
+    // Otherwise, move it back by up to 3 spaces.
+    this.reinsertNode(failedCardNode, 3);
     
-  }
-
-  public fail(i: number): void {
-
   }
 
   public next(): void {
