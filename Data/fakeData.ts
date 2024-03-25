@@ -433,6 +433,21 @@ const flashCards1: FlashCardType[] = [
     }
   ];
   
+  const smallSet: FlashCardType[] = [
+    {
+      "term": "컴퓨터",
+      "romanization": "(keompyuteo)",
+      "definition": "computer"
+    },
+    {
+      "term": "이메일",
+      "definition": "email"
+    },
+    {
+      "term": "동료",
+      "definition": "colleague"
+    }
+  ]
   const workTravelCards: FlashCardType[] = [
     {
         "term": "업무 분담",
@@ -542,6 +557,10 @@ const flashCards1: FlashCardType[] = [
     {
         title: "Office Vocab 💼",
         playlist: workTravelCards
+    },
+    {
+      title: "Small Set 🧛‍♀️",
+      playlist: smallSet
     }
 ];
 

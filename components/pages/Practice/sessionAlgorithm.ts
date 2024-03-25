@@ -163,7 +163,7 @@ export class CardNode {
     this.currPlaylist = currPlaylist;
     this.partitionHead = new CardNode(); // Dummy head for partition
     this.partitionLength = 0;
-    this.partitionSize = 3;
+    this.partitionSize = 6;
     this.numOfStrikes = 3;
     this.passedQueueIncrement = 4;
     this.numNewCardsPartition = 2;
@@ -415,6 +415,7 @@ export class CardNode {
      */
     public toString(): string {
         let str = `Current Playlist: ${this.currPlaylist ? 'Present' : 'Null'}\n`;
+        str += `Current Playlist Length: ${Object.keys(this.currPlaylist!.playlist).length}\n`;
         str += `Partition Length: ${this.partitionLength}\n`;
         str += `BleedQueue Length: ${this.bleedLength}\n`;
         str += `Partition Size: ${this.partitionSize}\n`;

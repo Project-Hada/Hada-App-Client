@@ -25,7 +25,6 @@ type PracticeScreenProps = {
 
 type HistoryItem = {
   direction: string;
-  currentIndex: number;
 };
 
 export default function PracticeScreen({ navigation, route }: any) {
@@ -86,6 +85,20 @@ export default function PracticeScreen({ navigation, route }: any) {
   // Function to handle the card swipe animation
   const moveCard = (direction: string) => {
     if (!currentSession) return;
+    console.log(
+      currentSession.getBleedLength(),
+      Object.keys(currPlaylist!.playlist).length - 1,
+      currentSession.getBleedLength() >=
+        Object.keys(currPlaylist!.playlist).length - 1
+    );
+    if (
+      currentSession.getBleedLength() >=
+      Object.keys(currPlaylist!.playlist).length - 1
+    ) {
+      navigation.goBack();
+      return;
+    }
+
     if (currentSession.getPartitionHead()) {
       console.log("DIRECTION", direction);
       if (direction === "right") {
@@ -115,6 +128,7 @@ export default function PracticeScreen({ navigation, route }: any) {
         setIsFlipped(false);
         // After the animation, reset position and update card indices
         cardOffsetX.setValue(0); // Reset position
+        setHistory([...history, { direction }]);
         setSliderIndex(0);
       });
     }
@@ -124,8 +138,11 @@ export default function PracticeScreen({ navigation, route }: any) {
   const bringBackCard = () => {
     setIsFlipped(false);
     setWasFlipped(false);
+    console.log("SCRIBBLE DOT I EOUEOUOEO");
+    console.log(history.length, !currentSession);
     if (history.length <= 0 || !currentSession) return;
     //session manipulation
+    console.log("SCRIBBLE DOT I O");
     currentSession.undoLastAction();
     console.log(currentSession.toString());
 
