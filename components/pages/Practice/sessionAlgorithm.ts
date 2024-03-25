@@ -146,7 +146,13 @@ class CardNode {
     private bleedQueue: CardNode; // Holds the nodes after passing, null if empty.
     private bleedLength: number; // Track the length of the bleedQueue.
     private partitionSize: number;
-    private partitionSnapshots: Array<{head: CardNode, length: number, bleedLength: number}> = [];
+    private partitionSnapshots: Array<{
+        head: CardNode,
+        length: number,
+        bleedLength: number,
+        bleedQueueHead: CardNode // Add this property
+    }> = [];
+    
   
     
 
@@ -305,32 +311,43 @@ class CardNode {
     
     }
 
-  // Method to save a snapshot of the current partition state
-  private savePartitionState(): void {
-      // Clone the entire partition and bleed queue
-      const headClone = new CardNode(); // New dummy head for the cloned list
-      let current = this.partitionHead.next; // Start from the actual first element
-      let cloneCurrent = headClone;
-      while (current) {
-          cloneCurrent.next = current.clone();
-          cloneCurrent = cloneCurrent.next;
-          current = current.next;
-      }
+    // Method to save a snapshot of the current partition state along with the bleed queue
+    private savePartitionState(): void {
+        const partitionClone = this.cloneLinkedList(this.partitionHead);
+        const bleedQueueClone = this.cloneLinkedList(this.bleedQueue);
 
-      // Save the cloned list and current lengths
-      this.partitionSnapshots.push({ head: headClone, length: this.partitionLength, bleedLength: this.bleedLength });
-  }
+        // Save the cloned lists and current lengths
+        this.partitionSnapshots.push({
+            head: partitionClone,
+            length: this.partitionLength,
+            bleedLength: this.bleedLength,
+            bleedQueueHead: bleedQueueClone // Save the state of the bleedQueue as well
+        });
+    }
 
-  // Method to restore the last saved partition state
-  public undoLastAction(): void {
-      const lastSnapshot = this.partitionSnapshots.pop();
-      if (lastSnapshot) {
-          this.partitionHead = lastSnapshot.head;
-          this.partitionLength = lastSnapshot.length;
-          this.bleedLength = lastSnapshot.bleedLength;
-          // Additional logic might be needed to correctly re-link the bleedQueue
-      }
-  }
+    // Method to restore the last saved partition state along with the bleed queue
+    public undoLastAction(): void {
+        const lastSnapshot = this.partitionSnapshots.pop();
+        if (lastSnapshot) {
+            this.partitionHead = lastSnapshot.head;
+            this.partitionLength = lastSnapshot.length;
+            this.bleedQueue = lastSnapshot.bleedQueueHead; // Restore the bleedQueue
+            this.bleedLength = lastSnapshot.bleedLength;
+        }
+    }
+
+    // Helper method to clone a linked list
+    private cloneLinkedList(head: CardNode): CardNode {
+        const dummyHead = new CardNode(); // New dummy head for the cloned list
+        let current = head.next; // Start from the actual first element
+        let cloneCurrent = dummyHead;
+        while (current) {
+            cloneCurrent.next = current.clone();
+            cloneCurrent = cloneCurrent.next;
+            current = current.next;
+        }
+        return dummyHead; // Return the dummy head of the cloned list
+    }
 
    /**
    * Determines if the user is able to grade based on the time since the last session.
