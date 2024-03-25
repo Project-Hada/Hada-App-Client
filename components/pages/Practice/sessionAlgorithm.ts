@@ -106,52 +106,108 @@ class CardNode {
       this.fails = fails;
       this.next = next;
     }
+    
+    // A method to calculate the difficulty score for sorting in the bleedQueue.
+    // You can tailor this calculation to fit your needs.
+    get difficultyScore(): number {
+      // An arbitrary calculation based on passes and fails.
+      return this.fails - this.passes;
+    }
   }
-  
   
   class SessionAlgorithm {
     private currPlaylist: PlaylistType | null;
     private partitionHead: CardNode; // Represents the fake head of the linked list for partition.
-    private partitionLength: number; // Tracks the number of nodes in the linked list, excluding the fake head.
+    private partitionLength: number;
+    private bleedQueue: CardNode; // Holds the nodes after passing, null if empty.
+    private bleedLength: number; // Track the length of the bleedQueue.
     private partitionSize: number;
   
-    constructor(currPlaylist: PlaylistType | null) {
-      this.currPlaylist = currPlaylist;
-      this.partitionHead = new CardNode();
-      this.partitionLength = 0; // Initialize the length to 0.
-      this.partitionSize = 5;
-    }
-  
-    private addCardToPartition(card: FlashCardType): void {
-      const newNode = new CardNode(card);
-      let current = this.partitionHead;
-      while (current.next !== null) {
-        current = current.next;
-      }
-      current.next = newNode;
-      this.partitionLength++; // Increment the count when a new node is added.
-    }
-  
-    /**
-     * Creates a partition of flashcards to be studied in a session.
-     * @param n - The number of flashcards to include in the partition.
-     */
-    private createPartition(n: number): void {
-        let bleedIndex = this.currPlaylist?.bleedArray.length || 0;
-        const totalFlashcards = Object.keys(this.currPlaylist!.playlist).length;
     
-        for (let i = 0; i < n && bleedIndex < totalFlashcards; i++) {
-            const flashcardKey = Object.keys(this.currPlaylist!.playlist)[bleedIndex++];
-            const flashcard = this.currPlaylist!.playlist[flashcardKey];
-            this.addCardToPartition(flashcard); // Add card to the linked list.
+
+  constructor(currPlaylist: PlaylistType | null) {
+    this.currPlaylist = currPlaylist;
+    this.partitionHead = new CardNode(); // Dummy head for partition
+    this.partitionLength = 0;
+    this.partitionSize = 5;
+    this.bleedQueue = new CardNode(); // Initialize bleedQueue with a dummy head
+    this.bleedLength = 0;
+  }
+
+    // Method to add a card to the bleedQueue based on its difficultyScore.
+    /**
+   * Adds a node to the bleedQueue, sorting by difficulty.
+   * @param node - The node to add to the bleedQueue.
+   */
+    private addToBleedQueue(node: CardNode): void {
+        // Start from the dummy head
+        let current = this.bleedQueue;
+    
+        // Since we're using a dummy head, current will never be null.
+        // Sort nodes based on the difficultyScore instead of just fails.
+        while (current.next && current.next.difficultyScore <= node.difficultyScore) {
+            current = current.next;
+        }
+    
+        // Insert the node into the bleedQueue, maintaining sort order by difficultyScore.
+        node.next = current.next;
+        current.next = node;
+    
+        this.bleedLength++; // Increment the length of the bleedQueue.
+    }
+  
+    private createPartition(): void {
+        this.partitionHead.next = null;
+        this.partitionLength = 0;
+    
+        let newCardsAdded = 0;
+        // Add two new cards first
+        while (newCardsAdded < 2) {
+            const flashcardKey = Object.keys(this.currPlaylist!.playlist)[this.bleedLength + newCardsAdded];
+            if (flashcardKey) {
+                const flashcard = this.currPlaylist!.playlist[flashcardKey];
+                const newNode = new CardNode(flashcard);
+                this.addToPartition(newNode); // Add the new card to the partition
+                newCardsAdded++;
+            }
+        }
+    
+        // Then fill the rest with bleedQueue cards if available, or continue adding new cards
+        for (let i = newCardsAdded; i < this.partitionSize; i++) {
+            if (this.bleedQueue.next !== null) {
+                // Add the next bleedQueue card to the partition
+                const bleedNode = this.bleedQueue.next;
+                this.bleedQueue.next = bleedNode.next; // Remove from bleedQueue
+                bleedNode.next = null; // Clear the next reference
+                this.addToPartition(bleedNode); // Add to the partition
+                this.bleedLength--; // Adjust bleedQueue length if needed
+            } else {
+                // No more cards in bleedQueue, add the next new card from the playlist
+                const flashcardKey = Object.keys(this.currPlaylist!.playlist)[this.bleedLength + i];
+                if (flashcardKey) {
+                    const flashcard = this.currPlaylist!.playlist[flashcardKey];
+                    const newNode = new CardNode(flashcard);
+                    this.addToPartition(newNode); // Add the new card to the partition
+                }
+            }
         }
     }
-    // Include methods to remove cards from the partition where you will decrement this.partitionLength accordingly.
+    
+    private addToPartition(node: CardNode): void {
+        let current = this.partitionHead;
+        while (current.next !== null) {
+            current = current.next;
+        }
+        current.next = node; // Append the node to the end of the partition
+        this.partitionLength++; // Increment the count of nodes in the partition
+    }
+    
+    
 
     public startSession(): CardNode {
         // Reset the length when starting a new session.
         this.partitionLength = 0;
-        this.createPartition(this.partitionSize); 
+        this.createPartition(); 
         return this.partitionHead;
     }
 
@@ -187,33 +243,33 @@ class CardNode {
     node.next = current.next;
     current.next = node;
     this.partitionLength++;
-  }
-
-  public pass(): void {
-    if (!this.partitionHead.next) {
-      return; // No cards to pass.
     }
 
-    let passedCardNode = this.partitionHead.next; // The node to process.
-    this.partitionHead.next = passedCardNode.next; // Remove the node from its current position.
-    passedCardNode.next = null;
-    this.partitionLength--;
+    public pass(): void {
+        if (!this.partitionHead.next) {
+            return; // No cards to pass.
+        }
 
-    if (passedCardNode.passes >= 3) {
-      // The card is effectively removed if it has 3 passing passes.
-      // Place place at the start of the bleed queue
-      return;
+        // Remove the card node from the partition.
+        let passedCardNode = this.partitionHead.next;
+        this.partitionHead.next = passedCardNode.next;
+        passedCardNode.next = null;
+        this.partitionLength--;
+
+        // Check if the card has passed enough times to be moved to the bleedQueue.
+        if (passedCardNode.passes >= 3) {
+            // If it has passed sufficiently, add it to the bleedQueue.
+            this.addToBleedQueue(passedCardNode);
+        } else {
+            // Increment the pass count for the card.
+            passedCardNode.passes++;
+
+            // Reinsert the card into the partition.
+            this.reinsertNode(passedCardNode, 5);
+        }
     }
 
-    // Determine how far to move the card back based on its passes.
-    let positions = passedCardNode.passes > 0 ? 5 : this.partitionLength;
-    // Reset the passes if no fails, otherwise increment.
-    passedCardNode.passes = passedCardNode.passes > 0 ? passedCardNode.passes + 1 : 1;
-
-    this.reinsertNode(passedCardNode, positions);
-  }
-
-  public fail(): void {
+    public fail(): void {
     if (!this.partitionHead.next) {
       return; // No cards to fail.
     }
@@ -232,10 +288,6 @@ class CardNode {
     // Otherwise, move it back by up to 3 spaces.
     this.reinsertNode(failedCardNode, 3);
     
-  }
-
-  public next(): void {
-
   }
 }
 
