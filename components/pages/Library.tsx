@@ -138,17 +138,26 @@ export default function LibraryScreen({ navigation, route }: any) {
       borderRadius: theme.spacing.borderRadius,
       borderColor: theme.colors.border,
       paddingVertical: theme.spacing.library.verticalPadding,
+      paddingLeft: 65,
       marginBottom: theme.spacing.library.marginBottom,
       marginHorizontal: theme.spacing.library.marginHorizontal,
+      
     },
     iconContainer: {
-      justifyContent: "center",
-      alignItems: "center",
-      borderRadius: theme.spacing.borderRadius,
-      backgroundColor: theme.colors.icons,
+      // justifyContent: "center",
+      // alignItems: "center",
+      // borderRadius: theme.spacing.borderRadius,
+      // backgroundColor: theme.colors.icons,
       marginHorizontal: theme.spacing.library.iconMarginHorizontal,
-      width: 55,
-      height: 55,
+      marginLeft: 0,
+      borderTopLeftRadius: 9, 
+      borderBottomLeftRadius: 6,
+      position: 'absolute',
+      left: 0,
+      top: 0,
+      bottom: 0,
+      width: 60,
+      // height: 60,
     },
     playlistInfo: {
       flex: 5,
@@ -321,12 +330,12 @@ export default function LibraryScreen({ navigation, route }: any) {
               style={libStyles.playlist}
               onPress={() => handleNavigation(item.id)} // pass the id to handle navigation
             >
-              <View style={[libStyles.iconContainer, { backgroundColor: itemColor }]}>
-                <MaterialCommunityIcons
+              <View style={[libStyles.iconContainer, { backgroundColor: itemColor}]}>
+                {/* <MaterialCommunityIcons
                   size={44}
                   name="access-point"
                   color="black"
-                />
+                /> */}
               </View>
               <View style={libStyles.playlistInfo}>
                 <Text style={libStyles.playlistName}>{item.title}</Text>
