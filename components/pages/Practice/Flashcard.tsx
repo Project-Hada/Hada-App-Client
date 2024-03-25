@@ -137,7 +137,7 @@ export default function FlashCard({
       </Animated.View>
 
       <Animated.View
-        style={[styles.flashCard, backAnimatedStyle, { position: "absolute" }]}
+        style={[styles.flashCard, backAnimatedStyle, theme.shadow.default, { position: "absolute" }]}
       >
         <Text style={styles.definition}>{definition}</Text>
         <TouchableOpacity style={styles.audioButton} onPress={handleAudio}>
