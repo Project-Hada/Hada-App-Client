@@ -16,7 +16,7 @@ import FlashCardSlider from "./FlashcardSlider";
 import Aromanize from "aromanize";
 import { FlashCardType } from "../../../utils/types";
 import { useTheme } from "../../../utils/contexts/ThemeContext";
-import { Session } from "./sessionAlgorithm";
+import { CardNode, Session } from "./sessionAlgorithm";
 
 type PracticeScreenProps = {
   navigation: any;
@@ -33,6 +33,7 @@ export default function PracticeScreen({ navigation, route }: any) {
   const cardOffsetX = useRef(new Animated.Value(0)).current; // Animation for swiping
   const [isFlipped, setIsFlipped] = useState(false);
   const [sliderIndex, setSliderIndex] = useState(0);
+  const [dynamicHead, setDynamicHead] = useState<CardNode | null>(null);
   const [wasFlipped, setWasFlipped] = useState(false);
   const [resetFlip, setResetFlip] = useState(false);
   const [currentSession, setSession] = useState<Session | null>(null);
@@ -44,6 +45,8 @@ export default function PracticeScreen({ navigation, route }: any) {
       session.startSession();
       setSession(session);
       console.log(session.toString());
+
+      setDynamicHead(session.getPartitionHead());
     }
   }, [currPlaylist]);
 
@@ -81,7 +84,6 @@ export default function PracticeScreen({ navigation, route }: any) {
         console.log("FAIL");
         currentSession.fail();
       }
-      console.log("bruh");
       console.log("oops", currentSession.toString());
 
       const newFlippedValue = isFlipped;
@@ -89,6 +91,9 @@ export default function PracticeScreen({ navigation, route }: any) {
       setResetFlip(!resetFlip);
       const moveTo = direction === "left" ? -1000 : 1000; // Determine direction based on 'X' or 'O'
       setSliderIndex(999);
+      if (currentSession.getPartitionHead()?.next) {
+        setDynamicHead(currentSession.getPartitionHead()!.next);
+      }
 
       Animated.timing(cardOffsetX, {
         toValue: moveTo,
@@ -99,6 +104,7 @@ export default function PracticeScreen({ navigation, route }: any) {
         setIsFlipped(false);
         // After the animation, reset position and update card indices
         cardOffsetX.setValue(0); // Reset position
+        setSliderIndex(0);
       });
     }
   };
@@ -127,6 +133,7 @@ export default function PracticeScreen({ navigation, route }: any) {
       setResetFlip(!resetFlip);
       // After the animation, reset position and update card indices
       cardOffsetX.setValue(0);
+      setDynamicHead(currentSession.getPartitionHead());
       // Update indices
       setSliderIndex(0);
     });
@@ -274,9 +281,9 @@ export default function PracticeScreen({ navigation, route }: any) {
           </TouchableOpacity>
           <View style={styles.flashCardContainer}>
             <FlashCard
-              term={currentSession.getPartitionHead()!.card!.term}
-              romanization={`(${Aromanize.hangulToLatin(currentSession.getPartitionHead()!.card!.term, "rr-translit")})`}
-              definition={currentSession.getPartitionHead()!.card!.definition}
+              term={dynamicHead!.card!.term}
+              romanization={`(${Aromanize.hangulToLatin(dynamicHead!.card!.term, "rr-translit")})`}
+              definition={dynamicHead!.card!.definition}
               onFlip={() => setIsFlipped(!isFlipped)}
               resetFlip={resetFlip}
             />

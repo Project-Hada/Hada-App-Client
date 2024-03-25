@@ -46,6 +46,7 @@ export default function FlashCardSlider({
     term: {
       fontSize: typography.flashcard.termSize,
       fontFamily: typography.fonts.variableFont,
+      color: theme.colors.text,
     },
     romanizationContainer: {},
     romanization: {
