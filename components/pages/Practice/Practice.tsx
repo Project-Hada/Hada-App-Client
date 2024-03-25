@@ -42,7 +42,9 @@ export default function PracticeScreen({ navigation, route }: any) {
   const [sliderIndex, setSliderIndex] = useState(0);
   const [wasFlipped, setWasFlipped] = useState(false);
   const [resetFlip, setResetFlip] = useState(false);
-  let currentSession: Session;
+  const [currentSession, setSession] = useState<Session>(
+    new Session(currPlaylist)
+  );
   useEffect(() => {
     // If there's only one flashcard, we don't need to set a next index
     if (flashcardsArray.length === 1) {
@@ -51,7 +53,8 @@ export default function PracticeScreen({ navigation, route }: any) {
   }, [flashcardsArray]);
 
   useEffect(() => {
-    currentSession = new Session(currPlaylist);
+    currentSession.startSession();
+    console.log(currentSession.toString());
   }, []);
 
   const renderProgressIndicators = () => {
@@ -71,13 +74,16 @@ export default function PracticeScreen({ navigation, route }: any) {
   // Function to handle the card swipe animation
   const moveCard = (direction: string) => {
     if (flashcardsArray.length > 1) {
-      if (direction === "left") {
+      console.log("DIRECTION", direction);
+      if (direction === "right") {
+        console.log("PASS");
         currentSession.pass();
       } else {
+        console.log("FAIL");
         currentSession.fail();
       }
-
-      console.log(Session.toString());
+      console.log("bruh");
+      console.log("oops", currentSession.toString());
 
       const newFlippedValue = isFlipped;
       setWasFlipped(newFlippedValue);
@@ -114,7 +120,7 @@ export default function PracticeScreen({ navigation, route }: any) {
     setWasFlipped(false);
     if (history.length <= 0) return;
     currentSession.undoLastAction();
-    console.log(Session.toString());
+    console.log(currentSession.toString());
 
     const historyLen = history.length - 1;
     const moveTo = 0; // Determine direction based on 'X' or 'O'

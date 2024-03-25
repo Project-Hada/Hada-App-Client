@@ -133,6 +133,9 @@ class CardNode {
         // An example calculation; modify this as needed.
         return this.fails - this.passes;
     }
+    toString() {
+        return `[${this.card?.term},${this.card?.definition}]`
+    }
 }
 
   
@@ -363,7 +366,7 @@ class CardNode {
         str += "Partition Contents: ";
         let current = this.partitionHead.next; // Skip dummy head
         while (current) {
-            str += `${current.card ? current.card.toString() : 'Empty Node'} -> `;
+            str += `${current.card ? current.toString() : 'Empty Node'} -> `;
             current = current.next;
         }
         str += "End\n";
@@ -371,7 +374,7 @@ class CardNode {
         str += "BleedQueue Contents: ";
         current = this.bleedQueue.next; // Assuming bleedQueue also has a dummy head
         while (current) {
-            str += `${current.card ? current.card.toString() : 'Empty Node'} -> `;
+            str += `${current.card ? current.toString() : 'Empty Node'} -> `;
             current = current.next;
         }
         str += "End\n";
