@@ -93,7 +93,7 @@ export default function DeckPreview({ navigation, route }: any) {
         </TouchableOpacity>
         <View style={styles.headerContent}>
           <View style={styles.headerInfo}>
-            <Text style={styles.headerTitle}>{currPlaylist.title}</Text>
+            <Text style={styles.headerTitle}>{currPlaylist?.title}</Text>
             <View style={styles.subHeader}>
               <MaterialCommunityIcons
                 name="cards-variant"
