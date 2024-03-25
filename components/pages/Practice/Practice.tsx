@@ -16,6 +16,7 @@ import FlashCardSlider from "./FlashcardSlider";
 import Aromanize from "aromanize";
 import { FlashCardType } from "../../../utils/types";
 import { useTheme } from "../../../utils/contexts/ThemeContext";
+import { Session } from "./sessionAlgorithm";
 
 type HistoryItem = {
   direction: string;
@@ -41,13 +42,17 @@ export default function PracticeScreen({ navigation, route }: any) {
   const [sliderIndex, setSliderIndex] = useState(0);
   const [wasFlipped, setWasFlipped] = useState(false);
   const [resetFlip, setResetFlip] = useState(false);
-
+  let currentSession: Session;
   useEffect(() => {
     // If there's only one flashcard, we don't need to set a next index
     if (flashcardsArray.length === 1) {
       setNextIndex(0); // There is no "next", so it's the same card
     }
   }, [flashcardsArray]);
+
+  useEffect(() => {
+    currentSession = new Session(currPlaylist);
+  }, []);
 
   const renderProgressIndicators = () => {
     return flashcardsArray.map((card: any, index: any) => (
@@ -66,6 +71,14 @@ export default function PracticeScreen({ navigation, route }: any) {
   // Function to handle the card swipe animation
   const moveCard = (direction: string) => {
     if (flashcardsArray.length > 1) {
+      if (direction === "left") {
+        currentSession.pass();
+      } else {
+        currentSession.fail();
+      }
+
+      console.log(Session.toString());
+
       const newFlippedValue = isFlipped;
       setWasFlipped(newFlippedValue);
       setResetFlip(!resetFlip);
@@ -100,6 +113,9 @@ export default function PracticeScreen({ navigation, route }: any) {
     setIsFlipped(false);
     setWasFlipped(false);
     if (history.length <= 0) return;
+    currentSession.undoLastAction();
+    console.log(Session.toString());
+
     const historyLen = history.length - 1;
     const moveTo = 0; // Determine direction based on 'X' or 'O'
     const offset = history[historyLen].direction === "left" ? -1000 : 1000; // Determine direction based on 'X' or 'O'

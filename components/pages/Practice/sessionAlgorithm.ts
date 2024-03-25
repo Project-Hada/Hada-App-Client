@@ -99,29 +99,51 @@ class CardNode {
     passes: number;
     fails: number;
     next: CardNode | null;
-  
+    actionHistory: Array<{action: 'pass' | 'fail', passes: number, fails: number}>; // Action history stack
+
     constructor(card?: FlashCardType, passes: number = 0, fails: number = 0, next: CardNode | null = null) {
-      this.card = card;
-      this.passes = passes;
-      this.fails = fails;
-      this.next = next;
+        this.card = card;
+        this.passes = passes;
+        this.fails = fails;
+        this.next = next;
+        this.actionHistory = []; // Initialize empty history
     }
-    
-    // A method to calculate the difficulty score for sorting in the bleedQueue.
-    // You can tailor this calculation to fit your needs.
+
+    // Method to add an action to the history
+    addActionToHistory(action: 'pass' | 'fail') {
+        this.actionHistory.push({ action, passes: this.passes, fails: this.fails });
+    }
+
+    // Method to revert the last action
+    undoLastAction(): void {
+        const lastAction = this.actionHistory.pop();
+        if (lastAction) {
+            this.passes = lastAction.passes;
+            this.fails = lastAction.fails;
+        }
+    }
+
+    // Method to create a deep clone of the CardNode, including actionHistory.
+    clone(): CardNode {
+        const clonedNode = new CardNode(this.card, this.passes, this.fails, null);
+        clonedNode.actionHistory = [...this.actionHistory]; // Assuming deep clone isn't needed for actionHistory contents
+        return clonedNode;
+    }
     get difficultyScore(): number {
-      // An arbitrary calculation based on passes and fails.
-      return this.fails - this.passes;
+        // An example calculation; modify this as needed.
+        return this.fails - this.passes;
     }
-  }
+}
+
   
-  class SessionAlgorithm {
+  export class Session {
     private currPlaylist: PlaylistType | null;
     private partitionHead: CardNode; // Represents the fake head of the linked list for partition.
     private partitionLength: number;
     private bleedQueue: CardNode; // Holds the nodes after passing, null if empty.
     private bleedLength: number; // Track the length of the bleedQueue.
     private partitionSize: number;
+    private partitionSnapshots: Array<{head: CardNode, length: number, bleedLength: number}> = [];
   
     
 
@@ -133,6 +155,13 @@ class CardNode {
     this.bleedQueue = new CardNode(); // Initialize bleedQueue with a dummy head
     this.bleedLength = 0;
   }
+
+    public startSession(): CardNode {
+    // Reset the length when starting a new session.
+    this.partitionLength = 0;
+    this.createPartition(); 
+    return this.partitionHead;
+    }
 
     // Method to add a card to the bleedQueue based on its difficultyScore.
     /**
@@ -201,32 +230,11 @@ class CardNode {
         current.next = node; // Append the node to the end of the partition
         this.partitionLength++; // Increment the count of nodes in the partition
     }
-    
-    
-
-    public startSession(): CardNode {
-        // Reset the length when starting a new session.
-        this.partitionLength = 0;
-        this.createPartition(); 
-        return this.partitionHead;
-    }
-
-   /**
-   * Determines if the user is able to grade based on the time since the last session.
-   * @returns {boolean} True if grading is possible, false otherwise.
-   */
-   private canGrade(): boolean {
-    const lastSession = this.currPlaylist?.lastSession || 0;
-    const currentTime = Date.now();
-    const sixteenHoursInMilliseconds = 16 * 60 * 60 * 1000;
-    const timeDifference = currentTime - lastSession;
-    return timeDifference <= sixteenHoursInMilliseconds;
-  }
 
   /**
-   * Helper method to reinsert a node in the queue.
+   * Helper method to reinsert a node in the partition.
    * @param node - The card node to reinsert.
-   * @param positions - The number of positions to move the card back in the queue.
+   * @param positions - The number of positions to move the card back in the partition.
    */
   private reinsertNode(node: CardNode, positions: number): void {
     // Ensure positions are within bounds.
@@ -246,6 +254,7 @@ class CardNode {
     }
 
     public pass(): void {
+        this.savePartitionState();
         if (!this.partitionHead.next) {
             return; // No cards to pass.
         }
@@ -255,6 +264,7 @@ class CardNode {
         this.partitionHead.next = passedCardNode.next;
         passedCardNode.next = null;
         this.partitionLength--;
+        passedCardNode.addActionToHistory('pass');
 
         // Check if the card has passed enough times to be moved to the bleedQueue.
         if (passedCardNode.passes >= 3) {
@@ -270,25 +280,104 @@ class CardNode {
     }
 
     public fail(): void {
-    if (!this.partitionHead.next) {
-      return; // No cards to fail.
-    }
+        this.savePartitionState();
+        if (!this.partitionHead.next) {
+            return; // No cards to fail.
+        }
 
-    let failedCardNode = this.partitionHead.next; // The node to process.
-    this.partitionHead.next = failedCardNode.next; // Remove the node from its current position.
-    failedCardNode.next = null;
-    this.partitionLength--;
+        let failedCardNode = this.partitionHead.next; // The node to process.
+        this.partitionHead.next = failedCardNode.next; // Remove the node from its current position.
+        failedCardNode.next = null;
+        this.partitionLength--;
+        failedCardNode.addActionToHistory('fail');
 
-    failedCardNode.passes = 0; // Reset the passes due to failure.
-    failedCardNode.fails++; // Increment the fails.
+        failedCardNode.passes = 0; // Reset the passes due to failure.
+        failedCardNode.fails++; // Increment the fails.
 
-    if (failedCardNode.fails >= 3) {
-      // If the card has 3 fails, it moves to the front of the bleed queue.
-    }
-    // Otherwise, move it back by up to 3 spaces.
-    this.reinsertNode(failedCardNode, 3);
+        if (failedCardNode.fails >= 3) {
+        // If the card has 3 fails, it moves to the front of the bleed queue.
+        }
+        // Otherwise, move it back by up to 3 spaces.
+        this.reinsertNode(failedCardNode, 3);
     
+    }
+
+  // Method to save a snapshot of the current partition state
+  private savePartitionState(): void {
+      // Clone the entire partition and bleed queue
+      const headClone = new CardNode(); // New dummy head for the cloned list
+      let current = this.partitionHead.next; // Start from the actual first element
+      let cloneCurrent = headClone;
+      while (current) {
+          cloneCurrent.next = current.clone();
+          cloneCurrent = cloneCurrent.next;
+          current = current.next;
+      }
+
+      // Save the cloned list and current lengths
+      this.partitionSnapshots.push({ head: headClone, length: this.partitionLength, bleedLength: this.bleedLength });
   }
+
+  // Method to restore the last saved partition state
+  public undoLastAction(): void {
+      const lastSnapshot = this.partitionSnapshots.pop();
+      if (lastSnapshot) {
+          this.partitionHead = lastSnapshot.head;
+          this.partitionLength = lastSnapshot.length;
+          this.bleedLength = lastSnapshot.bleedLength;
+          // Additional logic might be needed to correctly re-link the bleedQueue
+      }
+  }
+
+   /**
+   * Determines if the user is able to grade based on the time since the last session.
+   * @returns {boolean} True if grading is possible, false otherwise.
+   */
+     private canGrade(): boolean {
+        const lastSession = this.currPlaylist?.lastSession || 0;
+        const currentTime = Date.now();
+        const sixteenHoursInMilliseconds = 16 * 60 * 60 * 1000;
+        const timeDifference = currentTime - lastSession;
+        return timeDifference <= sixteenHoursInMilliseconds;
+      }
+    
+    /**
+     * Retrieves the first actual element of the partition linked list, bypassing the dummy head.
+     * @returns The first real CardNode in the partition, or null if the partition is empty.
+     */
+    public getPartitionHead(): CardNode | null {
+        return this.partitionHead.next;
+    }
+
+    /**
+     * Generates a string representation of the current state of the SessionAlgorithm, including
+     * the properties of interest and the contents of both the partition and the bleedQueue.
+     * @returns A string detailing the current state and contents of the partition and bleedQueue.
+     */
+    public toString(): string {
+        let str = `Current Playlist: ${this.currPlaylist ? 'Present' : 'Null'}\n`;
+        str += `Partition Length: ${this.partitionLength}\n`;
+        str += `BleedQueue Length: ${this.bleedLength}\n`;
+        str += `Partition Size: ${this.partitionSize}\n`;
+
+        str += "Partition Contents: ";
+        let current = this.partitionHead.next; // Skip dummy head
+        while (current) {
+            str += `${current.card ? current.card.toString() : 'Empty Node'} -> `;
+            current = current.next;
+        }
+        str += "End\n";
+
+        str += "BleedQueue Contents: ";
+        current = this.bleedQueue.next; // Assuming bleedQueue also has a dummy head
+        while (current) {
+            str += `${current.card ? current.card.toString() : 'Empty Node'} -> `;
+            current = current.next;
+        }
+        str += "End\n";
+
+        return str;
+    }
 }
 
 // Usage example:
