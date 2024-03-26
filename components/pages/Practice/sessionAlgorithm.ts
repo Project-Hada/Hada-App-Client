@@ -82,26 +82,63 @@
  * Card Parameters:
  * g: grade for a card showing level of mastery, > 0 implies it has been studied
  * 
- * 
- *
- * 
- *
  * g: (grade) cards must remember how well they've been studied, which would also implied if they've been studied
  *
  */
 
 import { FlashCardType, PlaylistType } from "../../../utils/types";
 
-export class CardNode {
+export interface ICardNode {
+    // Holds the flashcard data.
+    card: FlashCardType | undefined;
+
+    // Counts the number of times the card has been passed.
+    passes: number;
+
+    // Counts the number of times the card has failed.
+    fails: number;
+
+    // How many times in a row a card was correct in a partition
+    aRow: number;
+
+    // Points to the next card node in the linked list.
+    next: ICardNode | null;
+
+    // Keeps a history of actions taken on this card, along with the pass and fail counts at the time of action.
+    actionHistory: Array<{
+        action: 'pass' | 'fail', // The action taken ('pass' or 'fail').
+        passes: number,          // The number of passes at the time of action.
+        fails: number            // The number of fails at the time of action.
+    }>;
+
+    // Records an action ('pass' or 'fail') to the card's history.
+    addActionToHistory(action: 'pass' | 'fail'): void;
+
+    // Removes the most recent action from the card's history.
+    undoLastAction(): void;
+
+    // Creates a copy of the card node, useful for duplicating the node without affecting the original.
+    clone(): ICardNode;
+
+    // A read-only property that calculates and returns a difficulty score based on the card's history.
+    readonly difficultyScore: number;
+
+    // Returns a string representation of the card node for easy logging or debugging.
+    toString(): string;
+}
+
+export class CardNode implements ICardNode {
     card: FlashCardType | undefined;
     passes: number;
     fails: number;
+    aRow: number;
     next: CardNode | null;
     actionHistory: Array<{action: 'pass' | 'fail', passes: number, fails: number}>; // Action history stack
 
-    constructor(card?: FlashCardType, passes: number = 0, fails: number = 0, next: CardNode | null = null) {
+    constructor(card?: FlashCardType, passes: number = 0, fails: number = 0, aRow: number = 0, next: CardNode | null = null) {
         this.card = card;
         this.passes = passes;
+        this.aRow = aRow;
         this.fails = fails;
         this.next = next;
         this.actionHistory = []; // Initialize empty history
@@ -127,10 +164,12 @@ export class CardNode {
         clonedNode.actionHistory = [...this.actionHistory]; // Assuming deep clone isn't needed for actionHistory contents
         return clonedNode;
     }
+
     get difficultyScore(): number {
         // An example calculation; modify this as needed.
         return this.fails - this.passes;
     }
+
     toString() {
         return `[${this.card?.term},${this.card?.definition}]`
     }
@@ -284,7 +323,7 @@ export class CardNode {
         passedCardNode.addActionToHistory('pass');
 
         // Check if the card has passed enough times to be moved to the bleedQueue.
-        if (passedCardNode.passes >= this.numInARow) {
+        if (passedCardNode.aRow >= this.numInARow) {
             // If it has passed sufficiently, add it to the bleedQueue.
             this.addToBleedQueue(passedCardNode);
         } else {
@@ -313,7 +352,7 @@ export class CardNode {
         this.partitionLength--;
         failedCardNode.addActionToHistory('fail');
 
-        failedCardNode.passes = 0; // Reset the passes due to failure.
+        failedCardNode.aRow = 0; // Reset the passes due to failure.
         failedCardNode.fails++; // Increment the fails.
 
         if (failedCardNode.fails >= this.numOfStrikes) {

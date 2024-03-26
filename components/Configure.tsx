@@ -61,7 +61,8 @@ export default function Configure() {
       }
     };
     enableSound();
-  });
+  }, []);
+
   const { theme } = useTheme();
 
   // don't load if the fonts haven't loaded yet

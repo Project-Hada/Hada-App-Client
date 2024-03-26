@@ -85,12 +85,6 @@ export default function PracticeScreen({ navigation, route }: any) {
   // Function to handle the card swipe animation
   const moveCard = (direction: string) => {
     if (!currentSession) return;
-    console.log(
-      currentSession.getBleedLength(),
-      Object.keys(currPlaylist!.playlist).length - 1,
-      currentSession.getBleedLength() >=
-        Object.keys(currPlaylist!.playlist).length - 1
-    );
     if (
       currentSession.getBleedLength() >=
       Object.keys(currPlaylist!.playlist).length - 1
@@ -98,9 +92,8 @@ export default function PracticeScreen({ navigation, route }: any) {
       navigation.goBack();
       return;
     }
-
+    console.log(currentSession.toString());
     if (currentSession.getPartitionHead()) {
-      console.log("DIRECTION", direction);
       if (direction === "right") {
         console.log("PASS");
         currentSession.pass();
@@ -108,7 +101,6 @@ export default function PracticeScreen({ navigation, route }: any) {
         console.log("FAIL");
         currentSession.fail();
       }
-      console.log("oops", currentSession.toString());
 
       const newFlippedValue = isFlipped;
       setWasFlipped(newFlippedValue);
@@ -138,11 +130,8 @@ export default function PracticeScreen({ navigation, route }: any) {
   const bringBackCard = () => {
     setIsFlipped(false);
     setWasFlipped(false);
-    console.log("SCRIBBLE DOT I EOUEOUOEO");
-    console.log(history.length, !currentSession);
     if (history.length <= 0 || !currentSession) return;
     //session manipulation
-    console.log("SCRIBBLE DOT I O");
     currentSession.undoLastAction();
     console.log(currentSession.toString());
 
