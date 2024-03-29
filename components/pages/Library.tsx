@@ -4,7 +4,6 @@ import React, {
   ReactNode,
   ReactPortal,
   useContext,
-  useEffect,
   useState,
 } from "react";
 import {
@@ -23,14 +22,12 @@ import {
   Octicons,
 } from "@expo/vector-icons";
 import { StackNavigationProp } from "@react-navigation/stack";
-import { PlaylistType, FlashCardType } from "../../utils/types";
+import { FlashCardType } from "../../utils/types";
 import LibraryContext from "../../utils/contexts/LibraryContext";
 import flashCards from "../../Data/fakeData";
 // import { styles } from "./DeckPreview/DeckPreview";
 import AddButton from "../AddButton";
 import generateId from "../../utils/idGenerator";
-import { getAllDecksByUser } from "../../utils/services/decksFunctions";
-import { DeckSchema } from "../../utils/schemas/DeckSchema";
 import { useTheme } from "../../utils/contexts/ThemeContext";
 import { typography } from "../theme/Typography";
 
@@ -46,7 +43,7 @@ type LibraryScreenProps = {
 };
 export default function LibraryScreen({ navigation, route }: any) {
   // Library Context
-  const { user, library, setCurrPlaylist, addPlaylist } = useContext(LibraryContext);
+  const { library, setCurrPlaylist, addPlaylist } = useContext(LibraryContext);
   const flashcards = flashCards;
 
   const handleNavigation = (playlistId: string) => {
@@ -84,14 +81,6 @@ export default function LibraryScreen({ navigation, route }: any) {
     // Navigate to DeckPreview with the new playlist's ID
     navigation.navigate("DeckPreview", { playlistId: newPlaylistId });
   };
-
-  // TODO: TEMP save decks here; please fix----------------
-  const [decks, setDecks] = useState<PlaylistType[]>([]);
-  const getDecks = async () => await getAllDecksByUser(user!.uid, setDecks)
-  useEffect(() => {
-    getDecks();
-  }, [])
-  //--------------------------------------------
 
   const { theme } = useTheme();
   const libStyles = StyleSheet.create({
@@ -234,25 +223,6 @@ export default function LibraryScreen({ navigation, route }: any) {
         </TouchableOpacity>
       </View>
       <ScrollView contentContainerStyle={libStyles.scrollView}>
-        {/* User Info */}
-        <View>
-          <Text>Your Email: {user?.email}</Text>
-        </View>
-        { decks.map( (d) => {
-          return (
-            <View key={d.id}>
-              <Text>deck name: {d.title}</Text>
-              {d.playlist?.map((c, index) => {
-                return (
-                  <View key={index}>
-                    <Text> {c.term} ---- {c.definition}</Text>
-                  </View>
-                )
-              })}
-            </View>
-          )
-        }) }
-
         {Object.values(library).map((item, index) => {
           return (
             <TouchableOpacity
