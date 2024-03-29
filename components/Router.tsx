@@ -23,7 +23,7 @@ const AppStack = () => {
         screenOptions={{
           cardStyle: { flex: 1, backgroundColor: "transparent" },
         }}
-        initialRouteName="LibraryScreen"
+        initialRouteName="LoginScreen"
       >
         <Screen
           name="LibraryScreen"
