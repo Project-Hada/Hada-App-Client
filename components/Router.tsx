@@ -2,15 +2,11 @@
 import React from "react";
 import { createStackNavigator } from "@react-navigation/stack";
 import { Text, StyleSheet, SafeAreaView, Platform } from "react-native";
-import { NavigationContainer } from "@react-navigation/native";
 import LibraryScreen from "./pages/Library";
 import DeckPreview from "./pages/DeckPreview/DeckPreview";
 import { PracticeScreen } from "./pages/Practice";
-import { LoginScreen } from "./pages/UserAuth/LoginScreen";
-import { RegisterScreen } from "./pages/UserAuth/RegisterScreen";
-import { BackendDemo } from "./pages/demoIndex"
+import { NavigationContainer } from "@react-navigation/native";
 import { useTheme } from "../utils/contexts/ThemeContext";
-
 
 const { Navigator, Screen } = createStackNavigator();
 
@@ -23,30 +19,12 @@ const AppStack = () => {
 
   return (
     <SafeAreaView style={styles.droidSafeArea}>
-      <Navigator initialRouteName="LoginScreen">
-        <Screen
-          name="LoginScreen"
-          component={LoginScreen}
-          options={{ headerShown: false }}
-        />
-        <Screen
-          name="RegisterScreen"
-          component={RegisterScreen}
-          options={{ headerShown: false }}
-        />
-        <Screen
-          name="BackendDemo"
-          component={BackendDemo}
-          options={{ headerShown: false }}
-        />
-
-
-<!--       <Navigator
+      <Navigator
         screenOptions={{
           cardStyle: { flex: 1, backgroundColor: "transparent" },
         }}
         initialRouteName="LibraryScreen"
-      > -->
+      >
         <Screen
           name="LibraryScreen"
           component={LibraryScreen}
