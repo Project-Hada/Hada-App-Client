@@ -7,6 +7,8 @@ import DeckPreview from "./pages/DeckPreview/DeckPreview";
 import { PracticeScreen } from "./pages/Practice";
 import { NavigationContainer } from "@react-navigation/native";
 import { useTheme } from "../utils/contexts/ThemeContext";
+import { LoginScreen } from "./pages/UserAuth/LoginScreen";
+import { RegisterScreen } from "./pages/UserAuth/RegisterScreen";
 
 const { Navigator, Screen } = createStackNavigator();
 
@@ -25,6 +27,17 @@ const AppStack = () => {
         }}
         initialRouteName="LoginScreen"
       >
+
+        <Screen
+          name="LoginScreen"
+          component={LoginScreen}
+          options={{ headerShown: false }}
+        />
+        <Screen
+          name="RegisterScreen"
+          component={RegisterScreen}
+          options={{ headerShown: false }}
+        />
         <Screen
           name="LibraryScreen"
           component={LibraryScreen}
