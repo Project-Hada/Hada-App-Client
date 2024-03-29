@@ -4,6 +4,7 @@ import React, {
   ReactNode,
   ReactPortal,
   useContext,
+  useEffect,
   useState,
 } from "react";
 import {
@@ -22,12 +23,14 @@ import {
   Octicons,
 } from "@expo/vector-icons";
 import { StackNavigationProp } from "@react-navigation/stack";
-import { FlashCardType } from "../../utils/types";
+import { PlaylistType, FlashCardType } from "../../utils/types";
 import LibraryContext from "../../utils/contexts/LibraryContext";
 import flashCards from "../../Data/fakeData";
 import { styles } from "./DeckPreview/DeckPreview";
 import AddButton from "../AddButton";
 import generateId from "../../utils/idGenerator";
+import { getAllDecksByUser } from "../../utils/services/decksFunctions";
+import { DeckSchema } from "../../utils/schemas/DeckSchema";
 
 type PlaylistItemType = {
   name: string;
@@ -80,6 +83,14 @@ export default function LibraryScreen({ navigation, route }: any) {
     navigation.navigate("DeckPreview", { playlistId: newPlaylistId });
   };
 
+  // TODO: TEMP save decks here; please fix----------------
+  const [decks, setDecks] = useState<PlaylistType[]>([]);
+  const getDecks = async () => await getAllDecksByUser(user!.uid, setDecks)
+  useEffect(() => {
+    getDecks();
+  }, [])
+  //--------------------------------------------
+
   return (
     <SafeAreaView style={libStyles.container}>
       <View style={libStyles.headerContainer}>
@@ -91,7 +102,23 @@ export default function LibraryScreen({ navigation, route }: any) {
       </View>
       <ScrollView contentContainerStyle={libStyles.scrollView}>
         {/* User Info */}
-        <Text>Your Email: {user?.email}</Text>
+        <View>
+          <Text>Your Email: {user?.email}</Text>
+        </View>
+        { decks.map( (d) => {
+          return (
+            <View key={d.id}>
+              <Text>deck name: {d.title}</Text>
+              {d.playlist?.map((c, index) => {
+                return (
+                  <View key={index}>
+                    <Text> {c.term} ---- {c.definition}</Text>
+                  </View>
+                )
+              })}
+            </View>
+          )
+        }) }
 
         {Object.values(library).map((item, index) => {
           return (
