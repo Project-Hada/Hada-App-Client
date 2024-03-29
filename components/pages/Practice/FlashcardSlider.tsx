@@ -1,5 +1,5 @@
 import React from "react";
-import { StyleSheet, View, Text, Pressable } from "react-native";
+import { StyleSheet, View, Text } from "react-native";
 import { useTheme } from "../../../utils/contexts/ThemeContext";
 import { typography } from "../../theme/Typography";
 
@@ -79,48 +79,3 @@ export default function FlashCardSlider({
     </View>
   );
 }
-
-{
-  /* <View style={{backgroundColor: 'red', opacity: 0.5, width: '100%', height: '100%', pointerEvents: 'none'}}>
-
-</View> */
-}
-
-// const styles = StyleSheet.create({
-//   flashCardContainer: {
-//     height: "100%",
-//     justifyContent: "center",
-//     alignItems: "center",
-//     pointerEvents: "none",
-//   },
-//   flashCardFront: {
-//     width: "100%",
-//     height: "100%",
-//     borderRadius: 13,
-//     backgroundColor: "white",
-//     justifyContent: "center",
-//     alignItems: "center",
-//   },
-//   flashCardBack: {
-//     width: "100%",
-//     height: "100%",
-//     borderRadius: 13,
-//     backgroundColor: "white",
-//     justifyContent: "center",
-//     alignItems: "center",
-//   },
-//   termContainer: {},
-//   term: {
-//     fontSize: 38,
-//     fontFamily: "GeneralSans-Variable",
-//   },
-//   romanizationContainer: {},
-//   romanization: {
-//     fontSize: 28,
-//     fontFamily: "GeneralSans-Regular",
-//     color: "#A7A7A7",
-//   },
-//   definition: {
-//     fontSize: 34,
-//   },
-// });

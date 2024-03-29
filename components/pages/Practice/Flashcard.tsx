@@ -50,10 +50,6 @@ export default function FlashCard({
       alignItems: 'center',
       backfaceVisibility: 'hidden',
       shadowColor: '#171717',
-      borderWidth: spacing.borderWidth,
-      borderRightWidth: spacing.borderRightWidth,
-      borderBottomWidth: spacing.borderBottomWidth,
-      borderColor: theme.colors.border,
     },
     termContainer: {},
     term: {
@@ -128,7 +124,7 @@ export default function FlashCard({
 
   return (
     <Pressable onPress={triggerFlip} style={styles.flashCardPressableContainer}>
-      <Animated.View style={[styles.flashCard, frontAnimatedStyle]}>
+      <Animated.View style={[styles.flashCard, frontAnimatedStyle, theme.shadow.default]}>
         <View style={styles.termContainer}>
           <Text style={styles.term}>{term}</Text>
         </View>
@@ -141,7 +137,7 @@ export default function FlashCard({
       </Animated.View>
 
       <Animated.View
-        style={[styles.flashCard, backAnimatedStyle, { position: "absolute" }]}
+        style={[styles.flashCard, backAnimatedStyle, theme.shadow.default, { position: "absolute" }]}
       >
         <Text style={styles.definition}>{definition}</Text>
         <TouchableOpacity style={styles.audioButton} onPress={handleAudio}>
@@ -151,45 +147,3 @@ export default function FlashCard({
     </Pressable>
   );
 }
-
-// const styles = StyleSheet.create({
-//   flashCardPressableContainer: {
-//     flex: 1,
-//     justifyContent: "center",
-//     alignItems: "center",
-//     zIndex: 5,
-//   },
-//   flashCard: {
-//     width: "100%",
-//     height: "100%",
-//     borderRadius: 14,
-//     backgroundColor: theme.colors.container,
-//     justifyContent: "center",
-//     alignItems: "center",
-//     backfaceVisibility: "hidden",
-//     shadowColor: "#171717",
-//     borderWidth: 1,
-//     borderRightWidth: 4,
-//     borderBottomWidth: 4,
-//     borderColor: theme.colors.border,
-//   },
-//   termContainer: {},
-//   term: {
-//     fontSize: 38,
-//     fontFamily: theme.typography.variableFont,
-//   },
-//   romanizationContainer: {},
-//   romanization: {
-//     fontSize: 28,
-//     fontFamily: theme.typography.regularFont,
-//     color: theme.colors.subtext,
-//   },
-//   definition: {
-//     fontSize: 34,
-//   },
-//   audioButton: {
-//     position: "absolute",
-//     top: 15,
-//     right: 15,
-//   },
-// });

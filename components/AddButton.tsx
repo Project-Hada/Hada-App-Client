@@ -2,10 +2,13 @@ import React from "react";
 import { StyleSheet, View } from "react-native";
 import { Octicons } from "@expo/vector-icons";
 
+import { useTheme } from "../utils/contexts/ThemeContext";
+
 export default function AddButton() {
+  const { theme } = useTheme();
   return (
     <View style={styles.addIconContainer}>
-      <View style={styles.addIconOutline} />
+      <View style={[styles.addIconOutline, theme.shadow.addBtn]} />
       <Octicons
         style={styles.addIcon}
         name="diff-added"
@@ -23,16 +26,11 @@ const styles = StyleSheet.create({
   },
   addIcon: {},
   addIconOutline: {
-    backgroundColor: "#fff",
+    backgroundColor: "#FFFFFF",
     width: 26,
     height: 26,
     top: 5,
     left: 3,
     position: "absolute",
-    borderColor: "#000",
-    borderWidth: 5,
-    borderRadius: 3,
-    borderTopWidth: 0,
-    borderLeftWidth: 0,
   },
 });
