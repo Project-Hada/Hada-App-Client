@@ -1,11 +1,14 @@
-import React from "react";
+import React, { useEffect } from "react";
 import Configure from "./components/Configure";
 import { LibraryProvider } from "./utils/contexts/LibraryContext";
+import { ThemeProvider } from "./utils/contexts/ThemeContext";
 
 export default function App() {
   return (
-    <LibraryProvider>
-      <Configure />
-    </LibraryProvider>
+    <ThemeProvider>
+      <LibraryProvider>
+        <Configure />
+      </LibraryProvider>
+    </ThemeProvider>
   );
 }

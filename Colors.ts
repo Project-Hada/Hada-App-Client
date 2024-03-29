@@ -1,0 +1,30 @@
+export const colors = {
+    light: {
+        backgroundColor: "#F2E8E1",
+        accent: "#FFDF37",
+        border: "#000000",
+        icons: "#7F9CEF",
+        redButton: "#FF454C",
+        greenButton: "#72DA4F",
+        text: "#000000",
+        subtext: "#A7A7A7",
+        progressBar: "#38DAEF",
+        inactiveProgessBar: "#B2B2B2",
+        container: "#FFFFFF",
+        audioButton: "#000000", 
+    },
+    dark: {
+        backgroundColor: "#4E4E4E",
+        accent: "#FFDF37",
+        border: "#000000",
+        icons: "#7F9CEF",
+        redButton: "#FF454C",
+        greenButton: "#72DA4F",
+        text: "#F1F1F1",
+        subtext: "#A7A7A7",
+        progressBar: "#38DAEF",
+        inactiveProgessBar: "#B2B2B2",
+        container: "#333333",
+        audioButton: "#FFFFFF", 
+    }
+  };
