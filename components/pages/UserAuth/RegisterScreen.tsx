@@ -1,7 +1,7 @@
 import { AntDesign } from '@expo/vector-icons';
 import React from 'react';
 import { useState, useEffect } from 'react'
-import { Button, View, ScrollView, StyleSheet, TextInput, Pressable } from 'react-native';
+import { Button, View, ScrollView, StyleSheet, TextInput, Pressable, Text} from 'react-native';
 import { auth } from '../../../utils/firebaseConfig';
 import { createUserWithEmailAndPassword } from 'firebase/auth';
 import { addNewUserWithID } from '../../../utils/services/usersFunctions';
@@ -38,9 +38,9 @@ export function RegisterScreen({ navigation, route }: any) {
 
   return (
     <View style={{paddingHorizontal: 20}}>
-      <h1> REGISTER </h1>
+      <Text> REGISTER </Text>
 
-      {(error !== "") && <p>{error}</p>}
+      {(error !== "") && <Text>{error}</Text>}
 
       {/* Custom Login */}
       <TextInput

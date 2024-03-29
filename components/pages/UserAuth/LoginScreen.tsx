@@ -1,7 +1,7 @@
 import { AntDesign } from '@expo/vector-icons';
 import React from 'react';
 import { useState, useEffect } from 'react'
-import { Button, View, ScrollView, StyleSheet, TextInput, Pressable } from 'react-native';
+import { Button, View, ScrollView, StyleSheet, TextInput, Pressable, Text } from 'react-native';
 import { auth } from '../../../utils/firebaseConfig';
 import { signInWithEmailAndPassword } from 'firebase/auth';
 
@@ -25,9 +25,9 @@ export function LoginScreen({ navigation, route }: any) {
 
   return (
     <View style={{paddingHorizontal: 20}}>
-      <h1> LOGIN </h1>
+      <Text> LOGIN </Text>
 
-      {(error !== "") && <p>{error}</p>}
+      {(error !== "") && <Text>{error}</Text>}
 
       {/* Custom Login */}
       <TextInput
@@ -53,12 +53,7 @@ export function LoginScreen({ navigation, route }: any) {
       
       {/* Custom Register */}
       <Pressable style={{ flexDirection: 'row', paddingTop: 20}} onPress={() => navigation.navigate("RegisterScreen")}>
-        <AntDesign name="plussquareo" size={24} color="black" /><span>Register</span>
-      </Pressable>
-
-      {/* TESTING ONLY */}
-      <Pressable style={{ flexDirection: 'row', paddingTop: 20}} onPress={() => navigation.navigate("BackendDemo")}>
-        <AntDesign name="codesquareo" size={24} color="black" /><span>BackendDemo</span>
+        <AntDesign name="plussquareo" size={24} color="black"><Text>Register</Text></AntDesign>
       </Pressable>
     </View>
   )
