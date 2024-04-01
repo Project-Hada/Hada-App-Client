@@ -82,26 +82,24 @@
  * Card Parameters:
  * g: grade for a card showing level of mastery, > 0 implies it has been studied
  * 
- * 
- *
- * 
- *
  * g: (grade) cards must remember how well they've been studied, which would also implied if they've been studied
  *
  */
 
 import { FlashCardType, PlaylistType } from "../../../utils/types";
 
-export class CardNode {
+export class CardNode implements ICardNode {
     card: FlashCardType | undefined;
     passes: number;
     fails: number;
+    aRow: number;
     next: CardNode | null;
     actionHistory: Array<{action: 'pass' | 'fail', passes: number, fails: number}>; // Action history stack
 
-    constructor(card?: FlashCardType, passes: number = 0, fails: number = 0, next: CardNode | null = null) {
+    constructor(card?: FlashCardType, passes: number = 0, fails: number = 0, aRow: number = 0, next: CardNode | null = null) {
         this.card = card;
         this.passes = passes;
+        this.aRow = aRow;
         this.fails = fails;
         this.next = next;
         this.actionHistory = []; // Initialize empty history
@@ -127,18 +125,22 @@ export class CardNode {
         clonedNode.actionHistory = [...this.actionHistory]; // Assuming deep clone isn't needed for actionHistory contents
         return clonedNode;
     }
+
     get difficultyScore(): number {
         // An example calculation; modify this as needed.
         return this.fails - this.passes;
     }
+
     toString() {
         return `[${this.card?.term},${this.card?.definition}]`
     }
 }
 
   
-  export class Session {
+export class Session {
+  
     private currPlaylist: PlaylistType | null;
+    private currPlaylistLength: number;
     private partitionHead: CardNode; // Represents the fake head of the linked list for partition.
     private partitionLength: number;
     private bleedQueue: CardNode; // Holds the nodes after passing, null if empty.
@@ -149,6 +151,8 @@ export class CardNode {
     private numNewCardsPartition: number; //number of new cards per partition
     private numOfStrikes: number; //number of strikes for bad grade and higher bleed queue priority
     private numInARow: number; //number of times they get it in a row to pass the card for partition
+    private numOfLoops: number; //the number of times a user has studied their deck in one session a user has done
+    private numOfStudiedInSession: number;
     private partitionSnapshots: Array<{
         head: CardNode,
         length: number,
@@ -161,6 +165,7 @@ export class CardNode {
 
   constructor(currPlaylist: PlaylistType | null) {
     this.currPlaylist = currPlaylist;
+    this.currPlaylistLength = Object.keys(this.currPlaylist!.playlist).length;
     this.partitionHead = new CardNode(); // Dummy head for partition
     this.partitionLength = 0;
     this.partitionSize = 6;
@@ -168,9 +173,17 @@ export class CardNode {
     this.passedQueueIncrement = 4;
     this.numNewCardsPartition = 2;
     this.failedQueueIncrement = 2;
+    this.numOfStudiedInSession = 0;
     this.numInARow = 2;
-    this.bleedQueue = new CardNode(); // Initialize bleedQueue with a dummy head
-    this.bleedLength = 0;
+    this.numOfLoops = 0; //starts off -1 if session hasn't created a partition yet
+    if (currPlaylist && currPlaylist.bleedQueue) {
+        this.bleedQueue = currPlaylist.bleedQueue; // Directly use the bleedQueue if it exists
+        // Use the stored bleedQueueLength if available; otherwise, calculate dynamically
+        this.bleedLength = currPlaylist.bleedQueueLength;
+      } else {
+        this.bleedQueue = new CardNode(); // Initialize bleedQueue with a dummy head if not present
+        this.bleedLength = 0; // Initialize the length as 0 if no bleedQueue is present
+      }
   }
 
     public startSession(): CardNode {
@@ -208,7 +221,7 @@ export class CardNode {
     
         let newCardsAdded = 0;
         // Add two new cards first
-        while (newCardsAdded < this.numNewCardsPartition) {
+        while (newCardsAdded < this.numNewCardsPartition && this.bleedLength < this.currPlaylistLength) {
             const flashcardKey = Object.keys(this.currPlaylist!.playlist)[this.bleedLength + newCardsAdded];
             if (flashcardKey) {
                 const flashcard = this.currPlaylist!.playlist[flashcardKey];
@@ -225,6 +238,7 @@ export class CardNode {
                 const bleedNode = this.bleedQueue.next;
                 this.bleedQueue.next = bleedNode.next; // Remove from bleedQueue
                 bleedNode.next = null; // Clear the next reference
+                bleedNode.aRow = 0;
                 this.addToPartition(bleedNode); // Add to the partition
                 this.bleedLength--; // Adjust bleedQueue length if needed
             } else {
@@ -275,7 +289,6 @@ export class CardNode {
         if (!this.partitionHead.next) {
             return; // No cards to pass.
         }
-
         // Remove the card node from the partition.
         let passedCardNode = this.partitionHead.next;
         this.partitionHead.next = passedCardNode.next;
@@ -284,12 +297,17 @@ export class CardNode {
         passedCardNode.addActionToHistory('pass');
 
         // Check if the card has passed enough times to be moved to the bleedQueue.
-        if (passedCardNode.passes >= this.numInARow) {
+        if (passedCardNode.aRow >= this.numInARow) {
             // If it has passed sufficiently, add it to the bleedQueue.
             this.addToBleedQueue(passedCardNode);
+            this.numOfStudiedInSession++;
+            if(this.numOfStudiedInSession % this.currPlaylistLength === 0) {
+                this.numOfLoops++;
+            }
         } else {
             // Increment the pass count for the card.
             passedCardNode.passes++;
+            passedCardNode.aRow++;
 
             // Reinsert the card into the partition.
             this.reinsertNode(passedCardNode, this.passedQueueIncrement);
@@ -313,7 +331,7 @@ export class CardNode {
         this.partitionLength--;
         failedCardNode.addActionToHistory('fail');
 
-        failedCardNode.passes = 0; // Reset the passes due to failure.
+        failedCardNode.aRow = 0; // Reset the passes due to failure.
         failedCardNode.fails++; // Increment the fails.
 
         if (failedCardNode.fails >= this.numOfStrikes) {
@@ -390,6 +408,46 @@ export class CardNode {
         return this.partitionLength;
     }
 
+    public getNumOfStudiedInSession(): number {
+        return this.numOfStudiedInSession;
+    }
+
+    public getNumOfLoops(): number {
+        return this.numOfLoops;
+    }
+
+    public getCurrPlaylistLength(): number {
+        return this.currPlaylistLength;
+    }
+
+    public getAllFlashcards(): Array<FlashCardType> {
+        let flashcards: Array<FlashCardType> = [];
+    
+        // Traverse the partition linked list
+        let current = this.partitionHead.next; // Start after the dummy head
+        while (current) {
+            if (current.card) {
+                flashcards.push(current.card); // Add the flashcard to the array
+            }
+            current = current.next; // Move to the next node
+        }
+    
+        // Traverse the bleedQueue linked list
+        current = this.bleedQueue.next; // Start after the dummy head
+        while (current) {
+            if (current.card) {
+                flashcards.push(current.card); // Add the flashcard to the array
+            }
+            current = current.next; // Move to the next node
+        }
+    
+        return flashcards; // Return the array of flashcards
+    }    
+
+    public getBleedQueue(): CardNode {
+        return this.bleedQueue
+    }
+
     /**
      * Gets the length of the bleed queue.
      * @returns {number} The number of cards in the bleed queue.
@@ -415,11 +473,18 @@ export class CardNode {
      */
     public toString(): string {
         let str = `Current Playlist: ${this.currPlaylist ? 'Present' : 'Null'}\n`;
-        str += `Current Playlist Length: ${Object.keys(this.currPlaylist!.playlist).length}\n`;
+        str += `Current Playlist Length: ${this.currPlaylistLength}\n`;
         str += `Partition Length: ${this.partitionLength}\n`;
         str += `BleedQueue Length: ${this.bleedLength}\n`;
         str += `Partition Size: ${this.partitionSize}\n`;
-
+        str += `Failed Queue Increment: ${this.failedQueueIncrement}\n`;
+        str += `Passed Queue Increment: ${this.passedQueueIncrement}\n`;
+        str += `New Cards Per Partition: ${this.numNewCardsPartition}\n`;
+        str += `Number of Strikes: ${this.numOfStrikes}\n`;
+        str += `Passes In A Row Needed: ${this.numInARow}\n`;
+        str += `Number of Loops Through Deck: ${this.numOfLoops}\n`;
+        str += `Number of Cards Studied In Session: ${this.numOfStudiedInSession}\n`;
+    
         str += "Partition Contents: ";
         let current = this.partitionHead.next; // Skip dummy head
         while (current) {
@@ -427,7 +492,7 @@ export class CardNode {
             current = current.next;
         }
         str += "End\n";
-
+    
         str += "BleedQueue Contents: ";
         current = this.bleedQueue.next; // Assuming bleedQueue also has a dummy head
         while (current) {
@@ -435,9 +500,55 @@ export class CardNode {
             current = current.next;
         }
         str += "End\n";
-
+    
+        // str += "Partition Snapshots: ";
+        // this.partitionSnapshots.forEach((snapshot, index) => {
+        //     str += `[Snapshot ${index + 1}: Length = ${snapshot.length}, BleedLength = ${snapshot.bleedLength}] `;
+        // });
+        // str += this.partitionSnapshots.length > 0 ? "" : "No snapshots recorded.\n";
+    
         return str;
     }
+    
+}
+
+export interface ICardNode {
+    // Holds the flashcard data.
+    card: FlashCardType | undefined;
+
+    // Counts the number of times the card has been passed.
+    passes: number;
+
+    // Counts the number of times the card has failed.
+    fails: number;
+
+    // How many times in a row a card was correct in a partition
+    aRow: number;
+
+    // Points to the next card node in the linked list.
+    next: ICardNode | null;
+
+    // Keeps a history of actions taken on this card, along with the pass and fail counts at the time of action.
+    actionHistory: Array<{
+        action: 'pass' | 'fail', // The action taken ('pass' or 'fail').
+        passes: number,          // The number of passes at the time of action.
+        fails: number            // The number of fails at the time of action.
+    }>
+
+    // Records an action ('pass' or 'fail') to the card's history.
+    addActionToHistory(action: 'pass' | 'fail'): void;
+
+    // Removes the most recent action from the card's history.
+    undoLastAction(): void;
+
+    // Creates a copy of the card node, useful for duplicating the node without affecting the original.
+    clone(): ICardNode;
+
+    // A read-only property that calculates and returns a difficulty score based on the card's history.
+    readonly difficultyScore: number;
+
+    // Returns a string representation of the card node for easy logging or debugging.
+    toString(): string;
 }
 
 // Usage example:

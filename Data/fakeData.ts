@@ -435,6 +435,16 @@ const flashCards1: FlashCardType[] = [
   
   const smallSet: FlashCardType[] = [
     {
+      "term": "손질하다",
+      "romanization": "(sonjilhada)",
+      "definition": "to prepare (food)"
+    },
+    {
+      "term": "껍질",
+      "romanization": "(kkeopjil)",
+      "definition": "peel/skin"
+    },
+    {
       "term": "컴퓨터",
       "romanization": "(keompyuteo)",
       "definition": "computer"
