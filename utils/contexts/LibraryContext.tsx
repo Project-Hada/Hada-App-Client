@@ -37,6 +37,10 @@ export interface PlaylistContextType {
     flashcardId: string,
     updatedFlashcard: FlashCardType
   ) => void;
+  updatePlaylist: (
+    playlistId: string,
+    updatedPlaylistData: Partial<PlaylistType>
+  ) => void;
   deleteFlashcard: (playlistId: string, flashcardId: string) => void;
 }
 
@@ -48,6 +52,7 @@ const defaultState: PlaylistContextType = {
   setLibrary: () => {},
   addPlaylist: () => {},
   addFlashcard: () => {},
+  updatePlaylist: () => {},
   updateFlashcard: () => {},
   deleteFlashcard: () => {},
 };
@@ -184,6 +189,32 @@ export const LibraryProvider: React.FC<PropsWithChildren<{}>> = ({
     }
   };
 
+  const updatePlaylist = (
+    playlistId: string,
+    updatedPlaylistData: Partial<PlaylistType>
+  ) => {
+    const playlistToUpdate = library[playlistId];
+    if (playlistToUpdate) {
+      // Create a new playlist object with the updated data
+      const updatedPlaylist = {
+        ...playlistToUpdate,
+        ...updatedPlaylistData,
+        playlist: { ...playlistToUpdate.playlist }, // Ensure the flashcards remain unchanged
+      };
+
+      // Update the library state with the modified playlist
+      setLibrary((prevLibrary) => ({
+        ...prevLibrary,
+        [playlistId]: updatedPlaylist,
+      }));
+
+      // If the current playlist is the one being updated, also update currPlaylist
+      if (currPlaylist?.id === playlistId) {
+        setCurrPlaylist(updatedPlaylist);
+      }
+    }
+  };
+
   return (
     <LibraryContext.Provider
       value={{
@@ -193,6 +224,7 @@ export const LibraryProvider: React.FC<PropsWithChildren<{}>> = ({
         setLibrary,
         addPlaylist,
         addFlashcard,
+        updatePlaylist,
         updateFlashcard,
         deleteFlashcard,
       }}
