@@ -2,7 +2,6 @@ import React, { useState, useRef, useEffect, useContext } from "react";
 import {
   StyleSheet,
   View,
-  Text,
   TouchableOpacity,
   Animated,
   SafeAreaView,
@@ -16,61 +15,108 @@ import FlashCardSlider from "./FlashcardSlider";
 import Aromanize from "aromanize";
 import { FlashCardType } from "../../../utils/types";
 import { useTheme } from "../../../utils/contexts/ThemeContext";
-
-type HistoryItem = {
-  direction: string;
-  currentIndex: number;
-};
+import { CardNode, Session } from "./sessionAlgorithm";
 
 type PracticeScreenProps = {
   navigation: any;
   flashCards: FlashCardType[];
 };
 
+type HistoryItem = {
+  direction: string;
+};
+
 export default function PracticeScreen({ navigation, route }: any) {
   const { currPlaylist } = useContext(FlashcardContext);
-  const flashcardsObject = currPlaylist!.playlist;
-  const flashcardsArray = Object.values(flashcardsObject); // Convert flashcards object to array
-  const [currentIndex, setCurrentIndex] = useState(0);
-  const [dynamicIndex, setDynamicIndex] = useState(currentIndex);
-  const [nextIndex, setNextIndex] = useState(1); // Next card index
-  const [history, setHistory] = useState<HistoryItem[]>([]);
   const cardOffsetX = useRef(new Animated.Value(0)).current; // Animation for swiping
   const [isFlipped, setIsFlipped] = useState(false);
   const [sliderIndex, setSliderIndex] = useState(0);
+  const [dynamicHead, setDynamicHead] = useState<CardNode | null>(null);
   const [wasFlipped, setWasFlipped] = useState(false);
   const [resetFlip, setResetFlip] = useState(false);
+  const [currentSession, setSession] = useState<Session | null>(null);
+  const [history, setHistory] = useState<HistoryItem[]>([]);
 
   useEffect(() => {
-    // If there's only one flashcard, we don't need to set a next index
-    if (flashcardsArray.length === 1) {
-      setNextIndex(0); // There is no "next", so it's the same card
-    }
-  }, [flashcardsArray]);
+    if (currPlaylist) {
+      const session = new Session(currPlaylist);
+      session.startSession();
+      setSession(session);
+      console.log(session.toString());
 
+      setDynamicHead(session.getPartitionHead());
+    }
+  }, [currPlaylist]);
+
+  // const partitionLength = currentSession.getPartitionLength(); // This should be fine now
+  //     const currentIndex = currentSession.getBleedLength();
+  //     for (
+  //       let index = 0;
+  //       index < Object.keys(currPlaylist!.playlist).length;
+  //       index++
+  //     ) {
   const renderProgressIndicators = () => {
-    return flashcardsArray.map((card: any, index: any) => (
-      <View
-        key={`progress-${index}`}
-        style={[
-          styles.progressIndicator,
-          currentIndex > index ? styles.progressIndicatorPassed : null,
-          // If currentIndex is equal to index, it's the current card, we can highlight it differently
-          currentIndex === index ? styles.progressIndicatorCurrent : null,
-        ]}
-      />
-    ));
+    const indicators = [];
+    if (currentSession) {
+      const partitionLength = currentSession.getPartitionLength(); // This should be fine now
+      const currentIndex = currentSession.getBleedLength();
+      for (
+        let index = 0;
+        index < Object.keys(currPlaylist!.playlist).length;
+        index++
+      ) {
+        indicators.push(
+          <View
+            key={`progress-${index}`}
+            style={[
+              styles.progressIndicator,
+              currentIndex > index ? styles.progressIndicatorPassed : null,
+              currentIndex === index ? styles.progressIndicatorCurrent : null,
+            ]}
+          />
+        );
+      }
+    }
+
+    return indicators;
   };
 
   // Function to handle the card swipe animation
   const moveCard = (direction: string) => {
-    if (flashcardsArray.length > 1) {
+    if (!currentSession) return;
+    console.log(
+      currentSession.getBleedLength(),
+      Object.keys(currPlaylist!.playlist).length - 1,
+      currentSession.getBleedLength() >=
+        Object.keys(currPlaylist!.playlist).length - 1
+    );
+    if (
+      currentSession.getBleedLength() >=
+      Object.keys(currPlaylist!.playlist).length - 1
+    ) {
+      navigation.goBack();
+      return;
+    }
+
+    if (currentSession.getPartitionHead()) {
+      console.log("DIRECTION", direction);
+      if (direction === "right") {
+        console.log("PASS");
+        currentSession.pass();
+      } else {
+        console.log("FAIL");
+        currentSession.fail();
+      }
+      console.log("oops", currentSession.toString());
+
       const newFlippedValue = isFlipped;
       setWasFlipped(newFlippedValue);
       setResetFlip(!resetFlip);
       const moveTo = direction === "left" ? -1000 : 1000; // Determine direction based on 'X' or 'O'
       setSliderIndex(999);
-      setDynamicIndex(nextIndex);
+      if (currentSession.getPartitionHead()?.next) {
+        setDynamicHead(currentSession.getPartitionHead()!.next);
+      }
 
       Animated.timing(cardOffsetX, {
         toValue: moveTo,
@@ -81,14 +127,7 @@ export default function PracticeScreen({ navigation, route }: any) {
         setIsFlipped(false);
         // After the animation, reset position and update card indices
         cardOffsetX.setValue(0); // Reset position
-        // Save action to history
-        setHistory([...history, { direction, currentIndex }]);
-        const newCurrentIndex = (currentIndex + 1) % flashcardsArray.length;
-        const newNextIndex = (nextIndex + 1) % flashcardsArray.length;
-
-        // Update indices
-        setCurrentIndex(newCurrentIndex);
-        setNextIndex(newNextIndex);
+        setHistory([...history, { direction }]);
         setSliderIndex(0);
       });
     }
@@ -98,15 +137,19 @@ export default function PracticeScreen({ navigation, route }: any) {
   const bringBackCard = () => {
     setIsFlipped(false);
     setWasFlipped(false);
-    if (history.length <= 0) return;
+    console.log("SCRIBBLE DOT I EOUEOUOEO");
+    console.log(history.length, !currentSession);
+    if (history.length <= 0 || !currentSession) return;
+    //session manipulation
+    console.log("SCRIBBLE DOT I O");
+    currentSession.undoLastAction();
+    console.log(currentSession.toString());
+
     const historyLen = history.length - 1;
     const moveTo = 0; // Determine direction based on 'X' or 'O'
     const offset = history[historyLen].direction === "left" ? -1000 : 1000; // Determine direction based on 'X' or 'O'
     cardOffsetX.setValue(offset);
     setSliderIndex(999);
-    const newCurrentIndex = history[historyLen].currentIndex;
-    setCurrentIndex(newCurrentIndex);
-    setNextIndex((newCurrentIndex + 1) % flashcardsArray.length);
     setHistory(history.slice(0, historyLen));
 
     Animated.timing(cardOffsetX, {
@@ -117,7 +160,7 @@ export default function PracticeScreen({ navigation, route }: any) {
       setResetFlip(!resetFlip);
       // After the animation, reset position and update card indices
       cardOffsetX.setValue(0);
-      setDynamicIndex(newCurrentIndex);
+      setDynamicHead(currentSession.getPartitionHead());
       // Update indices
       setSliderIndex(0);
     });
@@ -179,7 +222,7 @@ export default function PracticeScreen({ navigation, route }: any) {
       justifyContent: "center",
       pointerEvents: "none",
     },
-    nextFlashCard: {
+    FlashCard: {
       position: "absolute",
       flex: 6,
       backgroundColor: theme.colors.container,
@@ -246,60 +289,74 @@ export default function PracticeScreen({ navigation, route }: any) {
     },
   });
 
+  if (currentSession) {
+    console.log(currentSession.toString());
+    console.log(currentSession.getPartitionHead());
+  }
+
   return (
     <SafeAreaView style={styles.container}>
-      {/* <Text>{`I${isFlipped}, W${wasFlipped}`}</Text> */}
-      <TouchableOpacity
-        onPress={() => navigation.goBack()}
-        style={styles.topNav}
-      >
-        <FontAwesome6 name="chevron-left" size={24} color="black" />
-        <View style={styles.progress}>{renderProgressIndicators()}</View>
-      </TouchableOpacity>
-      <View style={styles.flashCardContainer}>
-        <FlashCard
-          term={flashcardsArray[dynamicIndex].term}
-          romanization={`(${Aromanize.hangulToLatin(flashcardsArray[dynamicIndex].term, "rr-translit")})`}
-          definition={flashcardsArray[dynamicIndex].definition}
-          onFlip={() => setIsFlipped(!isFlipped)}
-          resetFlip={resetFlip}
-        />
-        {flashcardsArray.length > 1 && (
-          <View
-            style={[
-              styles.flashCardAnimated,
-              { zIndex: sliderIndex, opacity: sliderIndex },
-            ]}
+      {currentSession && (
+        <>
+          {/* <Text>{`I${isFlipped}, W${wasFlipped}`}</Text> */}
+          <TouchableOpacity
+            onPress={() => navigation.goBack()}
+            style={styles.topNav}
           >
-            <Animated.View style={[cardStyle]}>
-              <FlashCardSlider
-                term={flashcardsArray[currentIndex].term}
-                romanization={`(${Aromanize.hangulToLatin(flashcardsArray[dynamicIndex].term, "rr-translit")})`}
-                definition={flashcardsArray[currentIndex].definition}
-                isFlipped={wasFlipped || isFlipped}
-              />
-            </Animated.View>
+            <FontAwesome6 name="chevron-left" size={24} color="black" />
+            <View style={styles.progress}>{renderProgressIndicators()}</View>
+          </TouchableOpacity>
+          <View style={styles.flashCardContainer}>
+            <FlashCard
+              term={dynamicHead!.card!.term}
+              romanization={`(${Aromanize.hangulToLatin(dynamicHead!.card!.term, "rr-translit")})`}
+              definition={dynamicHead!.card!.definition}
+              onFlip={() => setIsFlipped(!isFlipped)}
+              resetFlip={resetFlip}
+            />
+            {Object.keys(currPlaylist!.playlist).length > 1 && (
+              <View
+                style={[
+                  styles.flashCardAnimated,
+                  { zIndex: sliderIndex, opacity: sliderIndex },
+                ]}
+              >
+                <Animated.View style={[cardStyle]}>
+                  <FlashCardSlider
+                    term={currentSession.getPartitionHead()!.card!.term}
+                    romanization={`(${Aromanize.hangulToLatin(currentSession.getPartitionHead()!.card!.term, "rr-translit")})`}
+                    definition={
+                      currentSession.getPartitionHead()!.card!.definition
+                    }
+                    isFlipped={wasFlipped || isFlipped}
+                  />
+                </Animated.View>
+              </View>
+            )}
           </View>
-        )}
-      </View>
 
-      <TouchableOpacity onPress={bringBackCard} style={styles.centerControl}>
-        <FontAwesome6 name="rotate-left" size={38} color="#929292" />
-      </TouchableOpacity>
-      <View style={styles.bottomControls}>
-        <TouchableOpacity
-          onPress={() => moveCard("left")}
-          style={[styles.controls, styles.left]}
-        >
-          <FontAwesome6 name="circle-xmark" size={44} color="black" />
-        </TouchableOpacity>
-        <TouchableOpacity
-          onPress={() => moveCard("right")}
-          style={[styles.controls, styles.right]}
-        >
-          <FontAwesome6 name="circle-check" size={44} color="black" />
-        </TouchableOpacity>
-      </View>
+          <TouchableOpacity
+            onPress={bringBackCard}
+            style={styles.centerControl}
+          >
+            <FontAwesome6 name="rotate-left" size={38} color="#929292" />
+          </TouchableOpacity>
+          <View style={styles.bottomControls}>
+            <TouchableOpacity
+              onPress={() => moveCard("left")}
+              style={[styles.controls, styles.left]}
+            >
+              <FontAwesome6 name="circle-xmark" size={44} color="black" />
+            </TouchableOpacity>
+            <TouchableOpacity
+              onPress={() => moveCard("right")}
+              style={[styles.controls, styles.right]}
+            >
+              <FontAwesome6 name="circle-check" size={44} color="black" />
+            </TouchableOpacity>
+          </View>
+        </>
+      )}
     </SafeAreaView>
   );
 }

@@ -50,10 +50,6 @@ export default function FlashCard({
       alignItems: 'center',
       backfaceVisibility: 'hidden',
       shadowColor: '#171717',
-      borderWidth: spacing.borderWidth,
-      borderRightWidth: spacing.borderRightWidth,
-      borderBottomWidth: spacing.borderBottomWidth,
-      borderColor: theme.colors.border,
     },
     termContainer: {},
     term: {
@@ -128,7 +124,7 @@ export default function FlashCard({
 
   return (
     <Pressable onPress={triggerFlip} style={styles.flashCardPressableContainer}>
-      <Animated.View style={[styles.flashCard, frontAnimatedStyle]}>
+      <Animated.View style={[styles.flashCard, frontAnimatedStyle, theme.shadow.default]}>
         <View style={styles.termContainer}>
           <Text style={styles.term}>{term}</Text>
         </View>
@@ -141,7 +137,7 @@ export default function FlashCard({
       </Animated.View>
 
       <Animated.View
-        style={[styles.flashCard, backAnimatedStyle, { position: "absolute" }]}
+        style={[styles.flashCard, backAnimatedStyle, theme.shadow.default, { position: "absolute" }]}
       >
         <Text style={styles.definition}>{definition}</Text>
         <TouchableOpacity style={styles.audioButton} onPress={handleAudio}>
@@ -151,4 +147,5 @@ export default function FlashCard({
     </Pressable>
   );
 }
+
 

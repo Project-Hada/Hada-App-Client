@@ -1,8 +1,4 @@
 import React, {
-  JSXElementConstructor,
-  ReactElement,
-  ReactNode,
-  ReactPortal,
   useContext,
   useState,
 } from "react";
@@ -12,9 +8,7 @@ import {
   StyleSheet,
   ScrollView,
   SafeAreaView,
-  TouchableOpacity,
-  TextInput,
-  Pressable,
+  TouchableOpacity, 
 } from "react-native";
 import {
   AntDesign,
@@ -25,8 +19,7 @@ import {
 import { StackNavigationProp } from "@react-navigation/stack";
 import { FlashCardType } from "../../utils/types";
 import LibraryContext from "../../utils/contexts/LibraryContext";
-import flashCards from "../../Data/fakeData";
-// import { styles } from "./DeckPreview/DeckPreview";
+import flashCards from "../../Data/fakeData"; 
 import AddButton from "../AddButton";
 import generateId from "../../utils/idGenerator";
 import { useTheme } from "../../utils/contexts/ThemeContext";
@@ -143,7 +136,6 @@ export default function LibraryScreen({ navigation, route }: any) {
       paddingLeft: 65,
       marginBottom: theme.spacing.library.marginBottom,
       marginHorizontal: theme.spacing.library.marginHorizontal,
-      
     },
     iconContainer: {
       // justifyContent: "center",
@@ -229,7 +221,6 @@ export default function LibraryScreen({ navigation, route }: any) {
       borderRadius: theme.spacing.borderRadius,
       borderColor: theme.colors.border,
     },
-
     playlistName: {
       fontFamily: theme.typography.fonts.boldFont,
       fontSize: theme.typography.library.playlistTitleSize,
@@ -330,7 +321,7 @@ export default function LibraryScreen({ navigation, route }: any) {
           return (
             <TouchableOpacity
               key={`playlist-${item.id}`} // use the unique id as key
-              style={libStyles.playlist}
+              style={[libStyles.playlist, theme.shadow.default]}
               onPress={() => handleNavigation(item.id)} // pass the id to handle navigation
             >
               <View style={[libStyles.iconContainer, { backgroundColor: itemColor}]}>
@@ -353,3 +344,4 @@ export default function LibraryScreen({ navigation, route }: any) {
     </SafeAreaView>
   );
 }
+

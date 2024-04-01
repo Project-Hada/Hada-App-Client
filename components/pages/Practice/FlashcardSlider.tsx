@@ -1,5 +1,5 @@
 import React from "react";
-import { StyleSheet, View, Text, Pressable } from "react-native";
+import { StyleSheet, View, Text } from "react-native";
 import { useTheme } from "../../../utils/contexts/ThemeContext";
 import { typography } from "../../theme/Typography";
 
@@ -46,6 +46,7 @@ export default function FlashCardSlider({
     term: {
       fontSize: typography.flashcard.termSize,
       fontFamily: typography.fonts.variableFont,
+      color: theme.colors.text,
     },
     romanizationContainer: {},
     romanization: {
@@ -55,6 +56,7 @@ export default function FlashCardSlider({
     },
     definition: {
       fontSize: typography.flashcard.definitionSize,
+      color: theme.colors.text,
     },
   });
 

@@ -1,4 +1,3 @@
-// PreviewCard.tsx
 import React from "react";
 import { TouchableOpacity, View, Text, StyleSheet } from "react-native";
 import { Feather } from "@expo/vector-icons";
@@ -144,6 +143,7 @@ const PreviewCard: React.FC<PreviewCardProps> = ({
       borderRadius: theme.spacing.borderRadius,
       borderColor: theme.colors.border,
     },
+
     listItem: {
       flexDirection: "row",
       alignItems: "center",
@@ -213,7 +213,7 @@ const PreviewCard: React.FC<PreviewCardProps> = ({
 
   return (
     <TouchableOpacity onPress={onPress}>
-      <View style={styles.listItem}>
+      <View style={[styles.listItem, theme.shadow.default]}>
         <View style={styles.previewBadge}>
           <Text style={styles.previewBadgeText}>{term.slice(0, 1)}</Text>
         </View>
@@ -222,7 +222,6 @@ const PreviewCard: React.FC<PreviewCardProps> = ({
           <Text style={styles.term}>{definition}</Text>
         </View>
         <TouchableOpacity
-          style={styles.playButton}
           onPress={() => {
             handleAudio(term, "ko-KR");
             handleAudio(definition, "en-US");

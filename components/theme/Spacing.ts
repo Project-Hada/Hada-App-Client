@@ -36,4 +36,5 @@ export const spacing = {
     borderWidth: 1, 
     borderRightWidth: 4, 
     borderBottomWidth: 4,
+
   };
