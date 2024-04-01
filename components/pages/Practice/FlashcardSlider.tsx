@@ -29,7 +29,7 @@ export default function FlashCardSlider({
     flashCardFront: {
       width: "100%",
       height: "100%",
-      borderRadius: 13,
+      borderRadius: theme.spacing.flashcard.borderRadius,
       backgroundColor: theme.colors.container,
       justifyContent: "center",
       alignItems: "center",
@@ -37,7 +37,7 @@ export default function FlashCardSlider({
     flashCardBack: {
       width: "100%",
       height: "100%",
-      borderRadius: 13,
+      borderRadius: theme.spacing.flashcard.borderRadius,
       backgroundColor: theme.colors.container,
       justifyContent: "center",
       alignItems: "center",
@@ -79,3 +79,10 @@ export default function FlashCardSlider({
     </View>
   );
 }
+
+{
+  /* <View style={{backgroundColor: 'red', opacity: 0.5, width: '100%', height: '100%', pointerEvents: 'none'}}>
+
+</View> */
+}
+

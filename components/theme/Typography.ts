@@ -4,6 +4,7 @@ export const typography = {
     headerTitleSize: 24,
     playlistTitleSize: 18,
     subTextSize: 14,
+    createPlaylistSize: 20,
   },
   // DeckPreview Font Sizes
   deckPreview: {
@@ -15,6 +16,7 @@ export const typography = {
     addCardtextSize: 20,
     koreanTermSize: 22,
     englishTermSize: 16,
+    previewTextSize: 26,
   },
   // Flashcard Font Sizes
   flashcard: {

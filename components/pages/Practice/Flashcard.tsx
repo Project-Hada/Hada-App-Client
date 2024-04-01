@@ -69,8 +69,8 @@ export default function FlashCard({
     },
     audioButton: {
       position: "absolute",
-      top: 15,
-      right: 15,
+      top: theme.spacing.flashcard.audioButtonTop,
+      right: theme.spacing.flashcard.audioButtonRight,
     },
   });
 
@@ -147,3 +147,5 @@ export default function FlashCard({
     </Pressable>
   );
 }
+
+
