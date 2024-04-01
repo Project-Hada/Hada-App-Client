@@ -2,6 +2,7 @@ import React, { createContext, useState, useContext, ReactNode, useEffect } from
 import { colors } from '../../components/theme/Colors'; 
 import { spacing } from '../../components/theme/Spacing'; 
 import { typography } from '../../components/theme/Typography';
+import { shadow } from '../../components/theme/Shadow';
 
 type ThemeMode = 'light' | 'dark';
 
@@ -10,6 +11,7 @@ export interface ThemeContextType {
     colors: typeof colors.light | typeof colors.dark;
     spacing: typeof spacing;
     typography: typeof typography;
+    shadow: typeof shadow;
   };
   themeMode: ThemeMode;
   toggleTheme: () => void;
@@ -21,6 +23,7 @@ const defaultThemeContext: ThemeContextType = {
     colors: colors.light, 
     spacing,
     typography,
+    shadow,
   },
   themeMode: 'light', 
   toggleTheme: () => {}, 
@@ -31,7 +34,7 @@ export const ThemeContext = createContext<ThemeContextType>(defaultThemeContext)
 
 // Create a provider component
 export const ThemeProvider = ({ children }: { children: ReactNode }) => {
-  const [themeMode, setThemeMode] = useState<ThemeMode>('dark');
+  const [themeMode, setThemeMode] = useState<ThemeMode>('light');
 
   const toggleTheme = () => {
     setThemeMode((prevMode) => (prevMode === 'light' ? 'dark' : 'light'));
@@ -41,6 +44,7 @@ export const ThemeProvider = ({ children }: { children: ReactNode }) => {
     colors: themeMode === 'light' ? colors.light : colors.dark,
     spacing,
     typography,
+    shadow,
     toggleTheme,
   };
 

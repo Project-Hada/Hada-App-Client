@@ -2,7 +2,6 @@ import React, { useState, useRef, useEffect, useContext } from "react";
 import {
   StyleSheet,
   View,
-  Text,
   TouchableOpacity,
   Animated,
   SafeAreaView,
@@ -390,8 +389,8 @@ export default function PracticeScreen({ navigation, route }: any) {
       marginBottom: -26,
     },
     title: {
+      fontFamily: theme.typography.fonts.boldFont,
       fontSize: 20,
-      fontWeight: "bold",
     },
     separator: {
       marginVertical: 30,
@@ -502,119 +501,3 @@ export default function PracticeScreen({ navigation, route }: any) {
     </SafeAreaView>
   );
 }
-// const styles = StyleSheet.create({
-//   slideContainer: {
-//     position: "relative",
-//     flex: 6,
-//     width: "100%",
-//   },
-//   progress: {
-//     flexDirection: "row",
-//     width: "100%",
-//   },
-//   progressIndicator: {
-//     flex: 1, // Each indicator will take equal space
-//     height: 4, // Set the height of the indicator
-//     backgroundColor: "#E0E0E0", // Default color for indicators
-//     marginHorizontal: 2, // Optional: add some spacing between indicators
-//   },
-//   progressIndicatorPassed: {
-//     backgroundColor: "#38DAEF", // Color for passed cards
-//   },
-//   progressIndicatorCurrent: {
-//     backgroundColor: "#38DAEF", // Optional: if you want to highlight the current card differently
-//   },
-//   container: {
-//     flex: 1,
-//     alignItems: "center",
-//     justifyContent: "center",
-//     flexDirection: "column",
-//     backgroundColor: "#F2E8E1",
-//   },
-//   topNav: {
-//     backgroundColor: "transparent",
-//     display: "flex",
-//     alignItems: "flex-start",
-//     width: "100%",
-//     flex: 0.4,
-//     paddingHorizontal: 26,
-//     paddingVertical: 28,
-//     gap: 16,
-//     justifyContent: "center",
-//   },
-//   flashCardAnimated: {
-//     backgroundColor: "transparent",
-//     position: "absolute",
-//     zIndex: 9999,
-//     height: "100%",
-//     width: "100%",
-//     alignSelf: "center",
-//     justifyContent: "center",
-//     pointerEvents: "none",
-//   },
-// FlashCard: {
-//     position: "absolute",
-//     flex: 6,
-//     backgroundColor: "white",
-//     width: "100%",
-//   },
-//   flashCardContainer: {
-//     position: "relative",
-//     flex: 5,
-//     backgroundColor: "transparent",
-//     width: "100%",
-//     paddingHorizontal: 36,
-//   },
-//   bottomControls: {
-//     flex: 1.6,
-//     width: "100%",
-//     display: "flex",
-//     flexDirection: "row",
-//     justifyContent: "space-between",
-//     backgroundColor: "transparent",
-//     alignItems: "center",
-//     gap: 26,
-//     paddingHorizontal: 20,
-//   },
-//   right: {
-//     backgroundColor: "#72DA4F",
-//   },
-//   left: {
-//     backgroundColor: "#FF454C",
-//   },
-//   controls: {
-//     flex: 1,
-//     height: 100,
-//     backgroundColor: "#D9D9D9",
-
-//     justifyContent: "center",
-//     alignItems: "center",
-//     borderRadius: 8,
-//     shadowColor: "#171717",
-//     shadowOffset: {
-//       width: 4, // X offset
-//       height: 4, // Y offset
-//     },
-//     shadowOpacity: 1, // Transparency (0 to 1)
-//     shadowRadius: 0, // Blur radius
-//     elevation: 5, // Android-specific elevation
-//     borderWidth: 1,
-//     borderColor: "black",
-//   },
-//   centerControl: {
-//     flex: 1,
-//     backgroundColor: "transparent",
-//     justifyContent: "center",
-//     alignItems: "center",
-//     marginBottom: -26,
-//   },
-//   title: {
-//     fontSize: 20,
-//     fontWeight: "bold",
-//   },
-//   separator: {
-//     marginVertical: 30,
-//     height: 1,
-//     width: "80%",
-//   },
-// });

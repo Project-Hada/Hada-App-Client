@@ -6,21 +6,22 @@ import {
   FlatList,
   TouchableOpacity,
   SafeAreaView,
-  Pressable,
 } from "react-native";
+
 import {
   MaterialCommunityIcons,
   MaterialIcons,
-  AntDesign,
 } from "@expo/vector-icons";
+
 import FlashcardContext from "../../../utils/contexts/LibraryContext";
-import { TextInput } from "react-native-gesture-handler";
 import AddButton from "../../AddButton";
 import generateId from "../../../utils/idGenerator";
 import AddCardModal from "./AddCardModal";
 import PreviewCard from "./PreviewCard";
 import { FlashCardType } from "../../../utils/types";
 import { useTheme } from "../../../utils/contexts/ThemeContext";
+
+import Search from "./Search";
 
 // For Korean regex
 import * as Hangul from "hangul-js";
@@ -98,7 +99,7 @@ export default function DeckPreview({ navigation, route }: any) {
   const AddCardButton = () => {
     return (
       <TouchableOpacity onPress={handleOpenAdd}>
-        <View style={styles.listItem}>
+        <View style={[styles.listItem, theme.shadow.default]}>
           <View style={styles.previewBadge}>
             <MaterialCommunityIcons name="plus-thick" size={30} color="white" />
           </View>
@@ -119,18 +120,6 @@ export default function DeckPreview({ navigation, route }: any) {
   const { theme } = useTheme();
 
   const styles = StyleSheet.create({
-    pressableArea: {
-      flex: 1,
-    },
-    playButtonContainer: {
-      width: 41,
-      height: 41,
-      backgroundColor: theme.colors.accent,
-      alignItems: "center",
-      justifyContent: "center",
-      borderRadius: 100,
-      paddingLeft: 4,
-    },
     container: {
       flex: 1,
       backgroundColor: theme.colors.backgroundColor,
@@ -158,9 +147,8 @@ export default function DeckPreview({ navigation, route }: any) {
       justifyContent: "center",
     },
     headerTitle: {
-      fontFamily: "GeneralSans-Semibold",
-      fontSize: 20,
-      fontWeight: "bold",
+      fontFamily: theme.typography.fonts.semiboldFont,
+      fontSize: theme.typography.deckPreview.deckTitleSize,
       marginBottom: 4,
       color: theme.colors.text,
     },
@@ -169,32 +157,33 @@ export default function DeckPreview({ navigation, route }: any) {
       alignItems: "center",
     },
     wordCount: {
-      fontFamily: "GeneralSans-Regular",
-      fontSize: 14,
+      fontFamily: theme.typography.fonts.regularFont,
+      fontSize: theme.typography.deckPreview.wordCountSize,
       color: "#B6B6B6",
       paddingLeft: 4,
     },
+
     addingContainer: {
       flexDirection: "column",
       padding: 20,
       marginBottom: 5,
       marginHorizontal: 20,
-      borderWidth: 1,
-      borderRightWidth: 4,
-      borderBottomWidth: 4,
-      borderRadius: 10,
+      borderWidth: theme.spacing.borderWidth,
+      borderRightWidth: theme.spacing.borderRightWidth,
+      borderBottomWidth: theme.spacing.borderBottomWidth,
+      borderRadius: theme.spacing.borderRadius,
       borderColor: theme.colors.border,
       backgroundColor: theme.colors.container,
     },
     addingKoreanText: {
-      fontSize: 16,
+      fontSize: theme.typography.deckPreview.addKoreanSize,
       borderWidth: 1,
       paddingVertical: 9,
       marginVertical: 5,
       borderRadius: 4,
       textAlign: "left",
       paddingLeft: 13,
-      fontWeight: "bold",
+      fontFamily: theme.typography.fonts.boldFont,
     },
     addingEnglishText: {
       borderWidth: 1,
@@ -222,14 +211,14 @@ export default function DeckPreview({ navigation, route }: any) {
       justifyContent: "center",
       alignItems: "center",
       paddingVertical: 10,
-      borderWidth: 1,
-      borderRightWidth: 4,
-      borderBottomWidth: 4,
-      borderRadius: 10,
+      borderWidth: theme.spacing.borderWidth,
+      borderRightWidth: theme.spacing.borderRightWidth,
+      borderBottomWidth: theme.spacing.borderBottomWidth,
+      borderRadius: theme.spacing.borderRadius,
       borderColor: theme.colors.border,
     },
     addButtonText: {
-      fontFamily: "GeneralSans-Bold",
+      fontFamily: theme.typography.fonts.boldFont,
     },
     addButton: {
       width: "65%",
@@ -239,12 +228,13 @@ export default function DeckPreview({ navigation, route }: any) {
       justifyContent: "center",
       alignItems: "center",
       paddingVertical: 10,
-      borderWidth: 1,
-      borderRightWidth: 4,
-      borderBottomWidth: 4,
-      borderRadius: 10,
+      borderWidth: theme.spacing.borderWidth,
+      borderRightWidth: theme.spacing.borderRightWidth,
+      borderBottomWidth: theme.spacing.borderBottomWidth,
+      borderRadius: theme.spacing.borderRadius,
       borderColor: theme.colors.border,
     },
+
     listItem: {
       flexDirection: "row",
       alignItems: "center",
@@ -252,20 +242,23 @@ export default function DeckPreview({ navigation, route }: any) {
       padding: 12,
       marginVertical: 5,
       marginHorizontal: 20,
-      borderWidth: 1,
-      borderRightWidth: 4,
-      borderBottomWidth: 4,
-      borderRadius: 10,
+
+      borderWidth: theme.spacing.borderWidth,
+      borderRightWidth: theme.spacing.borderRightWidth,
+      borderBottomWidth: theme.spacing.borderBottomWidth,
+      borderRadius: theme.spacing.borderRadius,
       borderColor: theme.colors.border,
+
       backgroundColor: theme.colors.container,
     },
     termContainer: {
       flexDirection: "column",
       flex: 1,
     },
+
     termText: {
       fontSize: 22,
-      fontFamily: "GeneralSans-Bold",
+      fontFamily: theme.typography.fonts.boldFont,
     },
     term: {
       fontSize: 16,
@@ -273,58 +266,66 @@ export default function DeckPreview({ navigation, route }: any) {
       fontFamily: "GeneralSans-Medium",
       marginTop: -4,
     },
+
     previewBadge: {
       width: 48,
       height: 48,
-      borderRadius: 10,
+      borderRadius: theme.spacing.borderRadius,
       marginRight: 16,
       backgroundColor: theme.colors.icons,
       alignItems: "center",
       justifyContent: "center",
     },
+
     previewBadgeText: {
       paddingTop: 4,
-      fontFamily: "GeneralSans-Bold",
-      fontSize: 26,
-      color: "white",
+      fontFamily: theme.typography.fonts.boldFont,
+      fontSize: theme.typography.deckPreview.previewTextSize,
+      color: theme.colors.text,
     },
     practiceButton: {
       margin: 20,
       padding: 20,
-      borderWidth: 1,
-      borderBottomWidth: 4,
-      borderRightWidth: 4,
-      borderRadius: 10,
+      borderWidth: theme.spacing.borderWidth,
+      borderRightWidth: theme.spacing.borderRightWidth,
+      borderBottomWidth: theme.spacing.borderBottomWidth,
+      borderRadius: theme.spacing.borderRadius,
       borderColor: theme.colors.border,
+
       backgroundColor: theme.colors.accent,
       alignItems: "center",
       justifyContent: "center",
     },
     practiceButtonText: {
-      fontSize: 20,
-      fontWeight: "bold",
-      fontFamily: "GeneralSans-Bold",
+      fontSize: theme.typography.deckPreview.practiceButtonSize,
+      fontFamily: theme.typography.fonts.boldFont,
     },
-    playButton: {},
     addCardText: {
-      fontFamily: "GeneralSans-Semibold",
-      fontSize: 20,
+
+      fontFamily: theme.typography.fonts.semiboldFont,
+      fontSize: theme.typography.deckPreview.addCardtextSize,
+
     },
   });
 
   return (
     <SafeAreaView style={styles.container}>
       <View style={styles.header}>
+        {/* Back arrow */}
         <TouchableOpacity
           style={styles.backIcon}
           onPress={() => navigation.goBack()}
         >
           <MaterialIcons name="arrow-back-ios" size={28} color="black" />
         </TouchableOpacity>
+        {/* Header */}
         <View style={styles.headerContent}>
           <View style={styles.headerInfo}>
+            {/* Playlist Name */}
             <Text style={styles.headerTitle}>{currPlaylist?.title}</Text>
+            {/* Playlist Info container */}
             <View style={styles.subHeader}>
+              {/* Card Icon */}
               <MaterialCommunityIcons
                 name="cards-variant"
                 size={22}
@@ -335,6 +336,7 @@ export default function DeckPreview({ navigation, route }: any) {
               </Text>
             </View>
           </View>
+          {/* AddButton container */}
           <TouchableOpacity onPress={handleOpenAdd}>
             <AddButton />
           </TouchableOpacity>
@@ -343,17 +345,10 @@ export default function DeckPreview({ navigation, route }: any) {
       </View>
 
       {/* Search word input */}
-
-      <View style={OldStyles.searchContainer}>
-        <AntDesign name="search1" style={OldStyles.searchIcon} />
-        <TextInput
-          style={OldStyles.searchInput}
-          onChangeText={handleSearchWord}
-          value={searchTerm}
-          placeholder="Search"
-          keyboardType="default"
-        />
-      </View>
+      <Search 
+        handleSearchWord={handleSearchWord} 
+        searchTerm={searchTerm} 
+      />
 
       {/* Adding new card modal */}
       <AddCardModal
@@ -364,11 +359,10 @@ export default function DeckPreview({ navigation, route }: any) {
         englishWordInitial={""}
         isEditMode={false}
       />
-      {/* List of cards display */}
 
+      {/* List of cards display */}
       <FlatList
         // Filtering word using filter()
-
         data={filteredFlashcards}
         renderItem={({ item }) => (
           // The modal is now tied to the selectedCardId state.
@@ -410,239 +404,10 @@ export default function DeckPreview({ navigation, route }: any) {
             handleOpenAdd();
           }
         }}
-        style={styles.practiceButton}
+        style={[styles.practiceButton, theme.shadow.default]}
       >
         <Text style={styles.practiceButtonText}>Practice</Text>
       </TouchableOpacity>
     </SafeAreaView>
   );
 }
-
-{
-  /* {selectedCardId === item.id && (
-              <AddCardModal
-                isVisible={true}
-                onAdd={handleAdd}
-                onCancel={handleCancel}
-                koreanWordInitial={item.term}
-                englishWordInitial={item.definition}
-                isEditMode={true}
-              />
-            )} */
-}
-export const OldStyles = StyleSheet.create({
-  searchContainer: {
-    paddingVertical: 5,
-    marginTop: 15,
-    marginBottom: 15,
-    marginHorizontal: 20,
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "flex-start",
-    backgroundColor: "#FFFFFF",
-    borderWidth: 1,
-    borderRightWidth: 4,
-    borderBottomWidth: 4,
-    borderRadius: 20,
-    borderColor: "#000000",
-  },
-  searchIcon: {
-    paddingLeft: 10,
-    fontSize: 20,
-    color: "#000000",
-  },
-  searchInput: {
-    width: "100%",
-    paddingLeft: 10,
-  },
-  pressableArea: {
-    flex: 1,
-  },
-  playButtonContainer: {
-    width: 41,
-    height: 41,
-    backgroundColor: "#FFDF37",
-    alignItems: "center",
-    justifyContent: "center",
-    borderRadius: 100,
-    paddingLeft: 4,
-  },
-  container: {
-    flex: 1,
-    backgroundColor: "transparent",
-    paddingHorizontal: 4,
-  },
-  header: {
-    flexDirection: "row",
-    alignItems: "flex-start",
-    justifyContent: "flex-start",
-    padding: 20,
-    backgroundColor: "transparent",
-  },
-  backIcon: {
-    paddingTop: 4,
-  },
-  headerContent: {
-    width: "100%",
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
-    paddingRight: 35,
-  },
-  headerInfo: {
-    flexDirection: "column",
-    justifyContent: "center",
-  },
-  headerTitle: {
-    fontFamily: "GeneralSans-Semibold",
-    fontSize: 20,
-    fontWeight: "bold",
-    marginBottom: 4,
-  },
-  subHeader: {
-    flexDirection: "row",
-    alignItems: "center",
-  },
-  wordCount: {
-    fontFamily: "GeneralSans-Regular",
-    fontSize: 14,
-    color: "#B6B6B6",
-    paddingLeft: 4,
-  },
-  addingContainer: {
-    flexDirection: "column",
-    padding: 20,
-    marginBottom: 5,
-    marginHorizontal: 20,
-    borderWidth: 1,
-    borderRightWidth: 4,
-    borderBottomWidth: 4,
-    borderRadius: 10,
-    borderColor: "#000000",
-    backgroundColor: "white",
-  },
-  addingKoreanText: {
-    fontSize: 16,
-    borderWidth: 1,
-    paddingVertical: 9,
-    marginVertical: 5,
-    borderRadius: 4,
-    textAlign: "left",
-    paddingLeft: 13,
-    fontWeight: "bold",
-  },
-  addingEnglishText: {
-    borderWidth: 1,
-    marginVertical: 5,
-    paddingVertical: 7,
-    borderRadius: 4,
-    textAlign: "left",
-    paddingLeft: 13,
-  },
-  addingButtonContainer: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
-    width: "100%",
-    marginTop: 20,
-  },
-  cancelButtonText: {
-    fontFamily: "GeneralSans-Bold",
-  },
-  cancelButton: {
-    width: "30%",
-    backgroundColor: "#FF454C",
-    textAlign: "center",
-    flexDirection: "row",
-    justifyContent: "center",
-    alignItems: "center",
-    paddingVertical: 10,
-    borderWidth: 1,
-    borderRightWidth: 4,
-    borderBottomWidth: 4,
-    borderRadius: 10,
-    borderColor: "#000000",
-  },
-  addButtonText: {
-    fontFamily: "GeneralSans-Bold",
-  },
-  addButton: {
-    width: "65%",
-    backgroundColor: "#72DA4F",
-    textAlign: "center",
-    flexDirection: "row",
-    justifyContent: "center",
-    alignItems: "center",
-    paddingVertical: 10,
-    borderWidth: 1,
-    borderRightWidth: 4,
-    borderBottomWidth: 4,
-    borderRadius: 10,
-    borderColor: "#000000",
-  },
-  listItem: {
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "space-between",
-    padding: 12,
-    marginVertical: 5,
-    marginHorizontal: 20,
-    borderWidth: 1,
-    borderRightWidth: 4,
-    borderBottomWidth: 4,
-    borderRadius: 10,
-    borderColor: "#000000",
-    backgroundColor: "white",
-  },
-  termContainer: {
-    flexDirection: "column",
-    flex: 1,
-  },
-  termText: {
-    fontSize: 22,
-    fontFamily: "GeneralSans-Bold",
-  },
-  term: {
-    fontSize: 16,
-    color: "#A7A7A7",
-    fontFamily: "GeneralSans-Medium",
-    marginTop: -4,
-  },
-  previewBadge: {
-    width: 48,
-    height: 48,
-    borderRadius: 10,
-    marginRight: 16,
-    backgroundColor: "#7F9CEF",
-    alignItems: "center",
-    justifyContent: "center",
-  },
-  previewBadgeText: {
-    paddingTop: 4,
-    fontFamily: "GeneralSans-Bold",
-    fontSize: 26,
-    color: "white",
-  },
-  practiceButton: {
-    margin: 20,
-    padding: 20,
-    borderWidth: 1,
-    borderBottomWidth: 4,
-    borderRightWidth: 4,
-    borderRadius: 10,
-    borderColor: "#000000",
-    backgroundColor: "#FFDF37",
-    alignItems: "center",
-    justifyContent: "center",
-  },
-  practiceButtonText: {
-    fontSize: 20,
-    fontWeight: "bold",
-    fontFamily: "GeneralSans-Bold",
-  },
-  playButton: {},
-  addCardText: {
-    fontFamily: "GeneralSans-Semibold",
-    fontSize: 20,
-  },
-});
