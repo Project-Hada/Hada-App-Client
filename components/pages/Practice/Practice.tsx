@@ -30,7 +30,8 @@ type HistoryItem = {
 };
 
 export default function PracticeScreen({ navigation, route }: any) {
-  const { currPlaylist } = useContext(FlashcardContext);
+  const { currPlaylist, updateFlashcard, updatePlaylist } =
+    useContext(FlashcardContext);
   const opacityAnim = useRef(new Animated.Value(0)).current; // Initial opacity
   const cardOffsetX = useRef(new Animated.Value(0)).current; // Animation for swiping
   const [isFlipped, setIsFlipped] = useState(false);
@@ -44,6 +45,7 @@ export default function PracticeScreen({ navigation, route }: any) {
   const counterColorAnim = useRef(new Animated.Value(0)).current;
   const counterScaleAnim = useRef(new Animated.Value(1)).current;
   const textColorAnim = useRef(new Animated.Value(0)).current; // Initial value for text color animation
+  const [indicatorIndex, setIndicatorIndex] = useState(-1);
 
   useEffect(() => {
     if (currPlaylist) {
@@ -122,9 +124,10 @@ export default function PracticeScreen({ navigation, route }: any) {
   const renderProgressIndicators = () => {
     const indicators = [];
     if (currentSession) {
-      const partitionLength = currentSession.getPartitionLength(); // This should be fine now
-      const currentIndex =
-        currentSession.getCurrPlaylistLength() - partitionLength - 1;
+      const currIndex =
+        (currentSession.getNumOfStudiedInSession() %
+          currentSession.getCurrPlaylistLength()) -
+        1;
 
       if (currentSession.getNumOfLoops() > numOfLoops) {
         setNumOfLoops(currentSession.getNumOfLoops());
@@ -143,13 +146,13 @@ export default function PracticeScreen({ navigation, route }: any) {
             key={`progress-${index}`}
             style={[
               styles.progressIndicator,
-              currentIndex > index ? styles.progressIndicatorPassed : null,
-              currentIndex === index ? styles.progressIndicatorCurrent : null,
+              currIndex > index ? styles.progressIndicatorPassed : null,
+              currIndex === index ? styles.progressIndicatorCurrent : null,
             ]}
           >
             <Animated.View
               style={{
-                backgroundColor: "lime",
+                backgroundColor: "#98FF5D",
                 width: "100%",
                 height: "100%",
                 opacity: opacityAnim,
@@ -161,6 +164,31 @@ export default function PracticeScreen({ navigation, route }: any) {
     }
 
     return indicators;
+  };
+
+  const handleBackPress = () => {
+    if (currentSession && currPlaylist) {
+      // Assuming currentSession can give us the updated cards and bleedQueue
+      const updatedFlashcards = currentSession.getAllFlashcards();
+      const newBleedQueue = currentSession.getBleedQueue();
+      const newBleedQueueLength = currentSession.getBleedLength();
+
+      updatedFlashcards.forEach((card) => {
+        // Update each card with new passes and fails count
+        updateFlashcard(currPlaylist.id, card.id, {
+          ...card,
+          passes: card.passes,
+          fails: card.fails,
+        });
+      });
+
+      updatePlaylist(currPlaylist.id, {
+        bleedQueue: newBleedQueue,
+        bleedQueueLength: newBleedQueueLength,
+      });
+
+      navigation.goBack();
+    }
   };
 
   // Function to handle the card swipe animation
@@ -374,7 +402,7 @@ export default function PracticeScreen({ navigation, route }: any) {
   // Background color animation
   const counterBackgroundColor = counterColorAnim.interpolate({
     inputRange: [0, 1],
-    outputRange: [theme.colors.border, "lime"], // Change colors as needed
+    outputRange: [theme.colors.border, "#98FF5D"], // Change colors as needed
   });
 
   // Text scale animation
@@ -384,11 +412,11 @@ export default function PracticeScreen({ navigation, route }: any) {
 
   const animatedTextColor = textColorAnim.interpolate({
     inputRange: [0, 1],
-    outputRange: [theme.colors.border, "lime"], // Colors for the animation
+    outputRange: [theme.colors.border, "#98FF5D"], // Colors for the animation
   });
+
   if (currentSession) {
-    // console.log(currentSession.toString());
-    // console.log(currentSession.getPartitionHead());
+    console.log(currentSession.toString());
   }
 
   return (
@@ -474,7 +502,6 @@ export default function PracticeScreen({ navigation, route }: any) {
     </SafeAreaView>
   );
 }
-
 // const styles = StyleSheet.create({
 //   slideContainer: {
 //     position: "relative",

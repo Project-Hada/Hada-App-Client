@@ -138,6 +138,7 @@ export class CardNode implements ICardNode {
 
   
 export class Session {
+  
     private currPlaylist: PlaylistType | null;
     private currPlaylistLength: number;
     private partitionHead: CardNode; // Represents the fake head of the linked list for partition.
@@ -151,6 +152,7 @@ export class Session {
     private numOfStrikes: number; //number of strikes for bad grade and higher bleed queue priority
     private numInARow: number; //number of times they get it in a row to pass the card for partition
     private numOfLoops: number; //the number of times a user has studied their deck in one session a user has done
+    private numOfStudiedInSession: number;
     private partitionSnapshots: Array<{
         head: CardNode,
         length: number,
@@ -171,10 +173,17 @@ export class Session {
     this.passedQueueIncrement = 4;
     this.numNewCardsPartition = 2;
     this.failedQueueIncrement = 2;
+    this.numOfStudiedInSession = 0;
     this.numInARow = 2;
-    this.numOfLoops = -1; //starts off -1 if session hasn't created a partition yet
-    this.bleedQueue = new CardNode(); // Initialize bleedQueue with a dummy head
-    this.bleedLength = 0;
+    this.numOfLoops = 0; //starts off -1 if session hasn't created a partition yet
+    if (currPlaylist && currPlaylist.bleedQueue) {
+        this.bleedQueue = currPlaylist.bleedQueue; // Directly use the bleedQueue if it exists
+        // Use the stored bleedQueueLength if available; otherwise, calculate dynamically
+        this.bleedLength = currPlaylist.bleedQueueLength;
+      } else {
+        this.bleedQueue = new CardNode(); // Initialize bleedQueue with a dummy head if not present
+        this.bleedLength = 0; // Initialize the length as 0 if no bleedQueue is present
+      }
   }
 
     public startSession(): CardNode {
@@ -209,7 +218,6 @@ export class Session {
     private createPartition(): void {
         this.partitionHead.next = null;
         this.partitionLength = 0;
-        this.numOfLoops++;
     
         let newCardsAdded = 0;
         // Add two new cards first
@@ -292,6 +300,10 @@ export class Session {
         if (passedCardNode.aRow >= this.numInARow) {
             // If it has passed sufficiently, add it to the bleedQueue.
             this.addToBleedQueue(passedCardNode);
+            this.numOfStudiedInSession++;
+            if(this.numOfStudiedInSession % this.currPlaylistLength === 0) {
+                this.numOfLoops++;
+            }
         } else {
             // Increment the pass count for the card.
             passedCardNode.passes++;
@@ -396,12 +408,44 @@ export class Session {
         return this.partitionLength;
     }
 
+    public getNumOfStudiedInSession(): number {
+        return this.numOfStudiedInSession;
+    }
+
     public getNumOfLoops(): number {
         return this.numOfLoops;
     }
 
     public getCurrPlaylistLength(): number {
         return this.currPlaylistLength;
+    }
+
+    public getAllFlashcards(): Array<FlashCardType> {
+        let flashcards: Array<FlashCardType> = [];
+    
+        // Traverse the partition linked list
+        let current = this.partitionHead.next; // Start after the dummy head
+        while (current) {
+            if (current.card) {
+                flashcards.push(current.card); // Add the flashcard to the array
+            }
+            current = current.next; // Move to the next node
+        }
+    
+        // Traverse the bleedQueue linked list
+        current = this.bleedQueue.next; // Start after the dummy head
+        while (current) {
+            if (current.card) {
+                flashcards.push(current.card); // Add the flashcard to the array
+            }
+            current = current.next; // Move to the next node
+        }
+    
+        return flashcards; // Return the array of flashcards
+    }    
+
+    public getBleedQueue(): CardNode {
+        return this.bleedQueue
     }
 
     /**
@@ -433,7 +477,14 @@ export class Session {
         str += `Partition Length: ${this.partitionLength}\n`;
         str += `BleedQueue Length: ${this.bleedLength}\n`;
         str += `Partition Size: ${this.partitionSize}\n`;
-
+        str += `Failed Queue Increment: ${this.failedQueueIncrement}\n`;
+        str += `Passed Queue Increment: ${this.passedQueueIncrement}\n`;
+        str += `New Cards Per Partition: ${this.numNewCardsPartition}\n`;
+        str += `Number of Strikes: ${this.numOfStrikes}\n`;
+        str += `Passes In A Row Needed: ${this.numInARow}\n`;
+        str += `Number of Loops Through Deck: ${this.numOfLoops}\n`;
+        str += `Number of Cards Studied In Session: ${this.numOfStudiedInSession}\n`;
+    
         str += "Partition Contents: ";
         let current = this.partitionHead.next; // Skip dummy head
         while (current) {
@@ -441,7 +492,7 @@ export class Session {
             current = current.next;
         }
         str += "End\n";
-
+    
         str += "BleedQueue Contents: ";
         current = this.bleedQueue.next; // Assuming bleedQueue also has a dummy head
         while (current) {
@@ -449,9 +500,16 @@ export class Session {
             current = current.next;
         }
         str += "End\n";
-
+    
+        // str += "Partition Snapshots: ";
+        // this.partitionSnapshots.forEach((snapshot, index) => {
+        //     str += `[Snapshot ${index + 1}: Length = ${snapshot.length}, BleedLength = ${snapshot.bleedLength}] `;
+        // });
+        // str += this.partitionSnapshots.length > 0 ? "" : "No snapshots recorded.\n";
+    
         return str;
     }
+    
 }
 
 export interface ICardNode {
