@@ -32,6 +32,7 @@ import generateId from "../../utils/idGenerator";
 import { useTheme } from "../../utils/contexts/ThemeContext";
 import { typography } from "../theme/Typography";
 import GearButton from "../GearButton";
+import ProfilePicture from "./ProfilePicture";
 
 type PlaylistItemType = {
   name: string;
@@ -122,6 +123,7 @@ export default function LibraryScreen({ navigation, route }: any) {
       fontFamily: theme.typography.fonts.boldFont,
       fontSize: 30,
       color: theme.colors.text,
+      marginRight: 100,
     },
     scrollView: {
       width: "100%",
@@ -295,6 +297,7 @@ export default function LibraryScreen({ navigation, route }: any) {
     <SafeAreaView style={libStyles.container}>
       <View style={libStyles.topSection}>
         <View style={libStyles.headerContainer}>
+        <ProfilePicture />
         <Text style={libStyles.headerText}>Library</Text>
         <View style={libStyles.buttonGroup}>
           <TouchableOpacity onPress={handleOpenAdd}>

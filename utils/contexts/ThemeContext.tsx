@@ -1,5 +1,5 @@
 import React, { createContext, useState, useContext, ReactNode, useEffect } from 'react';
-import { colors } from '../../components/theme/colors'; 
+import { colors } from '../../components/theme/Colors'; 
 import { spacing } from '../../components/theme/Spacing'; 
 import { typography } from '../../components/theme/Typography';
 

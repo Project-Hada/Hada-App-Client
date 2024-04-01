@@ -1,6 +1,6 @@
 import React from 'react';
 import { useTheme } from '../utils/contexts/ThemeContext';
-import { Octicons } from "@expo/vector-icons";
+import { MaterialCommunityIcons, Octicons } from "@expo/vector-icons";
 import { StyleSheet, TouchableOpacity, View } from 'react-native';
 
 const GearButton = () => {
@@ -21,6 +21,7 @@ const GearButton = () => {
     <View style={styles.gearButtonContainer}>
       <TouchableOpacity onPress={toggleTheme}>    
         <Octicons name="gear" size={28} color={theme.colors.gearButton}  />
+        {/* <MaterialCommunityIcons name="theme-light-dark" size={28} color={theme.colors.gearButton} /> */}
       </TouchableOpacity>
     </View>
       
