@@ -8,6 +8,8 @@ import {
   SafeAreaView,
   StyleProp,
   ViewStyle,
+  Easing,
+  TextStyle,
 } from "react-native";
 import FlashcardContext from "../../../utils/contexts/LibraryContext";
 import { FontAwesome6 } from "@expo/vector-icons";
@@ -29,6 +31,7 @@ type HistoryItem = {
 
 export default function PracticeScreen({ navigation, route }: any) {
   const { currPlaylist } = useContext(FlashcardContext);
+  const opacityAnim = useRef(new Animated.Value(0)).current; // Initial opacity
   const cardOffsetX = useRef(new Animated.Value(0)).current; // Animation for swiping
   const [isFlipped, setIsFlipped] = useState(false);
   const [sliderIndex, setSliderIndex] = useState(0);
@@ -37,17 +40,76 @@ export default function PracticeScreen({ navigation, route }: any) {
   const [resetFlip, setResetFlip] = useState(false);
   const [currentSession, setSession] = useState<Session | null>(null);
   const [history, setHistory] = useState<HistoryItem[]>([]);
+  const [numOfLoops, setNumOfLoops] = useState(0);
+  const counterColorAnim = useRef(new Animated.Value(0)).current;
+  const counterScaleAnim = useRef(new Animated.Value(1)).current;
+  const textColorAnim = useRef(new Animated.Value(0)).current; // Initial value for text color animation
 
   useEffect(() => {
     if (currPlaylist) {
       const session = new Session(currPlaylist);
       session.startSession();
       setSession(session);
-      console.log(session.toString());
+      // console.log(session.toString());
 
       setDynamicHead(session.getPartitionHead());
     }
   }, [currPlaylist]);
+
+  const animateOpacity = () => {
+    // Reset opacity to 1 without animation for instant change
+    opacityAnim.setValue(1);
+
+    console.log(opacityAnim);
+    // Animate the opacity to 0
+    Animated.timing(opacityAnim, {
+      toValue: 0,
+      duration: 1000,
+      useNativeDriver: true,
+    }).start();
+  };
+
+  const animateCounter = () => {
+    // Sequence of two animations
+    Animated.sequence([
+      // First: spring to green
+      Animated.spring(counterColorAnim, {
+        toValue: 1,
+        useNativeDriver: false, // Background color animation doesn't support native driver
+        // You can adjust speed, bounciness, etc. here
+      }),
+      // Second: spring back to black
+      Animated.spring(counterColorAnim, {
+        toValue: 0,
+        useNativeDriver: false, // Background color animation doesn't support native driver
+        // You can adjust speed, bounciness, etc. here
+      }),
+    ]).start();
+
+    // Spring animation for scaling up and then down the text
+    counterScaleAnim.setValue(1.5); // Start at scaled down value
+    Animated.spring(counterScaleAnim, {
+      toValue: 1, // Scale back to normal
+
+      tension: 5,
+      useNativeDriver: false, // This is supported for scale transform
+    }).start();
+  };
+
+  const animateTextColor = () => {
+    Animated.sequence([
+      Animated.timing(textColorAnim, {
+        toValue: 1,
+        duration: 500, // Duration of the color change to green
+        useNativeDriver: false, // Must be false for color animations
+      }),
+      Animated.timing(textColorAnim, {
+        toValue: 0,
+        duration: 500, // Duration of the color change back to black
+        useNativeDriver: false, // Must be false for color animations
+      }),
+    ]).start();
+  };
 
   // const partitionLength = currentSession.getPartitionLength(); // This should be fine now
   //     const currentIndex = currentSession.getBleedLength();
@@ -56,14 +118,24 @@ export default function PracticeScreen({ navigation, route }: any) {
   //       index < Object.keys(currPlaylist!.playlist).length;
   //       index++
   //     ) {
+
   const renderProgressIndicators = () => {
     const indicators = [];
     if (currentSession) {
       const partitionLength = currentSession.getPartitionLength(); // This should be fine now
-      const currentIndex = currentSession.getBleedLength();
+      const currentIndex =
+        currentSession.getCurrPlaylistLength() - partitionLength - 1;
+
+      if (currentSession.getNumOfLoops() > numOfLoops) {
+        setNumOfLoops(currentSession.getNumOfLoops());
+        animateOpacity();
+        animateOpacity();
+        animateCounter();
+        animateTextColor();
+      }
       for (
         let index = 0;
-        index < Object.keys(currPlaylist!.playlist).length;
+        index < currentSession.getCurrPlaylistLength();
         index++
       ) {
         indicators.push(
@@ -74,7 +146,16 @@ export default function PracticeScreen({ navigation, route }: any) {
               currentIndex > index ? styles.progressIndicatorPassed : null,
               currentIndex === index ? styles.progressIndicatorCurrent : null,
             ]}
-          />
+          >
+            <Animated.View
+              style={{
+                backgroundColor: "lime",
+                width: "100%",
+                height: "100%",
+                opacity: opacityAnim,
+              }}
+            />
+          </View>
         );
       }
     }
@@ -85,14 +166,7 @@ export default function PracticeScreen({ navigation, route }: any) {
   // Function to handle the card swipe animation
   const moveCard = (direction: string) => {
     if (!currentSession) return;
-    if (
-      currentSession.getBleedLength() >=
-      Object.keys(currPlaylist!.playlist).length - 1
-    ) {
-      navigation.goBack();
-      return;
-    }
-    console.log(currentSession.toString());
+    // console.log(currentSession.toString());
     if (currentSession.getPartitionHead()) {
       if (direction === "right") {
         console.log("PASS");
@@ -133,7 +207,7 @@ export default function PracticeScreen({ navigation, route }: any) {
     if (history.length <= 0 || !currentSession) return;
     //session manipulation
     currentSession.undoLastAction();
-    console.log(currentSession.toString());
+    // console.log(currentSession.toString());
 
     const historyLen = history.length - 1;
     const moveTo = 0; // Determine direction based on 'X' or 'O'
@@ -261,6 +335,25 @@ export default function PracticeScreen({ navigation, route }: any) {
       borderWidth: 1,
       borderColor: theme.colors.border,
     },
+    counter: {
+      justifyContent: "center",
+      alignItems: "center",
+      width: 36,
+      height: 36,
+      borderWidth: 3,
+      borderRadius: 100,
+      padding: 4,
+    },
+    counterText: {
+      fontSize: 18,
+      fontFamily: theme.typography.fonts.mediumFont,
+    },
+    navContainer: {
+      flexDirection: "row",
+      alignItems: "center",
+      justifyContent: "space-between",
+      width: "100%",
+    },
     centerControl: {
       flex: 1,
       backgroundColor: "transparent",
@@ -278,10 +371,24 @@ export default function PracticeScreen({ navigation, route }: any) {
       width: "80%",
     },
   });
+  // Background color animation
+  const counterBackgroundColor = counterColorAnim.interpolate({
+    inputRange: [0, 1],
+    outputRange: [theme.colors.border, "lime"], // Change colors as needed
+  });
 
+  // Text scale animation
+  const counterTextStyle: Animated.WithAnimatedValue<StyleProp<TextStyle>> = {
+    transform: [{ scale: counterScaleAnim }],
+  };
+
+  const animatedTextColor = textColorAnim.interpolate({
+    inputRange: [0, 1],
+    outputRange: [theme.colors.border, "lime"], // Colors for the animation
+  });
   if (currentSession) {
-    console.log(currentSession.toString());
-    console.log(currentSession.getPartitionHead());
+    // console.log(currentSession.toString());
+    // console.log(currentSession.getPartitionHead());
   }
 
   return (
@@ -289,13 +396,30 @@ export default function PracticeScreen({ navigation, route }: any) {
       {currentSession && (
         <>
           {/* <Text>{`I${isFlipped}, W${wasFlipped}`}</Text> */}
-          <TouchableOpacity
-            onPress={() => navigation.goBack()}
-            style={styles.topNav}
-          >
-            <FontAwesome6 name="chevron-left" size={24} color="black" />
+          <View style={styles.topNav}>
+            <View style={styles.navContainer}>
+              <TouchableOpacity onPress={() => navigation.goBack()}>
+                <FontAwesome6 name="chevron-left" size={24} color="black" />
+              </TouchableOpacity>
+              <Animated.View
+                style={[
+                  styles.counter,
+                  { borderColor: counterBackgroundColor },
+                ]}
+              >
+                <Animated.Text
+                  style={[
+                    styles.counterText,
+                    counterTextStyle,
+                    { color: animatedTextColor },
+                  ]}
+                >
+                  {`${numOfLoops}x`}
+                </Animated.Text>
+              </Animated.View>
+            </View>
             <View style={styles.progress}>{renderProgressIndicators()}</View>
-          </TouchableOpacity>
+          </View>
           <View style={styles.flashCardContainer}>
             <FlashCard
               term={dynamicHead!.card!.term}
