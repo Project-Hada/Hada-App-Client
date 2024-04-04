@@ -1,4 +1,3 @@
-// PreviewCard.tsx
 import React from "react";
 import { TouchableOpacity, View, Text, StyleSheet } from "react-native";
 import { Feather } from "@expo/vector-icons";
@@ -20,7 +19,7 @@ const PreviewCard: React.FC<PreviewCardProps> = ({
   definition,
   onPress,
 }) => {
-  const {theme} = useTheme();
+  const { theme } = useTheme();
   const styles = StyleSheet.create({
     playButtonContainer: {
       width: 41,
@@ -78,10 +77,10 @@ const PreviewCard: React.FC<PreviewCardProps> = ({
       padding: 20,
       marginBottom: 5,
       marginHorizontal: 20,
-      borderWidth: 1,
-      borderRightWidth: 4,
-      borderBottomWidth: 4,
-      borderRadius: 10,
+      borderWidth: theme.spacing.borderWidth,
+      borderRightWidth: theme.spacing.borderRightWidth,
+      borderBottomWidth: theme.spacing.borderBottomWidth,
+      borderRadius: theme.spacing.borderRadius,
       borderColor: theme.colors.border,
       backgroundColor: theme.colors.container,
     },
@@ -121,11 +120,11 @@ const PreviewCard: React.FC<PreviewCardProps> = ({
       justifyContent: "center",
       alignItems: "center",
       paddingVertical: 10,
-      borderWidth: 1,
-      borderRightWidth: 4,
-      borderBottomWidth: 4,
-      borderRadius: 10,
-      borderColor: "#000000",
+      borderWidth: theme.spacing.borderWidth,
+      borderRightWidth: theme.spacing.borderRightWidth,
+      borderBottomWidth: theme.spacing.borderBottomWidth,
+      borderRadius: theme.spacing.borderRadius,
+      borderColor: theme.colors.border,
     },
     addButtonText: {
       fontFamily: "GeneralSans-Bold",
@@ -138,12 +137,13 @@ const PreviewCard: React.FC<PreviewCardProps> = ({
       justifyContent: "center",
       alignItems: "center",
       paddingVertical: 10,
-      borderWidth: 1,
-      borderRightWidth: 4,
-      borderBottomWidth: 4,
-      borderRadius: 10,
-      borderColor: "#000000",
+      borderWidth: theme.spacing.borderWidth,
+      borderRightWidth: theme.spacing.borderRightWidth,
+      borderBottomWidth: theme.spacing.borderBottomWidth,
+      borderRadius: theme.spacing.borderRadius,
+      borderColor: theme.colors.border,
     },
+
     listItem: {
       flexDirection: "row",
       alignItems: "center",
@@ -151,10 +151,10 @@ const PreviewCard: React.FC<PreviewCardProps> = ({
       padding: 12,
       marginVertical: 5,
       marginHorizontal: 20,
-      borderWidth: 1,
-      borderRightWidth: 4,
-      borderBottomWidth: 4,
-      borderRadius: 10,
+      borderWidth: theme.spacing.borderWidth,
+      borderRightWidth: theme.spacing.borderRightWidth,
+      borderBottomWidth: theme.spacing.borderBottomWidth,
+      borderRadius: theme.spacing.borderRadius,
       borderColor: theme.colors.border,
       backgroundColor: theme.colors.container,
     },
@@ -164,13 +164,13 @@ const PreviewCard: React.FC<PreviewCardProps> = ({
     },
     termText: {
       fontSize: 22,
-      fontFamily: "GeneralSans-Bold",
+      fontFamily: theme.typography.fonts.boldFont,
       color: theme.colors.text,
     },
     term: {
       fontSize: 16,
       color: theme.colors.subtext,
-      fontFamily: "GeneralSans-Medium",
+      fontFamily: theme.typography.fonts.mediumFont,
       marginTop: -4,
     },
     previewBadge: {
@@ -178,43 +178,42 @@ const PreviewCard: React.FC<PreviewCardProps> = ({
       height: 48,
       borderRadius: 10,
       marginRight: 16,
-      backgroundColor: "#7F9CEF",
+      backgroundColor: theme.colors.icons,
       alignItems: "center",
       justifyContent: "center",
     },
     previewBadgeText: {
       paddingTop: 4,
-      fontFamily: "GeneralSans-Bold",
-      fontSize: 26,
-      color: "white",
+      fontFamily: theme.typography.fonts.boldFont,
+      fontSize: theme.typography.deckPreview.previewTextSize,
+      color: theme.colors.text,
     },
     practiceButton: {
       margin: 20,
       padding: 20,
-      borderWidth: 1,
-      borderBottomWidth: 4,
-      borderRightWidth: 4,
-      borderRadius: 10,
+      borderWidth: theme.spacing.borderWidth,
+      borderBottomWidth: theme.spacing.borderBottomWidth,
+      borderRightWidth: theme.spacing.borderRightWidth,
+      borderRadius: theme.spacing.borderRadius,
       borderColor: theme.colors.border,
       backgroundColor: theme.colors.accent,
       alignItems: "center",
       justifyContent: "center",
     },
     practiceButtonText: {
-      fontSize: 20,
-      fontWeight: "bold",
-      fontFamily: "GeneralSans-Bold",
+      fontSize: theme.typography.deckPreview.practiceButtonSize,
+      fontFamily: theme.typography.fonts.boldFont,
     },
     playButton: {},
     addCardText: {
-      fontFamily: "GeneralSans-Semibold",
-      fontSize: 20,
+      fontFamily: theme.typography.fonts.semiboldFont,
+      fontSize: theme.typography.deckPreview.addCardtextSize,
     },
   });
 
   return (
     <TouchableOpacity onPress={onPress}>
-      <View style={styles.listItem}>
+      <View style={[styles.listItem, theme.shadow.default]}>
         <View style={styles.previewBadge}>
           <Text style={styles.previewBadgeText}>{term.slice(0, 1)}</Text>
         </View>
@@ -223,7 +222,6 @@ const PreviewCard: React.FC<PreviewCardProps> = ({
           <Text style={styles.term}>{definition}</Text>
         </View>
         <TouchableOpacity
-          style={styles.playButton}
           onPress={() => {
             handleAudio(term, "ko-KR");
             handleAudio(definition, "en-US");
@@ -237,196 +235,5 @@ const PreviewCard: React.FC<PreviewCardProps> = ({
     </TouchableOpacity>
   );
 };
-
-// Add your styles here
-// export const styles = StyleSheet.create({
-//   playButtonContainer: {
-//     width: 41,
-//     height: 41,
-//     backgroundColor: "#FFDF37",
-//     alignItems: "center",
-//     justifyContent: "center",
-//     borderRadius: 100,
-//     paddingLeft: 4,
-//   },
-//   container: {
-//     flex: 1,
-//     backgroundColor: "#F2E8E1",
-//     paddingHorizontal: 4,
-//   },
-//   header: {
-//     flexDirection: "row",
-//     alignItems: "flex-start",
-//     justifyContent: "flex-start",
-//     padding: 20,
-//     backgroundColor: "transparent",
-//   },
-//   backIcon: {
-//     paddingTop: 4,
-//   },
-//   headerContent: {
-//     width: "100%",
-//     flexDirection: "row",
-//     justifyContent: "space-between",
-//     alignItems: "center",
-//     paddingRight: 35,
-//   },
-//   headerInfo: {
-//     flexDirection: "column",
-//     justifyContent: "center",
-//   },
-//   headerTitle: {
-//     fontFamily: "GeneralSans-Semibold",
-//     fontSize: 20,
-//     fontWeight: "bold",
-//     marginBottom: 4,
-//   },
-//   subHeader: {
-//     flexDirection: "row",
-//     alignItems: "center",
-//   },
-//   wordCount: {
-//     fontFamily: "GeneralSans-Regular",
-//     fontSize: 14,
-//     color: "#B6B6B6",
-//     paddingLeft: 4,
-//   },
-//   addingContainer: {
-//     flexDirection: "column",
-//     padding: 20,
-//     marginBottom: 5,
-//     marginHorizontal: 20,
-//     borderWidth: 1,
-//     borderRightWidth: 4,
-//     borderBottomWidth: 4,
-//     borderRadius: 10,
-//     borderColor: "#000000",
-//     backgroundColor: "white",
-//   },
-//   addingKoreanText: {
-//     fontSize: 16,
-//     borderWidth: 1,
-//     paddingVertical: 9,
-//     marginVertical: 5,
-//     borderRadius: 4,
-//     textAlign: "left",
-//     paddingLeft: 13,
-//     fontWeight: "bold",
-//   },
-//   addingEnglishText: {
-//     borderWidth: 1,
-//     marginVertical: 5,
-//     paddingVertical: 7,
-//     borderRadius: 4,
-//     textAlign: "left",
-//     paddingLeft: 13,
-//   },
-//   addingButtonContainer: {
-//     flexDirection: "row",
-//     justifyContent: "space-between",
-//     alignItems: "center",
-//     width: "100%",
-//     marginTop: 20,
-//   },
-//   cancelButtonText: {
-//     fontFamily: "GeneralSans-Bold",
-//   },
-//   cancelButton: {
-//     width: "30%",
-//     backgroundColor: "#FF454C",
-//     textAlign: "center",
-//     flexDirection: "row",
-//     justifyContent: "center",
-//     alignItems: "center",
-//     paddingVertical: 10,
-//     borderWidth: 1,
-//     borderRightWidth: 4,
-//     borderBottomWidth: 4,
-//     borderRadius: 10,
-//     borderColor: "#000000",
-//   },
-//   addButtonText: {
-//     fontFamily: "GeneralSans-Bold",
-//   },
-//   addButton: {
-//     width: "65%",
-//     backgroundColor: "#72DA4F",
-//     textAlign: "center",
-//     flexDirection: "row",
-//     justifyContent: "center",
-//     alignItems: "center",
-//     paddingVertical: 10,
-//     borderWidth: 1,
-//     borderRightWidth: 4,
-//     borderBottomWidth: 4,
-//     borderRadius: 10,
-//     borderColor: "#000000",
-//   },
-//   listItem: {
-//     flexDirection: "row",
-//     alignItems: "center",
-//     justifyContent: "space-between",
-//     padding: 12,
-//     marginVertical: 5,
-//     marginHorizontal: 20,
-//     borderWidth: 1,
-//     borderRightWidth: 4,
-//     borderBottomWidth: 4,
-//     borderRadius: 10,
-//     borderColor: "#000000",
-//     backgroundColor: "white",
-//   },
-//   termContainer: {
-//     flexDirection: "column",
-//     flex: 1,
-//   },
-//   termText: {
-//     fontSize: 22,
-//     fontFamily: "GeneralSans-Bold",
-//   },
-//   term: {
-//     fontSize: 16,
-//     color: "#A7A7A7",
-//     fontFamily: "GeneralSans-Medium",
-//     marginTop: -4,
-//   },
-//   previewBadge: {
-//     width: 48,
-//     height: 48,
-//     borderRadius: 10,
-//     marginRight: 16,
-//     backgroundColor: "#7F9CEF",
-//     alignItems: "center",
-//     justifyContent: "center",
-//   },
-//   previewBadgeText: {
-//     paddingTop: 4,
-//     fontFamily: "GeneralSans-Bold",
-//     fontSize: 26,
-//     color: "white",
-//   },
-//   practiceButton: {
-//     margin: 20,
-//     padding: 20,
-//     borderWidth: 1,
-//     borderBottomWidth: 4,
-//     borderRightWidth: 4,
-//     borderRadius: 10,
-//     borderColor: "#000000",
-//     backgroundColor: "#FFDF37",
-//     alignItems: "center",
-//     justifyContent: "center",
-//   },
-//   practiceButtonText: {
-//     fontSize: 20,
-//     fontWeight: "bold",
-//     fontFamily: "GeneralSans-Bold",
-//   },
-//   playButton: {},
-//   addCardText: {
-//     fontFamily: "GeneralSans-Semibold",
-//     fontSize: 20,
-//   },
-// });
 
 export default PreviewCard;
