@@ -49,7 +49,11 @@ export default function PracticeScreen({ navigation, route }: any) {
 
   useEffect(() => {
     if (currPlaylist) {
-      const session = new Session(currPlaylist);
+      const session = new Session(
+        currPlaylist,
+        updateFlashcard,
+        updatePlaylist
+      );
       session.startSession();
       setSession(session);
       // console.log(session.toString());
@@ -62,7 +66,6 @@ export default function PracticeScreen({ navigation, route }: any) {
     // Reset opacity to 1 without animation for instant change
     opacityAnim.setValue(1);
 
-    console.log(opacityAnim);
     // Animate the opacity to 0
     Animated.timing(opacityAnim, {
       toValue: 0,
@@ -167,28 +170,7 @@ export default function PracticeScreen({ navigation, route }: any) {
   };
 
   const handleBackPress = () => {
-    if (currentSession && currPlaylist) {
-      // Assuming currentSession can give us the updated cards and bleedQueue
-      const updatedFlashcards = currentSession.getAllFlashcards();
-      const newBleedQueue = currentSession.getBleedQueue();
-      const newBleedQueueLength = currentSession.getBleedLength();
-
-      updatedFlashcards.forEach((card) => {
-        // Update each card with new passes and fails count
-        updateFlashcard(currPlaylist.id, card.id, {
-          ...card,
-          passes: card.passes,
-          fails: card.fails,
-        });
-      });
-
-      updatePlaylist(currPlaylist.id, {
-        bleedQueue: newBleedQueue,
-        bleedQueueLength: newBleedQueueLength,
-      });
-
-      navigation.goBack();
-    }
+    navigation.goBack();
   };
 
   // Function to handle the card swipe animation
@@ -197,10 +179,8 @@ export default function PracticeScreen({ navigation, route }: any) {
     // console.log(currentSession.toString());
     if (currentSession.getPartitionHead()) {
       if (direction === "right") {
-        console.log("PASS");
         currentSession.pass();
       } else {
-        console.log("FAIL");
         currentSession.fail();
       }
 
@@ -426,7 +406,7 @@ export default function PracticeScreen({ navigation, route }: any) {
           {/* <Text>{`I${isFlipped}, W${wasFlipped}`}</Text> */}
           <View style={styles.topNav}>
             <View style={styles.navContainer}>
-              <TouchableOpacity onPress={() => navigation.goBack()}>
+              <TouchableOpacity onPress={handleBackPress}>
                 <FontAwesome6 name="chevron-left" size={24} color="black" />
               </TouchableOpacity>
               <Animated.View
