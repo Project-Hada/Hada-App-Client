@@ -25,6 +25,7 @@ import Search from "./Search";
 
 // For Korean regex
 import * as Hangul from "hangul-js";
+import { addNewCardToDeck } from "../../../utils/services/decksFunctions";
 
 type DeckPreviewProps = {
   navigation: any;
@@ -56,7 +57,8 @@ export default function DeckPreview({ navigation, route }: any) {
         definition: englishWord,
       };
 
-      addFlashcard(currPlaylist.id, newFlashcard);
+      // addFlashcard(currPlaylist.id, newFlashcard);
+      addNewCardToDeck(currPlaylist.id, koreanWord, englishWord);
 
       // Close the modal and reset the form fields
       setIsAddingVisible(false);
@@ -75,11 +77,12 @@ export default function DeckPreview({ navigation, route }: any) {
     setSearchTerm(term);
   };
 
-  const flashcardsArray = currPlaylist
-    ? Object.values(currPlaylist.playlist).sort(
+  const flashcardsArray = Object.values(currPlaylist!.playlist)
+    ? Object.values(currPlaylist!.playlist).sort(
         (a, b) => b.createdAt - a.createdAt
       )
     : [];
+  console.log(flashcardsArray)
 
   // Filtering Flashcard by korean / english search term
 
@@ -369,6 +372,7 @@ export default function DeckPreview({ navigation, route }: any) {
           // It will open for the card that was last pressed.
           <View>
             <PreviewCard
+              key={item.id}
               term={item.term}
               definition={item.definition}
               onPress={() => handleCardPress(item.id)}

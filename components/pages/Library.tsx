@@ -1,5 +1,6 @@
 import React, {
   useContext,
+  useEffect,
   useState,
 } from "react";
 import {
@@ -9,6 +10,7 @@ import {
   ScrollView,
   SafeAreaView,
   TouchableOpacity, 
+  TextInput
 } from "react-native";
 import {
   AntDesign,
@@ -17,7 +19,7 @@ import {
   Octicons,
 } from "@expo/vector-icons";
 import { StackNavigationProp } from "@react-navigation/stack";
-import { FlashCardType } from "../../utils/types";
+import { PlaylistType, FlashCardType } from "../../utils/types";
 import LibraryContext from "../../utils/contexts/LibraryContext";
 import flashCards from "../../Data/fakeData"; 
 import AddButton from "../AddButton";
@@ -26,6 +28,7 @@ import { useTheme } from "../../utils/contexts/ThemeContext";
 import { typography } from "../theme/Typography";
 import GearButton from "../GearButton";
 import ProfilePicture from "./ProfilePicture";
+import { addNewDeck, getAllDecksByUID, getOneDeckByDID } from "../../utils/services/decksFunctions";
 
 type PlaylistItemType = {
   name: string;
@@ -39,7 +42,33 @@ type LibraryScreenProps = {
 };
 export default function LibraryScreen({ navigation, route }: any) {
   // Library Context
-  const { library, setCurrPlaylist, addPlaylist } = useContext(LibraryContext);
+  // remove test library
+  const { user, setCurrPlaylist, addPlaylist, library } = useContext(LibraryContext);
+  
+  const [personalLibrary, setPL] = useState<any[]>([]);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      if (user && user.uid) {
+        const data = await getAllDecksByUID(user.uid);
+        setPL(data);
+      }
+    };
+
+    fetchData();
+  }, [user]);
+
+  console.log("PL: ", personalLibrary);
+
+  // {{title, playlist (length), id}, {title, playlist (length), id}, {title, playlist (length), id}}
+  // [{title, playlist (length), id}, {title, playlist (length), id}, {title, playlist (length), id}]
+
+  // {"author": {"_key": [DocumentKey], "converter": null, "firestore": [Firestore], "type": "document"}, "id": "DePKSv183KzhlhTSoDBC", "playlist": [[Object], [Object], [Object], [Object], [Object], [Object], [Object], [Object]], "title": "cookingCards"}
+
+  // Library 
+  // {{title, playlist (length), id}, {title, playlist (length), id}, {title, playlist (length), id}}
+
+
   const flashcards = flashCards;
 
   const [searchSet, setSearchSet] = useState('');
@@ -53,8 +82,11 @@ export default function LibraryScreen({ navigation, route }: any) {
       playlist.title.toLowerCase().includes(searchSet.toLowerCase())
     );
 
-  const handleNavigation = (playlistId: string) => {
-    const playlist = library[playlistId];
+  console.log(filteredLibrary)
+
+  // {title, playlist, id}
+  const handleNavigation = async (playlist: PlaylistType) => {
+    // const playlist = personalLibrary[playlistId];
     if (playlist) {
       setCurrPlaylist(playlist);
       navigation.navigate("DeckPreview");
@@ -68,25 +100,34 @@ export default function LibraryScreen({ navigation, route }: any) {
   const handleCancel = () => {
     setIsAddingVisible(false);
   };
-  const handleOpenAdd = () => {
+  const handleOpenAdd = async () => {
     // Generate a new ID for the playlist
     const newPlaylistId = generateId();
 
     // Create a new playlist object with the ID
-    const newPlaylist = {
-      id: newPlaylistId,
-      title: "New Playlist",
-      playlist: [],
-    };
-
+    
+    const newDeckId = await addNewDeck(user!.uid, "New Playlist");
+    const newDeck = await getOneDeckByDID(newDeckId);
+    
+    console.log(newDeck)
+    
     // Add the new playlist to the context
-    addPlaylist(newPlaylist);
-
+    // addPlaylist(newPlaylist);
+    
     // Update the current playlist to the new one
-    setCurrPlaylist(newPlaylist);
+    
+    // The deck from the firestore 
+    const convert = {
+      id: newDeckId,
+      title: newDeck?.title,
+      playlist: newDeck?.playlist,
+      bleedQueue: newDeck?.bleedQueue,
+      bleedQueueLength: newDeck?.bleedQueueLength
+    };
+    setCurrPlaylist(convert);
 
     // Navigate to DeckPreview with the new playlist's ID
-    navigation.navigate("DeckPreview", { playlistId: newPlaylistId });
+    navigation.navigate("DeckPreview", { playlistId: newDeckId });
   };
 
   const profileColors = ["#D27FEF", "#38DAEF", "#FF454C", "#7F9CEF", "#FD9960", "#F3E565"];
@@ -316,21 +357,16 @@ export default function LibraryScreen({ navigation, route }: any) {
           style={libStyles.createPlaylistButton}>
           <Text style={libStyles.createPlaylistText}>Create Playlist +</Text>
         </TouchableOpacity>
-        {filteredLibrary.map((item, index) => {
+        {/* filteredLibrary */}
+        {personalLibrary.map((item, index) => {
           const itemColor = profileColors[index % profileColors.length];
           return (
             <TouchableOpacity
               key={`playlist-${item.id}`} // use the unique id as key
               style={[libStyles.playlist, theme.shadow.default]}
-              onPress={() => handleNavigation(item.id)} // pass the id to handle navigation
+              onPress={() => handleNavigation(personalLibrary[index])} // pass the id to handle navigation
             >
-              <View style={[libStyles.iconContainer, { backgroundColor: itemColor}]}>
-                {/* <MaterialCommunityIcons
-                  size={44}
-                  name="access-point"
-                  color="black"
-                /> */}
-              </View>
+              <View style={[libStyles.iconContainer, { backgroundColor: itemColor}]}></View>
               <View style={libStyles.playlistInfo}>
                 <Text style={libStyles.playlistName}>{item.title}</Text>
                 <Text style={libStyles.playlistWordCount}>
