@@ -55,10 +55,12 @@ export default function DeckPreview({ navigation, route }: any) {
         id: generateId(), // Generate a unique ID for the new flashcard
         term: koreanWord,
         definition: englishWord,
+        createdAt: -1,  // TODO: give proper time
+        passes: 0,
+        fails: 0
       };
 
-      // addFlashcard(currPlaylist.id, newFlashcard);
-      addNewCardToDeck(currPlaylist.id, koreanWord, englishWord);
+      addFlashcard(currPlaylist, newFlashcard);
 
       // Close the modal and reset the form fields
       setIsAddingVisible(false);

@@ -16,7 +16,7 @@ import React, {
 import { FlashCardType, PlaylistType } from "../types";
 import { User, onAuthStateChanged } from "firebase/auth";
 import { auth } from "../firebaseConfig";
-import { addNewDeck, getAllDecksByUID, getOneDeckByDID, testFunction } from "../services/decksFunctions";
+import { addNewCardToDeck, addNewDeck, getAllDecksByUID, getOneDeckByDID, testFunction } from "../services/decksFunctions";
 
 /**
  * Represents the state of the library, mapping playlist IDs to their respective PlaylistType.
@@ -36,7 +36,7 @@ export interface PlaylistContextType {
   library: LibraryState;
   setLibrary: Dispatch<SetStateAction<LibraryState>>;
   addPlaylist: () => Promise<PlaylistType>;
-  addFlashcard: (playlistId: string, newFlashcard: FlashCardType) => void;
+  addFlashcard: (playlist: PlaylistType, newFlashcard: FlashCardType) => void;
   updateFlashcard: (
     playlistId: string,
     flashcardId: string,
@@ -75,7 +75,7 @@ const LibraryContext = React.createContext<PlaylistContextType>(defaultState);
 export const LibraryProvider: React.FC<PropsWithChildren<{}>> = ({
   children,
 }: any) => {
-  const fetchData = async () => {
+  const refreshLibrary = async () => {
     if (user && user.uid) {
       const data = await getAllDecksByUID(user.uid);
       // console.log("Test", JSON.stringify(await testFunction(user.uid), null, 4))
@@ -83,10 +83,9 @@ export const LibraryProvider: React.FC<PropsWithChildren<{}>> = ({
     }
   };
 
-
   const [user, setUser] = useState<User | null>(null);
   onAuthStateChanged(auth, (user) => setUser(user) );
-  useEffect(() => { fetchData(); }, [user]);
+  useEffect(() => { refreshLibrary(); }, [user]);
 
   // Initialize currPlaylist as null because there might not be a current playlist selected
   const [currPlaylist, setCurrPlaylist] = useState<PlaylistType | null>(null);
@@ -96,7 +95,6 @@ export const LibraryProvider: React.FC<PropsWithChildren<{}>> = ({
   console.log("library: ", JSON.stringify(library, null, 4));
 
 
-
   /**
    * Adds a new playlist to the library state.
    * @param newPlaylist - The new playlist to be added.
@@ -104,7 +102,7 @@ export const LibraryProvider: React.FC<PropsWithChildren<{}>> = ({
   const addPlaylist = async () => {
     const newDeckId = await addNewDeck(user!.uid, "New Playlist");
     const newDeck = await getOneDeckByDID(newDeckId) as PlaylistType;
-    fetchData();
+    refreshLibrary();
     return newDeck;
   };
 
@@ -113,14 +111,14 @@ export const LibraryProvider: React.FC<PropsWithChildren<{}>> = ({
    * @param playlistId - The ID of the playlist to which the flashcard will be added.
    * @param newFlashcard - The flashcard to be added.
    */
-  const addFlashcard = (playlistId: string, newFlashcard: FlashCardType) => {
+  const addFlashcard = (playlist: PlaylistType, newFlashcard: FlashCardType) => {
     // Access the playlist directly by ID
     const newFlashcardWithTimestamp = {
       ...newFlashcard,
       createdAt: Date.now(), // Ensure every new flashcard has a current timestamp
     };
 
-    const playlistToUpdate = library[playlistId];
+    const playlistToUpdate = playlist;
 
     if (playlistToUpdate) {
       // Correctly use newFlashcardWithTimestamp when adding the flashcard
@@ -132,14 +130,16 @@ export const LibraryProvider: React.FC<PropsWithChildren<{}>> = ({
         },
       };
 
-      // Update the library with the new playlist that includes the new flashcard
-      setLibrary((prevLibrary) => ({
-        ...prevLibrary,
-        [playlistId]: updatedPlaylist,
-      }));
+      addNewCardToDeck(playlist.id, newFlashcardWithTimestamp.term, newFlashcardWithTimestamp.definition);
+      refreshLibrary();
+      // // Update the library with the new playlist that includes the new flashcard
+      // setLibrary((prevLibrary) => ({
+      //   ...prevLibrary,
+      //   [playlist.id]: updatedPlaylist,
+      // }));
 
       // Update currPlaylist if it's the one being modified
-      if (currPlaylist && currPlaylist.id === playlistId) {
+      if (currPlaylist && currPlaylist.id === playlist.id) {
         setCurrPlaylist(updatedPlaylist);
       }
     }
