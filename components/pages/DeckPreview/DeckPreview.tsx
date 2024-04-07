@@ -1,4 +1,4 @@
-import React, { useContext, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import {
   StyleSheet,
   View,
@@ -25,20 +25,42 @@ import Search from "./Search";
 
 // For Korean regex
 import * as Hangul from "hangul-js";
-import { addNewCardToDeck } from "../../../utils/services/decksFunctions";
+import { addNewCardToDeck, deleteCardInDeck, getAllDecksByUID, getOneDeckByDID, updateCardInDeck } from "../../../utils/services/decksFunctions";
+import LibraryContext from "../../../utils/contexts/LibraryContext";
 
 type DeckPreviewProps = {
   navigation: any;
 };
 
 export default function DeckPreview({ navigation, route }: any) {
-  const { currPlaylist, addFlashcard, updateFlashcard, deleteFlashcard } =
-    useContext(FlashcardContext);
+  const { user, setLibrary, setPL, personalLibrary } = useContext(LibraryContext);
+  const { currPlaylist, addFlashcard, updateFlashcard, deleteFlashcard, setCurrPlaylist } = useContext(FlashcardContext);
 
+  const fetchData = async () => {
+    if (user && user!.uid) {
+      const data = await getAllDecksByUID(user.uid);
+      setPL(data);
+      navigation.navigate("DeckPreview");
+      // console.log("PL: ", personalLibrary)
+      // console.log("CP: ", currPlaylist)
+      //PL:  [{"id": "DUGpWWjKNAWnUo6oI8Qa", "playlist": [[Object], [Object], [Object]], "title": "New Playlist"}, {"id": "DePKSv183KzhlhTSoDBC", "playlist": [[Object], [Object], [Object], [Object], [Object], [Object], [Object], [Object]], "title": "cookingCards"}, {"id": "Uj7qeYYF069aqAGmr5k1", "playlist": [[Object], [Object], [Object], [Object], [Object], [Object], [Object], [Object], [Object], [Object], [Object], [Object]], "title": "workTravelCards"}, {"id": "eoUwd9x4E5RCatnDHzXy", "playlist": [[Object], [Object], [Object], [Object], [Object], [Object]], "title": "natureCards"}, {"id": "li0Wcrlqw5K2hXdtrlN6", "playlist": [], "title": "New Playlist"}, {"id": "zG1Mho5TwS8UPIpP2cXw", "playlist": [[Object], [Object], [Object], [Object], [Object], [Object], [Object], [Object], [Object], [Object], [Object], [Object], [Object], [Object], [Object], [Object], [Object]], "title": "greetingCards"}]
+      //CP:  {"id": "DUGpWWjKNAWnUo6oI8Qa", "playlist": [{"definition": "Pepper", "term": "고추"}, {"definition": "Pepper paste", "term": "고추장"}, {"definition": "Pepper paste paste", "term": "고추장장"}], "title": "New Playlist"}
+      // You get the Deck Id and call getDeckbyDiD 
+      const newPL = await getOneDeckByDID(currPlaylist?.id)
+      setCurrPlaylist(newPL)
+    }
+  }
+
+  useEffect(() => {
+
+  }, [user, currPlaylist]);
+
+  
+  
   const flashcards = currPlaylist ? currPlaylist.playlist : [];
 
   // State to track the selected card for editing
-  const [selectedCardId, setSelectedCardId] = useState<string | null>(null);
+  const [selectedCardId, setSelectedCardId] = useState<number | null>(null);
   const [isAddingVisible, setIsAddingVisible] = useState(false);
 
   const handleCancel = () => {
@@ -58,13 +80,36 @@ export default function DeckPreview({ navigation, route }: any) {
       };
 
       // addFlashcard(currPlaylist.id, newFlashcard);
-      addNewCardToDeck(currPlaylist.id, koreanWord, englishWord);
-
+      const add = async () => {
+        await addNewCardToDeck(currPlaylist.id, koreanWord, englishWord);
+        fetchData();
+      }
+      add();
+      
       // Close the modal and reset the form fields
       setIsAddingVisible(false);
     }
     setSelectedCardId(null);
+    // refresh it here!
+    // fetchData();
   };
+
+  const handleUpdate = (flashcardId: number, updatedFlashcard: FlashCardType) => {
+    // refresh it here!
+    const update = async () => {
+      await updateCardInDeck(currPlaylist!.id, flashcardId, updatedFlashcard.term, updatedFlashcard.definition);
+      fetchData();
+    }
+    update();
+  }
+
+  const handleDelete = (flashcardId: number) => {
+    const del = async () => {
+      await deleteCardInDeck(currPlaylist!.id, flashcardId);
+      fetchData();
+    }
+    del();
+  }
 
   // Storing the search term
   const [searchTerm, setSearchTerm] = useState("");
@@ -115,7 +160,7 @@ export default function DeckPreview({ navigation, route }: any) {
   };
 
   // Function to handle card press
-  const handleCardPress = (cardId: string) => {
+  const handleCardPress = (cardId: number) => {
     setSelectedCardId(selectedCardId === cardId ? null : cardId);
     setIsAddingVisible(false);
   };
@@ -367,34 +412,35 @@ export default function DeckPreview({ navigation, route }: any) {
       <FlatList
         // Filtering word using filter()
         data={filteredFlashcards}
-        renderItem={({ item }) => (
+        renderItem={({ item, index }) => (
           // The modal is now tied to the selectedCardId state.
           // It will open for the card that was last pressed.
           <View>
             <PreviewCard
-              key={item.id}
               term={item.term}
               definition={item.definition}
-              onPress={() => handleCardPress(item.id)}
+              onPress={() => handleCardPress(index)}
             />
 
-            {selectedCardId === item.id && (
+            {selectedCardId === index && (
               <AddCardModal
                 isVisible={selectedCardId !== null}
                 onAdd={handleAdd} // Used for adding a new card
-                onUpdate={updateFlashcard}
-                onDelete={deleteFlashcard}
+                // onUpdate={updateFlashcard}
+                // onDelete={deleteFlashcard}
+                onUpdate={handleUpdate}
+                onDelete={handleDelete}
                 onCancel={handleCancel}
                 createdAt={item.createdAt}
                 koreanWordInitial={item.term}
                 englishWordInitial={item.definition}
-                flashcardId={item.id}
+                flashcardId={index}
                 isEditMode={true}
               />
             )}
           </View>
         )}
-        keyExtractor={(item) => item.id}
+        keyExtractor={(item, index) => index.toString()}
         ListHeaderComponent={AddCardButton}
         extraData={selectedCardId} // Ensure FlatList re-renders when selectedCardId changes
       />
@@ -415,3 +461,5 @@ export default function DeckPreview({ navigation, route }: any) {
     </SafeAreaView>
   );
 }
+
+

@@ -40,33 +40,25 @@ type LibraryScreenProps = {
   navigation: any;
   playlistData: PlaylistItemType[];
 };
+
 export default function LibraryScreen({ navigation, route }: any) {
   // Library Context
   // remove test library
-  const { user, setCurrPlaylist, addPlaylist, library } = useContext(LibraryContext);
-  
-  const [personalLibrary, setPL] = useState<any[]>([]);
+  const { user, setCurrPlaylist, addPlaylist, library, personalLibrary, setPL } = useContext(LibraryContext);
+
+  const fetchData = async () => {
+    if (user && user!.uid) {
+      const data = await getAllDecksByUID(user.uid);
+      setPL(data);
+    }
+  }
 
   useEffect(() => {
-    const fetchData = async () => {
-      if (user && user.uid) {
-        const data = await getAllDecksByUID(user.uid);
-        setPL(data);
-      }
-    };
-
     fetchData();
   }, [user]);
 
+
   console.log("PL: ", personalLibrary);
-
-  // {{title, playlist (length), id}, {title, playlist (length), id}, {title, playlist (length), id}}
-  // [{title, playlist (length), id}, {title, playlist (length), id}, {title, playlist (length), id}]
-
-  // {"author": {"_key": [DocumentKey], "converter": null, "firestore": [Firestore], "type": "document"}, "id": "DePKSv183KzhlhTSoDBC", "playlist": [[Object], [Object], [Object], [Object], [Object], [Object], [Object], [Object]], "title": "cookingCards"}
-
-  // Library 
-  // {{title, playlist (length), id}, {title, playlist (length), id}, {title, playlist (length), id}}
 
 
   const flashcards = flashCards;
@@ -81,8 +73,6 @@ export default function LibraryScreen({ navigation, route }: any) {
   : Object.values(library).filter((playlist) =>
       playlist.title.toLowerCase().includes(searchSet.toLowerCase())
     );
-
-  console.log(filteredLibrary)
 
   // {title, playlist, id}
   const handleNavigation = async (playlist: PlaylistType) => {
@@ -108,8 +98,8 @@ export default function LibraryScreen({ navigation, route }: any) {
     
     const newDeckId = await addNewDeck(user!.uid, "New Playlist");
     const newDeck = await getOneDeckByDID(newDeckId);
-    
-    console.log(newDeck)
+    // refresh 
+    fetchData();
     
     // Add the new playlist to the context
     // addPlaylist(newPlaylist);

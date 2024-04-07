@@ -4,21 +4,21 @@ import { Pressable, View, Text, TextInput, StyleSheet } from "react-native";
 import { useTheme } from "../../../utils/contexts/ThemeContext";
 import { FlashCardType } from "../../../utils/types";
 import FlashcardContext from "../../../utils/contexts/LibraryContext";
+import { deleteCardInDeck, updateCardInDeck } from "../../../utils/services/decksFunctions";
 
 interface AddCardModalProps {
   isVisible: boolean;
   onAdd: (koreanWord: string, englishWord: string) => void;
   onUpdate?: (
-    playlistId: string,
-    flashcardId: string,
+    flashcardId: number,
     updatedFlashcard: FlashCardType
   ) => void;
-  onDelete?: (playlistId: string, flashcardId: string) => void;
+  onDelete?: (flashcardId: number) => void;
   onCancel: () => void;
   koreanWordInitial: string;
   englishWordInitial: string;
   isEditMode: boolean;
-  flashcardId?: string;
+  flashcardId?: number;
   createdAt?: string;
 }
 
@@ -42,7 +42,7 @@ const AddCardModal: React.FC<AddCardModalProps> = ({
   const { currPlaylist } = useContext(FlashcardContext);
 
   const handleConfirm = () => {
-    if (isEditMode && flashcardId) {
+    if (isEditMode && flashcardId != null) {
       // Construct the updated flashcard object
       const updatedFlashcard: FlashCardType = {
         id: flashcardId,
@@ -51,7 +51,7 @@ const AddCardModal: React.FC<AddCardModalProps> = ({
         createdAt,
       };
       // Assuming the playlist ID is available in this scope as `playlistId`
-      onUpdate!(currPlaylist!.id, flashcardId, updatedFlashcard);
+      onUpdate!(flashcardId, updatedFlashcard);
     } else {
       onAdd(koreanWord, englishWord);
       setKoreanWord("");
@@ -60,8 +60,8 @@ const AddCardModal: React.FC<AddCardModalProps> = ({
   };
 
   const handleDelete = () => {
-    if (isEditMode && flashcardId) {
-      onDelete?.(currPlaylist!.id, flashcardId);
+    if (isEditMode && flashcardId != null) {
+      onDelete?.(flashcardId);
     }
     // Close modal
   };

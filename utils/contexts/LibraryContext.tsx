@@ -15,6 +15,7 @@ import React, {
 import { FlashCardType, PlaylistType } from "../types";
 import { User, onAuthStateChanged } from "firebase/auth";
 import { auth } from "../firebaseConfig";
+import { getAllDecksByUID } from "../services/decksFunctions";
 
 /**
  * Represents the state of the library, mapping playlist IDs to their respective PlaylistType.
@@ -45,6 +46,8 @@ export interface PlaylistContextType {
     updatedPlaylistData: Partial<PlaylistType>
   ) => void;
   deleteFlashcard: (playlistId: string, flashcardId: string) => void;
+  personalLibrary: PlaylistType[];
+  setPL: Dispatch<SetStateAction<PlaylistType[]>>;
 }
 
 // The default state for the PlaylistContext when it is first created.
@@ -59,6 +62,8 @@ const defaultState: PlaylistContextType = {
   updatePlaylist: () => {},
   updateFlashcard: () => {},
   deleteFlashcard: () => {},
+  personalLibrary: [],
+  setPL: () => [],
 };
 
 // Create the context with the default state.
@@ -78,6 +83,8 @@ export const LibraryProvider: React.FC<PropsWithChildren<{}>> = ({
 
   // Initialize the library as an empty object
   const [library, setLibrary] = useState<LibraryState>({});
+
+  const [personalLibrary, setPL] = useState<PlaylistType[]>([]);
 
   /**
    * Adds a new playlist to the library state.
@@ -235,6 +242,8 @@ export const LibraryProvider: React.FC<PropsWithChildren<{}>> = ({
         updatePlaylist,
         updateFlashcard,
         deleteFlashcard,
+        personalLibrary,
+        setPL,
       }}
     >
       {children}

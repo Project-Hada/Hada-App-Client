@@ -3,7 +3,7 @@ import { CardNode } from "../components/pages/Practice/sessionAlgorithm";
 //types for a flashcard
 export interface FlashCardType {
   createdAt: any;
-  id: string;
+  id: number;
   term: string;
   definition: string;
   passes: number;
