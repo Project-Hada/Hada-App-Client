@@ -10,11 +10,13 @@ import React, {
   PropsWithChildren,
   SetStateAction,
   createContext,
+  useEffect,
   useState,
 } from "react";
 import { FlashCardType, PlaylistType } from "../types";
 import { User, onAuthStateChanged } from "firebase/auth";
 import { auth } from "../firebaseConfig";
+import { getAllDecksByUID } from "../services/decksFunctions";
 
 /**
  * Represents the state of the library, mapping playlist IDs to their respective PlaylistType.
@@ -45,6 +47,7 @@ export interface PlaylistContextType {
     updatedPlaylistData: Partial<PlaylistType>
   ) => void;
   deleteFlashcard: (playlistId: string, flashcardId: string) => void;
+  personalLibrary: any[]
 }
 
 // The default state for the PlaylistContext when it is first created.
@@ -59,6 +62,7 @@ const defaultState: PlaylistContextType = {
   updatePlaylist: () => {},
   updateFlashcard: () => {},
   deleteFlashcard: () => {},
+  personalLibrary: []
 };
 
 // Create the context with the default state.
@@ -73,11 +77,27 @@ const LibraryContext = React.createContext<PlaylistContextType>(defaultState);
 export const LibraryProvider: React.FC<PropsWithChildren<{}>> = ({
   children,
 }: any) => {
+  const [user, setUser] = useState<User | null>(null);
+  onAuthStateChanged(auth, (user) => setUser(user) );
+
+  useEffect(() => {
+    const fetchData = async () => {
+      if (user && user.uid) {
+        const data = await getAllDecksByUID(user.uid);
+        setPL(data);
+      }
+    };
+
+    fetchData();
+  }, [user]);
+
   // Initialize currPlaylist as null because there might not be a current playlist selected
   const [currPlaylist, setCurrPlaylist] = useState<PlaylistType | null>(null);
 
   // Initialize the library as an empty object
   const [library, setLibrary] = useState<LibraryState>({});
+
+  const [personalLibrary, setPL] = useState<any>({});
 
   /**
    * Adds a new playlist to the library state.
@@ -219,8 +239,7 @@ export const LibraryProvider: React.FC<PropsWithChildren<{}>> = ({
     }
   };
 
-  const [user, setUser] = useState<User | null>(null);
-  onAuthStateChanged(auth, (user) => setUser(user));
+  
 
   return (
     <LibraryContext.Provider
@@ -235,6 +254,8 @@ export const LibraryProvider: React.FC<PropsWithChildren<{}>> = ({
         updatePlaylist,
         updateFlashcard,
         deleteFlashcard,
+
+        personalLibrary
       }}
     >
       {children}

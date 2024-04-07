@@ -43,21 +43,7 @@ type LibraryScreenProps = {
 export default function LibraryScreen({ navigation, route }: any) {
   // Library Context
   // remove test library
-  const { user, setCurrPlaylist, addPlaylist, library } = useContext(LibraryContext);
-  
-  const [personalLibrary, setPL] = useState<any[]>([]);
-
-  useEffect(() => {
-    const fetchData = async () => {
-      if (user && user.uid) {
-        const data = await getAllDecksByUID(user.uid);
-        setPL(data);
-      }
-    };
-
-    fetchData();
-  }, [user]);
-
+  const { user, setCurrPlaylist, addPlaylist, library, personalLibrary } = useContext(LibraryContext);
   console.log("PL: ", personalLibrary);
 
   // {{title, playlist (length), id}, {title, playlist (length), id}, {title, playlist (length), id}}
