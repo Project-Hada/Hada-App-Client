@@ -14,7 +14,7 @@ export function LoginScreen({ navigation, route }: any) {
   const handleSubmitForLogin = async () => {
     try {
       const response = await signInWithEmailAndPassword(auth, emailInput, passwordInput)
-      console.log(response)
+      console.log("sign in as ", response)
       navigation.navigate("LibraryScreen")
     }
     catch (error) {

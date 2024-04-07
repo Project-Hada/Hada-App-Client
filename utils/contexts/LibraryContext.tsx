@@ -16,7 +16,7 @@ import React, {
 import { FlashCardType, PlaylistType } from "../types";
 import { User, onAuthStateChanged } from "firebase/auth";
 import { auth } from "../firebaseConfig";
-import { getAllDecksByUID } from "../services/decksFunctions";
+import { getAllDecksByUID, testFunction } from "../services/decksFunctions";
 
 /**
  * Represents the state of the library, mapping playlist IDs to their respective PlaylistType.
@@ -84,6 +84,7 @@ export const LibraryProvider: React.FC<PropsWithChildren<{}>> = ({
     const fetchData = async () => {
       if (user && user.uid) {
         const data = await getAllDecksByUID(user.uid);
+        console.log("Test", JSON.stringify(await testFunction(user.uid), null, 4))
         setPL(data);
       }
     };

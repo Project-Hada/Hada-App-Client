@@ -19,7 +19,7 @@ export function RegisterScreen({ navigation, route }: any) {
       if (passwordInput != confirmPasswordInput) throw new Error("password mismatch")
 
       createUserWithEmailAndPassword(auth, emailInput, passwordInput).then(response => {
-        console.log(response);
+        console.log("register as ", response);
         addNewUserWithID(response.user.uid, usernameInput);
       });
       

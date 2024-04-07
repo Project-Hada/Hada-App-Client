@@ -44,7 +44,7 @@ export default function LibraryScreen({ navigation, route }: any) {
   // Library Context
   // remove test library
   const { user, setCurrPlaylist, addPlaylist, library, personalLibrary } = useContext(LibraryContext);
-  console.log("PL: ", personalLibrary);
+  // console.log("PL: ", personalLibrary);
 
   // {{title, playlist (length), id}, {title, playlist (length), id}, {title, playlist (length), id}}
   // [{title, playlist (length), id}, {title, playlist (length), id}, {title, playlist (length), id}]
@@ -68,7 +68,7 @@ export default function LibraryScreen({ navigation, route }: any) {
       playlist.title.toLowerCase().includes(searchSet.toLowerCase())
     );
 
-  console.log(filteredLibrary)
+  // console.log(filteredLibrary)
 
   // {title, playlist, id}
   const handleNavigation = async (playlist: PlaylistType) => {

@@ -47,11 +47,8 @@ export const getAllDecks = async (setDeckList: any) => {
 }
 
 export const getAllDecksByUID = async (uid : string) => {
-  // {"id": "DePKSv183KzhlhTSoDBC", "playlist":[], "title": "cookingCards"}
-  // [{{}, {}}]
   let res : any[] = []
 
-  // {title, playlist (length), id}
   const q = await query(decksCollectionRef, where("author", "==", doc(db, "/users/", uid)));
   const querySnapshot = await getDocs(q);
   querySnapshot.docs.map((doc) => res.push({
@@ -59,8 +56,22 @@ export const getAllDecksByUID = async (uid : string) => {
     title: doc.data().title,
     playlist: doc.data().playlist
   }));
+
   return res;
 }
+
+export const testFunction = async (uid : string) => {
+  const q = await query(decksCollectionRef, where("author", "==", doc(db, "/users/", uid)));
+  const querySnapshot = await getDocs(q);
+  let res = querySnapshot.docs.map((doc) => ({
+    id: doc.id,
+    title: doc.data().title,
+    playlist: doc.data().playlist
+  }));
+  
+  return res;
+}
+
 
 export const getOneDeckByDID = async (did: String) => {
   const newDoc = await getDoc(doc(db, "/decks/" + did))
