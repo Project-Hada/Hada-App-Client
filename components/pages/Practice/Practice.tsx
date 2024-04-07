@@ -19,6 +19,7 @@ import Aromanize from "aromanize";
 import { FlashCardType } from "../../../utils/types";
 import { useTheme } from "../../../utils/contexts/ThemeContext";
 import { CardNode, Session } from "./sessionAlgorithm";
+import DeckPreviewModal from "../DeckPreview/DeckPreviewModal";
 
 type PracticeScreenProps = {
   navigation: any;
@@ -337,6 +338,7 @@ export default function PracticeScreen({ navigation, route }: any) {
       alignItems: "center",
       gap: 26,
       paddingHorizontal: 20,
+      marginBottom: 10,
     },
     right: {
       backgroundColor: theme.colors.greenButton,
@@ -497,6 +499,7 @@ export default function PracticeScreen({ navigation, route }: any) {
               <FontAwesome6 name="circle-check" size={44} color="black" />
             </TouchableOpacity>
           </View>
+          <DeckPreviewModal/>
         </>
       )}
     </SafeAreaView>

@@ -9,6 +9,7 @@ import { colors } from "../../components/theme/Colors";
 import { spacing } from "../../components/theme/Spacing";
 import { typography } from "../../components/theme/Typography";
 import { shadow } from "../../components/theme/Shadow";
+import { SafeAreaView } from "react-native";
 
 type ThemeMode = "light" | "dark";
 
@@ -58,6 +59,7 @@ export const ThemeProvider = ({ children }: { children: ReactNode }) => {
   return (
     <ThemeContext.Provider value={{ theme, themeMode, toggleTheme }}>
       {children}
+      <SafeAreaView style={{ flex: 0, padding: 20, backgroundColor: theme.colors.listBackground }} />
     </ThemeContext.Provider>
   );
 };
