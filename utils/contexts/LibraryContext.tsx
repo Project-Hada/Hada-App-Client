@@ -16,7 +16,7 @@ import React, {
 import { FlashCardType, PlaylistType } from "../types";
 import { User, onAuthStateChanged } from "firebase/auth";
 import { auth } from "../firebaseConfig";
-import { getAllDecksByUID, testFunction } from "../services/decksFunctions";
+import { addNewDeck, getAllDecksByUID, getOneDeckByDID, testFunction } from "../services/decksFunctions";
 
 /**
  * Represents the state of the library, mapping playlist IDs to their respective PlaylistType.
@@ -35,7 +35,7 @@ export interface PlaylistContextType {
   setCurrPlaylist: Dispatch<SetStateAction<PlaylistType | null>>;
   library: LibraryState;
   setLibrary: Dispatch<SetStateAction<LibraryState>>;
-  addPlaylist: (newPlaylist: PlaylistType) => void;
+  addPlaylist: () => Promise<PlaylistType>;
   addFlashcard: (playlistId: string, newFlashcard: FlashCardType) => void;
   updateFlashcard: (
     playlistId: string,
@@ -57,7 +57,7 @@ const defaultState: PlaylistContextType = {
   setCurrPlaylist: () => {},
   library: {}, // Initialize library as an empty object
   setLibrary: () => {},
-  addPlaylist: () => {},
+  addPlaylist: () => {throw new Error("failed to add playlist")},
   addFlashcard: () => {},
   updatePlaylist: () => {},
   updateFlashcard: () => {},
@@ -77,20 +77,18 @@ const LibraryContext = React.createContext<PlaylistContextType>(defaultState);
 export const LibraryProvider: React.FC<PropsWithChildren<{}>> = ({
   children,
 }: any) => {
+  const fetchData = async () => {
+    if (user && user.uid) {
+      const data = await getAllDecksByUID(user.uid);
+      // console.log("Test", JSON.stringify(await testFunction(user.uid), null, 4))
+      setPL(data);
+    }
+  };
+
+
   const [user, setUser] = useState<User | null>(null);
   onAuthStateChanged(auth, (user) => setUser(user) );
-
-  useEffect(() => {
-    const fetchData = async () => {
-      if (user && user.uid) {
-        const data = await getAllDecksByUID(user.uid);
-        console.log("Test", JSON.stringify(await testFunction(user.uid), null, 4))
-        setPL(data);
-      }
-    };
-
-    fetchData();
-  }, [user]);
+  useEffect(() => { fetchData(); }, [user]);
 
   // Initialize currPlaylist as null because there might not be a current playlist selected
   const [currPlaylist, setCurrPlaylist] = useState<PlaylistType | null>(null);
@@ -104,11 +102,17 @@ export const LibraryProvider: React.FC<PropsWithChildren<{}>> = ({
    * Adds a new playlist to the library state.
    * @param newPlaylist - The new playlist to be added.
    */
-  const addPlaylist = (newPlaylist: PlaylistType) => {
-    setLibrary((prevLibrary) => ({
-      ...prevLibrary,
-      [newPlaylist.id]: newPlaylist, // Add the new playlist to the library object using the playlist id as the key
-    }));
+  // const addPlaylist = async (newPlaylist: PlaylistType) => {
+  const addPlaylist = async () => {
+    const newDeckId = await addNewDeck(user!.uid, "New Playlist");
+    const newDeck = await getOneDeckByDID(newDeckId) as PlaylistType;
+    fetchData();
+    return newDeck;
+
+    // setLibrary((prevLibrary) => ({
+    //   ...prevLibrary,
+    //   [newPlaylist.id]: newPlaylist, // Add the new playlist to the library object using the playlist id as the key
+    // }));
   };
 
   /**

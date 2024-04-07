@@ -2,6 +2,7 @@ import { collection, getDocs, addDoc, deleteDoc, doc, updateDoc, getDoc, query, 
 import { db } from "../firebaseConfig"
 import { CardNode } from '../../components/pages/Practice/sessionAlgorithm';
 import { useState } from 'react';
+import { PlaylistType } from '../types';
 
 // import { DeckSchema, deckConverter } from '../schemas/DeckSchema'
 
@@ -17,7 +18,7 @@ export const addNewDeck = async (uid: String, titleInput: String) => {
     // bleedQueueLength: 0
   }
   );
-  console.log("Document written with ID: ", docRef.id);
+  console.log("New Deck added with ID: ", docRef.id);
   return docRef.id;
 }
 
@@ -75,8 +76,13 @@ export const testFunction = async (uid : string) => {
 
 export const getOneDeckByDID = async (did: String) => {
   const newDoc = await getDoc(doc(db, "/decks/" + did))
-  if (newDoc)
-    return newDoc.data();
+  if (newDoc) {
+    return {
+      id: newDoc.id,
+      playlist: newDoc.data()!.playlist,
+      ...newDoc.data()
+    };
+  }
 }
 
 /* UPDATE Operations */

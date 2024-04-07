@@ -46,15 +46,6 @@ export default function LibraryScreen({ navigation, route }: any) {
   const { user, setCurrPlaylist, addPlaylist, library, personalLibrary } = useContext(LibraryContext);
   // console.log("PL: ", personalLibrary);
 
-  // {{title, playlist (length), id}, {title, playlist (length), id}, {title, playlist (length), id}}
-  // [{title, playlist (length), id}, {title, playlist (length), id}, {title, playlist (length), id}]
-
-  // {"author": {"_key": [DocumentKey], "converter": null, "firestore": [Firestore], "type": "document"}, "id": "DePKSv183KzhlhTSoDBC", "playlist": [[Object], [Object], [Object], [Object], [Object], [Object], [Object], [Object]], "title": "cookingCards"}
-
-  // Library 
-  // {{title, playlist (length), id}, {title, playlist (length), id}, {title, playlist (length), id}}
-
-
   const flashcards = flashCards;
 
   const [searchSet, setSearchSet] = useState('');
@@ -87,33 +78,14 @@ export default function LibraryScreen({ navigation, route }: any) {
     setIsAddingVisible(false);
   };
   const handleOpenAdd = async () => {
-    // Generate a new ID for the playlist
-    const newPlaylistId = generateId();
-
-    // Create a new playlist object with the ID
-    
-    const newDeckId = await addNewDeck(user!.uid, "New Playlist");
-    const newDeck = await getOneDeckByDID(newDeckId);
-    
-    console.log(newDeck)
-    
     // Add the new playlist to the context
-    // addPlaylist(newPlaylist);
+    const newPlaylist = await addPlaylist();
     
     // Update the current playlist to the new one
+    setCurrPlaylist(newPlaylist);
     
-    // The deck from the firestore 
-    const convert = {
-      id: newDeckId,
-      title: newDeck?.title,
-      playlist: newDeck?.playlist,
-      bleedQueue: newDeck?.bleedQueue,
-      bleedQueueLength: newDeck?.bleedQueueLength
-    };
-    setCurrPlaylist(convert);
-
     // Navigate to DeckPreview with the new playlist's ID
-    navigation.navigate("DeckPreview", { playlistId: newDeckId });
+    navigation.navigate("DeckPreview", { playlistId: newPlaylist.id });
   };
 
   const profileColors = ["#D27FEF", "#38DAEF", "#FF454C", "#7F9CEF", "#FD9960", "#F3E565"];
