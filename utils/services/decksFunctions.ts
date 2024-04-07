@@ -2,7 +2,7 @@ import { collection, getDocs, addDoc, deleteDoc, doc, updateDoc, getDoc, query, 
 import { db } from "../firebaseConfig"
 import { CardNode } from '../../components/pages/Practice/sessionAlgorithm';
 import { useState } from 'react';
-import { PlaylistType } from '../types';
+import { LibraryState, PlaylistType } from '../types';
 
 // import { DeckSchema, deckConverter } from '../schemas/DeckSchema'
 
@@ -48,14 +48,15 @@ export const getAllDecks = async (setDeckList: any) => {
 }
 
 export const getAllDecksByUID = async (uid : string) => {
-  let res : any[] = []
-
+  let res : LibraryState = {}
   const q = await query(decksCollectionRef, where("author", "==", doc(db, "/users/", uid)));
   const querySnapshot = await getDocs(q);
-  querySnapshot.docs.map((doc) => res.push({
+  querySnapshot.docs.map((doc) => (res[doc.id] = {
     id: doc.id,
     title: doc.data().title,
-    playlist: doc.data().playlist
+    playlist: doc.data().playlist,
+    bleedQueue: doc.data().bleedQueue, 
+    bleedQueueLength: doc.data().bleedQueueLength
   }));
 
   return res;

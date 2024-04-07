@@ -47,7 +47,6 @@ export interface PlaylistContextType {
     updatedPlaylistData: Partial<PlaylistType>
   ) => void;
   deleteFlashcard: (playlistId: string, flashcardId: string) => void;
-  personalLibrary: any[]
 }
 
 // The default state for the PlaylistContext when it is first created.
@@ -62,7 +61,6 @@ const defaultState: PlaylistContextType = {
   updatePlaylist: () => {},
   updateFlashcard: () => {},
   deleteFlashcard: () => {},
-  personalLibrary: []
 };
 
 // Create the context with the default state.
@@ -81,7 +79,7 @@ export const LibraryProvider: React.FC<PropsWithChildren<{}>> = ({
     if (user && user.uid) {
       const data = await getAllDecksByUID(user.uid);
       // console.log("Test", JSON.stringify(await testFunction(user.uid), null, 4))
-      setPL(data);
+      setLibrary(data);
     }
   };
 
@@ -95,24 +93,19 @@ export const LibraryProvider: React.FC<PropsWithChildren<{}>> = ({
 
   // Initialize the library as an empty object
   const [library, setLibrary] = useState<LibraryState>({});
+  console.log("library: ", JSON.stringify(library, null, 4));
 
-  const [personalLibrary, setPL] = useState<any>({});
+
 
   /**
    * Adds a new playlist to the library state.
    * @param newPlaylist - The new playlist to be added.
    */
-  // const addPlaylist = async (newPlaylist: PlaylistType) => {
   const addPlaylist = async () => {
     const newDeckId = await addNewDeck(user!.uid, "New Playlist");
     const newDeck = await getOneDeckByDID(newDeckId) as PlaylistType;
     fetchData();
     return newDeck;
-
-    // setLibrary((prevLibrary) => ({
-    //   ...prevLibrary,
-    //   [newPlaylist.id]: newPlaylist, // Add the new playlist to the library object using the playlist id as the key
-    // }));
   };
 
   /**
@@ -259,8 +252,6 @@ export const LibraryProvider: React.FC<PropsWithChildren<{}>> = ({
         updatePlaylist,
         updateFlashcard,
         deleteFlashcard,
-
-        personalLibrary
       }}
     >
       {children}

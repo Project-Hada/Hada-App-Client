@@ -43,8 +43,8 @@ type LibraryScreenProps = {
 export default function LibraryScreen({ navigation, route }: any) {
   // Library Context
   // remove test library
-  const { user, setCurrPlaylist, addPlaylist, library, personalLibrary } = useContext(LibraryContext);
-  // console.log("PL: ", personalLibrary);
+  const { user, setCurrPlaylist, addPlaylist, library } = useContext(LibraryContext);
+  // console.log("library: ", library);
 
   const flashcards = flashCards;
 
@@ -58,12 +58,10 @@ export default function LibraryScreen({ navigation, route }: any) {
   : Object.values(library).filter((playlist) =>
       playlist.title.toLowerCase().includes(searchSet.toLowerCase())
     );
+  console.log(filteredLibrary)
 
-  // console.log(filteredLibrary)
-
-  // {title, playlist, id}
+  
   const handleNavigation = async (playlist: PlaylistType) => {
-    // const playlist = personalLibrary[playlistId];
     if (playlist) {
       setCurrPlaylist(playlist);
       navigation.navigate("DeckPreview");
@@ -316,13 +314,13 @@ export default function LibraryScreen({ navigation, route }: any) {
           <Text style={libStyles.createPlaylistText}>Create Playlist +</Text>
         </TouchableOpacity>
         {/* filteredLibrary */}
-        {personalLibrary.map((item, index) => {
+        {filteredLibrary.map((item, index) => {
           const itemColor = profileColors[index % profileColors.length];
           return (
             <TouchableOpacity
               key={`playlist-${item.id}`} // use the unique id as key
               style={[libStyles.playlist, theme.shadow.default]}
-              onPress={() => handleNavigation(personalLibrary[index])} // pass the id to handle navigation
+              onPress={() => handleNavigation(library[item.id])} // pass the id to handle navigation
             >
               <View style={[libStyles.iconContainer, { backgroundColor: itemColor}]}></View>
               <View style={libStyles.playlistInfo}>
