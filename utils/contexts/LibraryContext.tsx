@@ -138,6 +138,8 @@ export const LibraryProvider: React.FC<PropsWithChildren<{}>> = ({
     if (playlistToUpdate && playlistToUpdate.playlist[flashcardId]) {
       // Preserve the existing flashcard properties, except those that are updated
       const flashcardToUpdate = playlistToUpdate.playlist[flashcardId];
+      // console.log("111111111111111111111", flashcardToUpdate);
+      // console.log("222222222222222222222", updatedFlashcard);
       const flashcardWithUpdates = {
         ...flashcardToUpdate,
         ...updatedFlashcard,
@@ -159,6 +161,7 @@ export const LibraryProvider: React.FC<PropsWithChildren<{}>> = ({
       if (currPlaylist?.id === playlistId) {
         setCurrPlaylist(updatedPlaylist);
       }
+      // console.log("333333333333333333333333333333333", currPlaylist);
     }
   };
 

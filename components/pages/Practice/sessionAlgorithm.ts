@@ -155,6 +155,7 @@ export class Session {
     private numOfStrikes: number; //number of strikes for bad grade and higher bleed queue priority
     private numInARow: number; //number of times they get it in a row to pass the card for partition
     private numOfLoops: number; //the number of times a user has studied their deck in one session a user has done
+    private hasLooped: boolean;
     private numOfStudiedInSession: number;
     private reinsertBloodQueueIncrement: number;
     private updateFlashcard; // functions from practice that update library context
@@ -184,6 +185,7 @@ export class Session {
     this.reinsertBloodQueueIncrement = 4;
     this.numInARow = 2;
     this.numOfLoops = 0; //starts off -1 if session hasn't created a partition yet
+    this.hasLooped = false;
     this.bleedQueue = new CardNode(); // Initialize bleedQueue with a dummy head if not present
         this.bleedLength = 0;
     if (currPlaylist && currPlaylist.bleedQueue) {
@@ -227,42 +229,40 @@ export class Session {
         this.partitionLength = 0;
         this.partitionSizeOnCreation = 0;
         let newCardsAdded = 0;
-        // Add two new cards first
-        while (newCardsAdded < this.numNewCardsPartition && this.bleedLength < this.currPlaylistLength) {
-            const flashcardKey = Object.keys(this.currPlaylist!.playlist)[this.bleedLength + newCardsAdded];
-            if (flashcardKey) {
-                const flashcard = this.currPlaylist!.playlist[flashcardKey];
-                const newNode = new CardNode(flashcard);
-                this.addToPartition(newNode); // Add the new card to the partition
-                newCardsAdded++;
-                this.partitionSizeOnCreation++;
-            }
-        }
-
-        // bleed queue cases to consider: 1, 2 
-        // Then fill the rest with bleedQueue cards if available, or continue adding new cards
-        for (let i = newCardsAdded; i < this.partitionSize; i++) {
-            if (this.bleedQueue.next !== null && i < this.bleedLength) {
-                // Add the next bleedQueue card to the partition
-                const bleedNode = this.bleedQueue.next;
-                this.bleedQueue.next = this.bleedQueue.next.next; // removing the head node
-                bleedNode.aRow = 0;
-                // reinsert into the queue 
-                // this.reinsertNodeInBleedQueue(bleedNode, this.reinsertBloodQueueIncrement);
-                this.addToPartition(bleedNode); // Add to the partition
-                this.partitionSizeOnCreation++;
-            } else {
-                // No more cards in bleedQueue, add the next new card from the playlist
-                const flashcardKey = Object.keys(this.currPlaylist!.playlist)[this.bleedLength + i];
-                if (flashcardKey) {
-                    const flashcard = this.currPlaylist!.playlist[flashcardKey];
+    
+        // Iterate over the playlist to find and add new cards, considering null or undefined as 0.
+        const playlistEntries = Object.entries(this.currPlaylist!.playlist);
+        for (let [key, flashcard] of playlistEntries) {
+            // Check if we've added the designated number of new cards.
+            if (newCardsAdded < this.numNewCardsPartition) {
+                // Consider a card new if it hasn't been passed or failed, treating null/undefined as 0.
+                const passes = flashcard.passes ?? 0;
+                const fails = flashcard.fails ?? 0;
+                if (passes === 0 && fails === 0) {
                     const newNode = new CardNode(flashcard);
-                    this.addToPartition(newNode); // Add the new card to the partition
+                    this.addToPartition(newNode); // Add the new card to the partition.
+                    newCardsAdded++;
                     this.partitionSizeOnCreation++;
                 }
+            } else {
+                // Stop adding new cards if the designated number has been reached.
+                break;
             }
         }
+    
+        // Then fill the rest of the partition with cards from the bleed queue, if available.
+        while (this.partitionSizeOnCreation < this.partitionSize && this.bleedQueue.next !== null) {
+            // Remove the next card from the bleed queue and add it to the partition.
+            const bleedNode = this.bleedQueue.next;
+            this.bleedQueue.next = bleedNode.next; // Adjust the pointer to remove the node from the bleed queue.
+            bleedNode.next = null; // Prevent linking issues.
+            bleedNode.aRow = 0; // Reset any accumulated consecutive pass count.
+            this.addToPartition(bleedNode); // Add the node to the partition.
+            this.partitionSizeOnCreation++;
+        }
     }
+    
+    
     
     private addToPartition(node: CardNode): void {
         let current = this.partitionHead;
@@ -343,6 +343,8 @@ private reinsertNodeInBleedQueue(node: CardNode, positions: number): void {
             // If in this pass the number of the partition increment loops which will trigger green animation
             if(this.partitionSizeOnCreation > 0 && this.partitionLength === 0) {
                 this.numOfLoops++;
+                this.hasLooped = true;
+                // console.log(this.toString())
                 this.updateState();
             }
         } else {
@@ -457,6 +459,10 @@ private reinsertNodeInBleedQueue(node: CardNode, positions: number): void {
         return this.numOfLoops;
     }
 
+    public getHasLoopped(): boolean {
+        return this.hasLooped;
+    }
+
     public getCurrPlaylistLength(): number {
         return this.currPlaylistLength;
     }
@@ -476,6 +482,8 @@ private reinsertNodeInBleedQueue(node: CardNode, positions: number): void {
         let current = this.partitionHead.next; // Start after the dummy head
         while (current) {
             if (current.card) {
+                current.card.passes = current.passes;
+                current.card.fails = current.fails;
                 flashcards.push(current.card); // Add the flashcard to the array
             }
             current = current.next; // Move to the next node
@@ -485,6 +493,8 @@ private reinsertNodeInBleedQueue(node: CardNode, positions: number): void {
         current = this.bleedQueue.next; // Start after the dummy head
         while (current) {
             if (current.card) {
+                current.card.passes = current.passes;
+                current.card.fails = current.fails;
                 flashcards.push(current.card); // Add the flashcard to the array
             }
             current = current.next; // Move to the next node
@@ -508,9 +518,9 @@ private reinsertNodeInBleedQueue(node: CardNode, positions: number): void {
         this.bleedQueue = new CardNode(); // Reinitialize with a dummy head.
         this.bleedLength = 0; // Reset the length since we're rebuilding the queue.
     
-        console.log(array.toString());
-        console.log(this.currPlaylist)
-        console.log("bruh")
+        // console.log(array.toString());
+        // console.log(this.currPlaylist)
+        // console.log("bruh")
 
         array.forEach(id => {
             // Assuming 'playlist' is accessible and contains all cards.
@@ -551,20 +561,21 @@ private reinsertNodeInBleedQueue(node: CardNode, positions: number): void {
       
             updatedFlashcards.forEach((card) => {
               // Update each card with new passes and fails count
+              //   console.log(card);
               this.updateFlashcard(this.currPlaylist!.id, card!.id, {
                 ...card,
                 passes: card.passes,
                 fails: card.fails,
               });
             });
-            console.log("000000000000000000!", this.bleedQueueToIDArray());
-            console.log("000000000000000000!", this.bleedLength);
-            console.log("9999999999999999!", this.toString());
+            // console.log("000000000000000000!", this.bleedQueueToIDArray());
+            // console.log("000000000000000000!", this.bleedLength);
+            // console.log("9999999999999999!", this.toString());
             this.updatePlaylist(this.currPlaylist.id, {
               bleedQueue: this.bleedQueueToIDArray(),
             });
       
-            console.log(this.currPlaylist.bleedQueue);
+            // console.log("AHHHHHHHHHHHHHHHHHHHHH",this.currPlaylist);
         }
     
     }

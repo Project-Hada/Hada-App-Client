@@ -49,16 +49,19 @@ export default function PracticeScreen({ navigation, route }: any) {
 
   useEffect(() => {
     if (currPlaylist) {
-      const session = new Session(
-        currPlaylist,
-        updateFlashcard,
-        updatePlaylist
-      );
-      session.startSession();
-      setSession(session);
-      // console.log(session.toString());
+      if (!currentSession) {
+        const session = new Session(
+          currPlaylist,
+          updateFlashcard,
+          updatePlaylist
+        );
 
-      setDynamicHead(session.getPartitionHead());
+        session.startSession();
+        setSession(session);
+        // console.log(session.toString());
+
+        setDynamicHead(session.getPartitionHead());
+      }
     }
   }, [currPlaylist]);
 
@@ -131,6 +134,9 @@ export default function PracticeScreen({ navigation, route }: any) {
       let partSize = currentSession.getPartitionSizeOnCreation();
       const currIndex = partSize - partLength - 1;
       // console.log("oop", currIndex, partSize, partLength);
+
+      // console.log(currentSession.getNumOfLoops());
+      // console.log(currentSession.getHasLoopped());
 
       if (currentSession.getNumOfLoops() > numOfLoops) {
         setNumOfLoops(currentSession.getNumOfLoops());
@@ -392,7 +398,7 @@ export default function PracticeScreen({ navigation, route }: any) {
   });
 
   if (currentSession) {
-    console.log(currentSession.toString());
+    // console.log(currentSession.toString());
   }
 
   return (
