@@ -51,12 +51,19 @@ export default function PracticeScreen({ navigation, route }: any) {
 
   useEffect(() => {
     if (currPlaylist) {
-      const session = new Session(currPlaylist);
-      session.startSession();
-      setSession(session);
-      // console.log(session.toString());
+      if (!currentSession) {
+        const session = new Session(
+          currPlaylist,
+          updateFlashcard,
+          updatePlaylist
+        );
 
-      setDynamicHead(session.getPartitionHead());
+        session.startSession();
+        setSession(session);
+        // console.log(session.toString());
+
+        setDynamicHead(session.getPartitionHead());
+      }
     }
   }, [currPlaylist]);
 
@@ -64,7 +71,6 @@ export default function PracticeScreen({ navigation, route }: any) {
     // Reset opacity to 1 without animation for instant change
     opacityAnim.setValue(1);
 
-    console.log(opacityAnim);
     // Animate the opacity to 0
     Animated.timing(opacityAnim, {
       toValue: 0,
@@ -126,10 +132,13 @@ export default function PracticeScreen({ navigation, route }: any) {
   const renderProgressIndicators = () => {
     const indicators = [];
     if (currentSession) {
-      const currIndex =
-        (currentSession.getNumOfStudiedInSession() %
-          currentSession.getCurrPlaylistLength()) -
-        1;
+      let partLength = currentSession.getPartitionLength();
+      let partSize = currentSession.getPartitionSizeOnCreation();
+      const currIndex = partSize - partLength - 1;
+      // console.log("oop", currIndex, partSize, partLength);
+
+      // console.log(currentSession.getNumOfLoops());
+      // console.log(currentSession.getHasLoopped());
 
       if (currentSession.getNumOfLoops() > numOfLoops) {
         setNumOfLoops(currentSession.getNumOfLoops());
@@ -138,11 +147,7 @@ export default function PracticeScreen({ navigation, route }: any) {
         animateCounter();
         animateTextColor();
       }
-      for (
-        let index = 0;
-        index < currentSession.getCurrPlaylistLength();
-        index++
-      ) {
+      for (let index = 0; index < partSize; index++) {
         indicators.push(
           <View
             key={`progress-${index}`}
@@ -169,28 +174,7 @@ export default function PracticeScreen({ navigation, route }: any) {
   };
 
   const handleBackPress = () => {
-    if (currentSession && currPlaylist) {
-      // Assuming currentSession can give us the updated cards and bleedQueue
-      const updatedFlashcards = currentSession.getAllFlashcards();
-      const newBleedQueue = currentSession.getBleedQueue();
-      const newBleedQueueLength = currentSession.getBleedLength();
-
-      updatedFlashcards.forEach((card) => {
-        // Update each card with new passes and fails count
-        updateFlashcard(currPlaylist.id, card.id, {
-          ...card,
-          passes: card.passes,
-          fails: card.fails,
-        });
-      });
-
-      updatePlaylist(currPlaylist.id, {
-        bleedQueue: newBleedQueue,
-        bleedQueueLength: newBleedQueueLength,
-      });
-
-      navigation.goBack();
-    }
+    navigation.goBack();
   };
 
   // Function to handle the card swipe animation
@@ -199,10 +183,8 @@ export default function PracticeScreen({ navigation, route }: any) {
     // console.log(currentSession.toString());
     if (currentSession.getPartitionHead()) {
       if (direction === "right") {
-        console.log("PASS");
         currentSession.pass();
       } else {
-        console.log("FAIL");
         currentSession.fail();
       }
 
@@ -443,7 +425,7 @@ export default function PracticeScreen({ navigation, route }: any) {
   });
 
   if (currentSession) {
-    console.log(currentSession.toString());
+    // console.log(currentSession.toString());
   }
 
   return (
@@ -453,7 +435,7 @@ export default function PracticeScreen({ navigation, route }: any) {
           {/* <Text>{`I${isFlipped}, W${wasFlipped}`}</Text> */}
           <View style={styles.topNav}>
             <View style={styles.navContainer}>
-              <TouchableOpacity onPress={() => navigation.goBack()}>
+              <TouchableOpacity onPress={handleBackPress}>
                 <FontAwesome6 name="chevron-left" size={24} color="black" />
               </TouchableOpacity>
               <Text style={styles.headerTitle}>{currPlaylist?.title}</Text>
