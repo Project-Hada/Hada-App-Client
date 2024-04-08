@@ -127,10 +127,10 @@ export default function PracticeScreen({ navigation, route }: any) {
   const renderProgressIndicators = () => {
     const indicators = [];
     if (currentSession) {
-      const currIndex =
-        (currentSession.getNumOfStudiedInSession() %
-          currentSession.getCurrPlaylistLength()) -
-        1;
+      let partLength = currentSession.getPartitionLength();
+      let partSize = currentSession.getPartitionSizeOnCreation();
+      const currIndex = partSize - partLength - 1;
+      // console.log("oop", currIndex, partSize, partLength);
 
       if (currentSession.getNumOfLoops() > numOfLoops) {
         setNumOfLoops(currentSession.getNumOfLoops());
@@ -139,11 +139,7 @@ export default function PracticeScreen({ navigation, route }: any) {
         animateCounter();
         animateTextColor();
       }
-      for (
-        let index = 0;
-        index < currentSession.getCurrPlaylistLength();
-        index++
-      ) {
+      for (let index = 0; index < partSize; index++) {
         indicators.push(
           <View
             key={`progress-${index}`}
