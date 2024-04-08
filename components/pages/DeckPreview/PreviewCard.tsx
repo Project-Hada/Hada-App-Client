@@ -13,13 +13,28 @@ interface PreviewCardProps {
 const handleAudio = (text: string, language: string) => {
   speak(text, language);
 };
-
+ 
 const PreviewCard: React.FC<PreviewCardProps> = ({
   term,
   definition,
   onPress,
 }) => {
   const { theme } = useTheme();
+  
+  const previewColors = [ // TBD
+      "#90CF8E",
+      "#A7DCA5",
+      "#C6EDC3",
+      "#E4FDE1",
+      "#EFFDEE",
+    ];
+    
+    // This is just for some different colors for each icon (Future: icons should correspond to how well the user knows the word)
+    const getColorForTerm = (term: string) => {
+      const index = term.charCodeAt(0)
+      return previewColors[index % previewColors.length];
+    };
+
   const styles = StyleSheet.create({
     playButtonContainer: {
       width: 41,
@@ -161,6 +176,7 @@ const PreviewCard: React.FC<PreviewCardProps> = ({
     termContainer: {
       flexDirection: "column",
       flex: 1,
+      marginLeft: 55,
     },
     termText: {
       fontSize: 22,
@@ -174,13 +190,18 @@ const PreviewCard: React.FC<PreviewCardProps> = ({
       marginTop: -4,
     },
     previewBadge: {
-      width: 48,
-      height: 48,
-      borderRadius: 10,
-      marginRight: 16,
-      backgroundColor: theme.colors.icons,
       alignItems: "center",
       justifyContent: "center",
+      marginHorizontal: theme.spacing.library.iconMarginHorizontal,
+      marginLeft: 0,
+      borderTopLeftRadius: 9,
+      borderBottomLeftRadius: 6,
+      position: "absolute",
+      left: 0,
+      top: 0,
+      bottom: 0,
+      width: 60,
+      backgroundColor: theme.colors.icons
     },
     previewBadgeText: {
       paddingTop: 4,
@@ -211,10 +232,12 @@ const PreviewCard: React.FC<PreviewCardProps> = ({
     },
   });
 
+  
+
   return (
     <TouchableOpacity onPress={onPress}>
       <View style={[styles.listItem, theme.shadow.default]}>
-        <View style={styles.previewBadge}>
+        <View style={[styles.previewBadge, {backgroundColor: getColorForTerm(term)}]}>
           <Text style={styles.previewBadgeText}>{term.slice(0, 1)}</Text>
         </View>
         <View style={styles.termContainer}>
