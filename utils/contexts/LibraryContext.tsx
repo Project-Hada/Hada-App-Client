@@ -16,7 +16,7 @@ import React, {
 import { FlashCardType, PlaylistType } from "../types";
 import { User, onAuthStateChanged } from "firebase/auth";
 import { auth } from "../firebaseConfig";
-import { addNewCardToDeck, addNewDeck, getAllDecksByUID, getOneDeckByDID, testFunction } from "../services/decksFunctions";
+import { addNewCardToDeck, addNewDeck, deleteCardInDeck, getAllDecksByUID, getOneDeckByDID, testFunction, updateCardInDeck } from "../services/decksFunctions";
 
 /**
  * Represents the state of the library, mapping playlist IDs to their respective PlaylistType.
@@ -38,15 +38,15 @@ export interface PlaylistContextType {
   addPlaylist: () => Promise<PlaylistType>;
   addFlashcard: (playlist: PlaylistType, newFlashcard: FlashCardType) => void;
   updateFlashcard: (
-    playlistId: string,
-    flashcardId: string,
+    playlist: PlaylistType,
+    flashcardId: number,
     updatedFlashcard: FlashCardType
   ) => void;
   updatePlaylist: (
     playlistId: string,
     updatedPlaylistData: Partial<PlaylistType>
   ) => void;
-  deleteFlashcard: (playlistId: string, flashcardId: string) => void;
+  deleteFlashcard: (playlist: PlaylistType, flashcardId: number) => void;
 }
 
 // The default state for the PlaylistContext when it is first created.
@@ -92,7 +92,7 @@ export const LibraryProvider: React.FC<PropsWithChildren<{}>> = ({
 
   // Initialize the library as an empty object
   const [library, setLibrary] = useState<LibraryState>({});
-  console.log("library: ", JSON.stringify(library, null, 4));
+  // console.log("library: ", JSON.stringify(library, null, 4));
 
 
   /**
@@ -152,11 +152,13 @@ export const LibraryProvider: React.FC<PropsWithChildren<{}>> = ({
    * @param updatedFlashcard - The new data for the flashcard.
    */
   const updateFlashcard = (
-    playlistId: string,
-    flashcardId: string,
+    playlist: PlaylistType,
+    flashcardId: number,
     updatedFlashcard: FlashCardType
   ) => {
-    const playlistToUpdate = library[playlistId];
+    updateCardInDeck(playlist.id, flashcardId, updatedFlashcard.term, updatedFlashcard.definition);
+
+    const playlistToUpdate = library[playlist.id];
     if (playlistToUpdate && playlistToUpdate.playlist[flashcardId]) {
       // Preserve the existing flashcard properties, except those that are updated
       const flashcardToUpdate = playlistToUpdate.playlist[flashcardId];
@@ -175,10 +177,10 @@ export const LibraryProvider: React.FC<PropsWithChildren<{}>> = ({
 
       setLibrary((prevLibrary) => ({
         ...prevLibrary,
-        [playlistId]: updatedPlaylist,
+        [playlist.id]: updatedPlaylist,
       }));
 
-      if (currPlaylist?.id === playlistId) {
+      if (currPlaylist?.id === playlist.id) {
         setCurrPlaylist(updatedPlaylist);
       }
     }
@@ -190,8 +192,10 @@ export const LibraryProvider: React.FC<PropsWithChildren<{}>> = ({
    * @param flashcardId - The ID of the flashcard to be removed.
    * This function updates the state to reflect the removal of the flashcard from the playlist.
    */
-  const deleteFlashcard = (playlistId: string, flashcardId: string) => {
-    const playlistToUpdate = library[playlistId];
+  const deleteFlashcard = (playlist: PlaylistType, flashcardId: number) => {
+    deleteCardInDeck(playlist.id, flashcardId);
+
+    const playlistToUpdate = library[playlist.id];
     if (playlistToUpdate && playlistToUpdate.playlist[flashcardId]) {
       const { [flashcardId]: _, ...restOfFlashcards } =
         playlistToUpdate.playlist;
@@ -202,10 +206,10 @@ export const LibraryProvider: React.FC<PropsWithChildren<{}>> = ({
 
       setLibrary({
         ...library,
-        [playlistId]: updatedPlaylist,
+        [playlist.id]: updatedPlaylist,
       });
 
-      if (currPlaylist?.id === playlistId) {
+      if (currPlaylist?.id === playlist.id) {
         setCurrPlaylist(updatedPlaylist);
       }
     }

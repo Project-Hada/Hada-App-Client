@@ -84,7 +84,7 @@ export default function DeckPreview({ navigation, route }: any) {
         (a, b) => b.createdAt - a.createdAt
       )
     : [];
-  console.log(flashcardsArray)
+  // console.log("flashcardsArray: ", flashcardsArray)
 
   // Filtering Flashcard by korean / english search term
 
@@ -100,6 +100,7 @@ export default function DeckPreview({ navigation, route }: any) {
 
   // Use this filtered array for your FlatList:
   const filteredFlashcards = filterFlashcards(flashcardsArray);
+  // console.log("filtered fc: ", filteredFlashcards)
 
   const AddCardButton = () => {
     return (
@@ -369,12 +370,13 @@ export default function DeckPreview({ navigation, route }: any) {
       <FlatList
         // Filtering word using filter()
         data={filteredFlashcards}
-        renderItem={({ item }) => (
+        renderItem={({ item, index }) => (
           // The modal is now tied to the selectedCardId state.
           // It will open for the card that was last pressed.
           <View>
             <PreviewCard
-              key={item.id}
+              // key={item.id}
+              key={index}
               term={item.term}
               definition={item.definition}
               onPress={() => handleCardPress(item.id)}
@@ -391,6 +393,7 @@ export default function DeckPreview({ navigation, route }: any) {
                 koreanWordInitial={item.term}
                 englishWordInitial={item.definition}
                 flashcardId={item.id}
+                flashcardIndex={index}
                 isEditMode={true}
               />
             )}

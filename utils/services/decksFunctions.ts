@@ -96,7 +96,7 @@ export const updateCardInDeck = async (did: String, cardIndex: number,
   const currDeck = await getOneDeckByDID(did)
   if (currDeck) {
     currDeck.playlist[cardIndex] = {term: newTerm, definition: newDefinition};
-    updateDeckByDID(did, {play: currDeck.playlist})
+    updateDeckByDID(did, {playlist: currDeck.playlist})
   }
 }
 
@@ -106,7 +106,7 @@ export const deleteDeckByDID = async (did: String) => {
 }
 
 export const deleteCardInDeck = async (did: String, cardIndex: number) => {
-  const currDeck = await getOneDeckByDID(did)
+  const currDeck = await getOneDeckByDID(did);
 
   if (currDeck) {
     currDeck.playlist.splice(cardIndex, 1);

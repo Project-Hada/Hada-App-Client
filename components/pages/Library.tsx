@@ -58,7 +58,7 @@ export default function LibraryScreen({ navigation, route }: any) {
   : Object.values(library).filter((playlist) =>
       playlist.title.toLowerCase().includes(searchSet.toLowerCase())
     );
-  console.log(filteredLibrary)
+  // console.log(filteredLibrary)
 
   
   const handleNavigation = async (playlist: PlaylistType) => {
