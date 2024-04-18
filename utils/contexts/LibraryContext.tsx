@@ -175,6 +175,8 @@ export const LibraryProvider: React.FC<PropsWithChildren<{}>> = ({
     if (playlistToUpdate && playlistToUpdate.playlist[flashcardId]) {
       // Preserve the existing flashcard properties, except those that are updated
       const flashcardToUpdate = playlistToUpdate.playlist[flashcardId];
+      // console.log("111111111111111111111", flashcardToUpdate);
+      // console.log("222222222222222222222", updatedFlashcard);
       const flashcardWithUpdates = {
         ...flashcardToUpdate,
         ...updatedFlashcard,
@@ -196,6 +198,7 @@ export const LibraryProvider: React.FC<PropsWithChildren<{}>> = ({
       if (currPlaylist?.id === playlist.id) {
         setCurrPlaylist(updatedPlaylist);
       }
+      // console.log("333333333333333333333333333333333", currPlaylist);
     }
   };
 
@@ -253,8 +256,31 @@ export const LibraryProvider: React.FC<PropsWithChildren<{}>> = ({
       }
     }
   };
+  const updatePlaylist = (
+    playlistId: string,
+    updatedPlaylistData: Partial<PlaylistType>
+  ) => {
+    const playlistToUpdate = library[playlistId];
+    if (playlistToUpdate) {
+      // Create a new playlist object with the updated data
+      const updatedPlaylist = {
+        ...playlistToUpdate,
+        ...updatedPlaylistData,
+        playlist: { ...playlistToUpdate.playlist }, // Ensure the flashcards remain unchanged
+      };
 
-  
+      // Update the library state with the modified playlist
+      setLibrary((prevLibrary) => ({
+        ...prevLibrary,
+        [playlistId]: updatedPlaylist,
+      }));
+
+      // If the current playlist is the one being updated, also update currPlaylist
+      if (currPlaylist?.id === playlistId) {
+        setCurrPlaylist(updatedPlaylist);
+      }
+    }
+  };
 
   return (
     <LibraryContext.Provider

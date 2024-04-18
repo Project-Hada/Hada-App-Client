@@ -42,8 +42,8 @@ export default function FlashCard({
       zIndex: 5,
     },
     flashCard: {
-      width: '100%',
-      height: '100%',
+      width: "100%",
+      height: "100%",
       borderRadius: spacing.flashcard.borderRadius,
       backgroundColor: theme.colors.container,
       justifyContent: 'center',
@@ -124,7 +124,10 @@ export default function FlashCard({
 
   return (
     <Pressable onPress={triggerFlip} style={styles.flashCardPressableContainer}>
-      <Animated.View style={[styles.flashCard, frontAnimatedStyle, theme.shadow.default]}>
+
+      <Animated.View
+        style={[styles.flashCard, frontAnimatedStyle, theme.shadow.default]}
+      >
         <View style={styles.termContainer}>
           <Text style={styles.term}>{term}</Text>
         </View>
@@ -132,20 +135,33 @@ export default function FlashCard({
           <Text style={styles.romanization}>{romanization}</Text>
         </View>
         <TouchableOpacity style={styles.audioButton} onPress={handleAudio}>
-          <FontAwesome name="volume-up" size={36} color={theme.colors.audioButton} />
+          <FontAwesome
+            name="volume-up"
+            size={36}
+            color={theme.colors.audioButton}
+          />
         </TouchableOpacity>
       </Animated.View>
 
       <Animated.View
-        style={[styles.flashCard, backAnimatedStyle, theme.shadow.default, { position: "absolute" }]}
+
+        style={[
+          styles.flashCard,
+          backAnimatedStyle,
+          theme.shadow.default,
+          { position: "absolute" },
+        ]}
       >
         <Text style={styles.definition}>{definition}</Text>
         <TouchableOpacity style={styles.audioButton} onPress={handleAudio}>
-          <FontAwesome name="volume-up" size={36} color={theme.colors.audioButton} />
+          <FontAwesome
+            name="volume-up"
+            size={36}
+            color={theme.colors.audioButton}
+          />
         </TouchableOpacity>
       </Animated.View>
     </Pressable>
   );
 }
-
 

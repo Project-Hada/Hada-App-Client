@@ -11,13 +11,15 @@ import {
   TextStyle,
 } from "react-native";
 import FlashcardContext from "../../../utils/contexts/LibraryContext";
-import { FontAwesome6 } from "@expo/vector-icons";
+import { FontAwesome6, MaterialCommunityIcons } from "@expo/vector-icons";
 import FlashCard from "./Flashcard";
 import FlashCardSlider from "./FlashcardSlider";
 import Aromanize from "aromanize";
 import { FlashCardType } from "../../../utils/types";
 import { useTheme } from "../../../utils/contexts/ThemeContext";
 import { CardNode, Session } from "./sessionAlgorithm";
+import DeckPreviewModal from "../DeckPreview/DeckPreviewModal";
+import GearButton from "../../GearButton";
 
 type PracticeScreenProps = {
   navigation: any;
@@ -48,12 +50,19 @@ export default function PracticeScreen({ navigation, route }: any) {
 
   useEffect(() => {
     if (currPlaylist) {
-      const session = new Session(currPlaylist);
-      session.startSession();
-      setSession(session);
-      // console.log(session.toString());
+      if (!currentSession) {
+        const session = new Session(
+          currPlaylist,
+          updateFlashcard,
+          updatePlaylist
+        );
 
-      setDynamicHead(session.getPartitionHead());
+        session.startSession();
+        setSession(session);
+        // console.log(session.toString());
+
+        setDynamicHead(session.getPartitionHead());
+      }
     }
   }, [currPlaylist]);
 
@@ -61,7 +70,6 @@ export default function PracticeScreen({ navigation, route }: any) {
     // Reset opacity to 1 without animation for instant change
     opacityAnim.setValue(1);
 
-    console.log(opacityAnim);
     // Animate the opacity to 0
     Animated.timing(opacityAnim, {
       toValue: 0,
@@ -123,10 +131,13 @@ export default function PracticeScreen({ navigation, route }: any) {
   const renderProgressIndicators = () => {
     const indicators = [];
     if (currentSession) {
-      const currIndex =
-        (currentSession.getNumOfStudiedInSession() %
-          currentSession.getCurrPlaylistLength()) -
-        1;
+      let partLength = currentSession.getPartitionLength();
+      let partSize = currentSession.getPartitionSizeOnCreation();
+      const currIndex = partSize - partLength - 1;
+      // console.log("oop", currIndex, partSize, partLength);
+
+      // console.log(currentSession.getNumOfLoops());
+      // console.log(currentSession.getHasLoopped());
 
       if (currentSession.getNumOfLoops() > numOfLoops) {
         setNumOfLoops(currentSession.getNumOfLoops());
@@ -196,10 +207,8 @@ export default function PracticeScreen({ navigation, route }: any) {
     // console.log(currentSession.toString());
     if (currentSession.getPartitionHead()) {
       if (direction === "right") {
-        console.log("PASS");
         currentSession.pass();
       } else {
-        console.log("FAIL");
         currentSession.fail();
       }
 
@@ -275,7 +284,7 @@ export default function PracticeScreen({ navigation, route }: any) {
     },
     progressIndicator: {
       flex: 1, // Each indicator will take equal space
-      height: 4, // Set the height of the indicator
+      height: 3.5, // Set the height of the indicator
       backgroundColor: theme.colors.inactiveProgessBar, // Default color for indicators
       marginHorizontal: 2, // Optional: add some spacing between indicators
     },
@@ -302,6 +311,7 @@ export default function PracticeScreen({ navigation, route }: any) {
       paddingVertical: 28,
       gap: 16,
       justifyContent: "center",
+      marginTop: 5
     },
     flashCardAnimated: {
       backgroundColor: "transparent",
@@ -325,6 +335,7 @@ export default function PracticeScreen({ navigation, route }: any) {
       backgroundColor: "transparent",
       width: "100%",
       paddingHorizontal: 36,
+      marginTop: 30
     },
     bottomControls: {
       flex: 1.6,
@@ -336,6 +347,8 @@ export default function PracticeScreen({ navigation, route }: any) {
       alignItems: "center",
       gap: 26,
       paddingHorizontal: 20,
+      marginBottom: 20,
+      marginTop: -5,
     },
     right: {
       backgroundColor: theme.colors.greenButton,
@@ -365,14 +378,14 @@ export default function PracticeScreen({ navigation, route }: any) {
     counter: {
       justifyContent: "center",
       alignItems: "center",
-      width: 36,
-      height: 36,
-      borderWidth: 3,
+      width: 30,
+      height: 30,
+      borderWidth: 2.25,
       borderRadius: 100,
-      padding: 4,
     },
     counterText: {
-      fontSize: 18,
+      fontSize: 16,
+
       fontFamily: theme.typography.fonts.mediumFont,
     },
     navContainer: {
@@ -380,23 +393,63 @@ export default function PracticeScreen({ navigation, route }: any) {
       alignItems: "center",
       justifyContent: "space-between",
       width: "100%",
+      marginTop: 10
+
     },
     centerControl: {
       flex: 1,
       backgroundColor: "transparent",
       justifyContent: "center",
       alignItems: "center",
-      marginBottom: -26,
+      marginBottom: -30,
+      marginTop: -10
     },
     title: {
       fontFamily: theme.typography.fonts.boldFont,
       fontSize: 20,
+
+      fontFamily: theme.typography.fonts.boldFont,
     },
     separator: {
       marginVertical: 30,
       height: 1,
       width: "80%",
     },
+    headerTitle: {
+      fontFamily: theme.typography.fonts.semiboldFont,
+      fontSize: theme.typography.deckPreview.deckTitleSize,
+      color: theme.colors.text,
+      marginLeft: -100
+    },
+    gearButton: {
+      marginBottom: -20,
+      marginVertical: -15,
+    },
+    subHeader: {
+      flexDirection: "row",
+      alignItems: "center",
+    },
+    wordCount: {
+      fontFamily: theme.typography.fonts.regularFont,
+      fontSize: theme.typography.deckPreview.wordCountSize,
+      color: "#B6B6B6",
+      paddingLeft: 4,
+    },
+  });
+  // Background color animation
+  const counterBackgroundColor = counterColorAnim.interpolate({
+    inputRange: [0, 1],
+    outputRange: [theme.colors.border, "#98FF5D"], // Change colors as needed
+  });
+
+  // Text scale animation
+  const counterTextStyle: Animated.WithAnimatedValue<StyleProp<TextStyle>> = {
+    transform: [{ scale: counterScaleAnim }],
+  };
+
+  const animatedTextColor = textColorAnim.interpolate({
+    inputRange: [0, 1],
+    outputRange: [theme.colors.border, "#98FF5D"], // Colors for the animation
   });
   // Background color animation
   const counterBackgroundColor = counterColorAnim.interpolate({
@@ -415,7 +468,8 @@ export default function PracticeScreen({ navigation, route }: any) {
   });
 
   if (currentSession) {
-    console.log(currentSession.toString());
+    // console.log(currentSession.toString());
+
   }
 
   return (
@@ -425,28 +479,47 @@ export default function PracticeScreen({ navigation, route }: any) {
           {/* <Text>{`I${isFlipped}, W${wasFlipped}`}</Text> */}
           <View style={styles.topNav}>
             <View style={styles.navContainer}>
-              <TouchableOpacity onPress={() => navigation.goBack()}>
+              <TouchableOpacity onPress={handleBackPress}>
                 <FontAwesome6 name="chevron-left" size={24} color="black" />
               </TouchableOpacity>
-              <Animated.View
+              <Text style={styles.headerTitle}>{currPlaylist?.title}</Text>
+              <View style={styles.gearButton}>
+                <GearButton />
+              </View>
+            </View>
+            
+            <View style={styles.progress}>{renderProgressIndicators()}</View>
+            <Animated.View
                 style={[
                   styles.counter,
-                  { borderColor: counterBackgroundColor },
+                  { borderColor: theme.colors.subtext, marginLeft: 303, marginTop: -10 },
                 ]}
               >
                 <Animated.Text
                   style={[
                     styles.counterText,
                     counterTextStyle,
-                    { color: animatedTextColor },
+                    { color: theme.colors.subtext },
                   ]}
                 >
                   {`${numOfLoops}x`}
                 </Animated.Text>
               </Animated.View>
+
+              <View style={[{marginTop: -45}]}>
+                {/* Card Icon */}
+                <MaterialCommunityIcons
+                  name="cards-variant"
+                  size={22}
+                  color="#B6B6B6"
+                />
+                <Text style={[styles.wordCount, {marginLeft: 20, marginTop: -20, marginBottom: 10}]}>
+                  {Object.keys(currPlaylist.playlist).length} words
+                </Text>
+              </View>
             </View>
-            <View style={styles.progress}>{renderProgressIndicators()}</View>
-          </View>
+          
+
           <View style={styles.flashCardContainer}>
             <FlashCard
               term={dynamicHead!.card!.term}
@@ -496,6 +569,7 @@ export default function PracticeScreen({ navigation, route }: any) {
               <FontAwesome6 name="circle-check" size={44} color="black" />
             </TouchableOpacity>
           </View>
+          <DeckPreviewModal/>
         </>
       )}
     </SafeAreaView>

@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React from "react";
 import Configure from "./components/Configure";
 import { LibraryProvider } from "./utils/contexts/LibraryContext";
 import { ThemeProvider } from "./utils/contexts/ThemeContext";

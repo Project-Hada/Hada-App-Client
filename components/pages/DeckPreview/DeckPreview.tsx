@@ -6,12 +6,10 @@ import {
   FlatList,
   TouchableOpacity,
   SafeAreaView,
+  ScrollView,
 } from "react-native";
 
-import {
-  MaterialCommunityIcons,
-  MaterialIcons,
-} from "@expo/vector-icons";
+import { MaterialCommunityIcons, MaterialIcons } from "@expo/vector-icons";
 
 import FlashcardContext from "../../../utils/contexts/LibraryContext";
 import AddButton from "../../AddButton";
@@ -27,11 +25,12 @@ import Search from "./Search";
 import * as Hangul from "hangul-js";
 import { addNewCardToDeck } from "../../../utils/services/decksFunctions";
 
+
 type DeckPreviewProps = {
   navigation: any;
 };
 
-export default function DeckPreview({ navigation, route }: any) {
+export default function DeckPreview({ navigation, route, withinModal = false }: any) {
   const { currPlaylist, addFlashcard, updateFlashcard, deleteFlashcard } =
     useContext(FlashcardContext);
 
@@ -129,6 +128,11 @@ export default function DeckPreview({ navigation, route }: any) {
     container: {
       flex: 1,
       backgroundColor: theme.colors.backgroundColor,
+      paddingHorizontal: 4,
+    },
+    modalContainer: {
+      flex: 1,
+      backgroundColor: theme.colors.listBackground,
       paddingHorizontal: 4,
     },
     header: {
@@ -289,6 +293,13 @@ export default function DeckPreview({ navigation, route }: any) {
       fontSize: theme.typography.deckPreview.previewTextSize,
       color: theme.colors.text,
     },
+    practiceButtonContainer: {
+      backgroundColor: theme.colors.listBackground,
+      marginHorizontal: -5,
+      marginBottom: -20,
+      borderTopColor: theme.colors.border,
+      borderTopWidth: 1,
+    },
     practiceButton: {
       margin: 20,
       padding: 20,
@@ -310,9 +321,77 @@ export default function DeckPreview({ navigation, route }: any) {
 
       fontFamily: theme.typography.fonts.semiboldFont,
       fontSize: theme.typography.deckPreview.addCardtextSize,
+    },
+    createAddCardButton: {
+      flexDirection: "row",
+      alignItems: "center",
+      justifyContent: "space-between",
+      padding: 12,
+      marginVertical: 5,
+      marginHorizontal: 20,
 
+      borderWidth: theme.spacing.borderWidth,
+      borderRightWidth: theme.spacing.borderRightWidth,
+      borderBottomWidth: theme.spacing.borderBottomWidth,
+      borderRadius: theme.spacing.borderRadius,
+      borderColor: theme.colors.border,
+      backgroundColor: theme.colors.accent,
     },
   });
+
+  // Use in DeckPreviewModal to prevent VirtualizedLists error
+  if (withinModal==true) {
+    return (
+      <SafeAreaView style={styles.modalContainer}>
+      {/* Search word input */}
+      <Search handleSearchWord={handleSearchWord} searchTerm={searchTerm} />
+
+      {/* Adding new card modal */}
+      <AddCardModal
+        isVisible={isAddingVisible}
+        onAdd={handleAdd}
+        onCancel={handleCancel}
+        koreanWordInitial={""}
+        englishWordInitial={""}
+        isEditMode={false}
+      />
+
+      {/* List of cards display in ScrollView instead of Flatlist */}
+      <ScrollView>
+        <TouchableOpacity
+          onPress={handleOpenAdd}
+          style={styles.createAddCardButton}
+        >
+          <Text style={styles.addCardText}>Add Card +</Text>
+        </TouchableOpacity>
+        
+        {filteredFlashcards.map((item) => (
+          <View key={item.id}>
+            <PreviewCard
+              term={item.term}
+              definition={item.definition}
+              onPress={() => handleCardPress(item.id)}
+            />
+            {selectedCardId === item.id && (
+              <AddCardModal
+                isVisible={selectedCardId !== null}
+                onAdd={handleAdd}
+                onUpdate={updateFlashcard}
+                onDelete={deleteFlashcard}
+                onCancel={handleCancel}
+                createdAt={item.createdAt}
+                koreanWordInitial={item.term}
+                englishWordInitial={item.definition}
+                flashcardId={item.id}
+                isEditMode={true}
+              />
+            )}
+          </View>
+        ))}
+      </ScrollView>
+    </SafeAreaView>
+    )
+  }
 
   return (
     <SafeAreaView style={styles.container}>
@@ -355,6 +434,7 @@ export default function DeckPreview({ navigation, route }: any) {
         handleSearchWord={handleSearchWord} 
         searchTerm={searchTerm} 
       />
+
 
       {/* Adding new card modal */}
       <AddCardModal
@@ -407,6 +487,7 @@ export default function DeckPreview({ navigation, route }: any) {
       />
 
       {/* Practice Button */}
+      <View style={styles.practiceButtonContainer}> 
       <TouchableOpacity
         onPress={() => {
           if (Object.keys(flashcards).length > 0) {
@@ -419,6 +500,7 @@ export default function DeckPreview({ navigation, route }: any) {
       >
         <Text style={styles.practiceButtonText}>Practice</Text>
       </TouchableOpacity>
+      </View>
     </SafeAreaView>
   );
 }

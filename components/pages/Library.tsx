@@ -50,6 +50,7 @@ export default function LibraryScreen({ navigation, route }: any) {
   const flashcards = flashCards;
 
   const [searchSet, setSearchSet] = useState('');
+
   const handleSearch = (set: string) => {
     setSearchSet(set);
   };
@@ -92,8 +93,8 @@ export default function LibraryScreen({ navigation, route }: any) {
     navigation.navigate("DeckPreview", { playlistId: newPlaylist.id });
   };
 
+
   const profileColors = ["#D27FEF", "#38DAEF", "#FF454C", "#7F9CEF", "#FD9960", "#F3E565"];
-  
   const { theme } = useTheme();
   const libStyles = StyleSheet.create({
     container: {
@@ -315,14 +316,16 @@ export default function LibraryScreen({ navigation, route }: any) {
           />
         </View>
       </View>
-
-      <ScrollView style={libStyles.bottomSection} contentContainerStyle={libStyles.scrollView}>
+      <ScrollView
+        style={libStyles.bottomSection}
+        contentContainerStyle={libStyles.scrollView}
+      >
         <TouchableOpacity
           onPress={handleOpenAdd}
-          style={libStyles.createPlaylistButton}>
+          style={libStyles.createPlaylistButton}
+        >
           <Text style={libStyles.createPlaylistText}>Create Playlist +</Text>
         </TouchableOpacity>
-        {/* filteredLibrary */}
         {filteredLibrary.map((item, index) => {
           const itemColor = profileColors[index % profileColors.length];
           return (
@@ -332,6 +335,7 @@ export default function LibraryScreen({ navigation, route }: any) {
               onPress={() => handleNavigation(library[item.id])} // pass the id to handle navigation
             >
               <View style={[libStyles.iconContainer, { backgroundColor: itemColor}]}></View>
+
               <View style={libStyles.playlistInfo}>
                 <Text style={libStyles.playlistName}>{item.title}</Text>
                 <Text style={libStyles.playlistWordCount}>
