@@ -365,14 +365,14 @@ export default function DeckPreview({ navigation, route, withinModal = false }: 
           <Text style={styles.addCardText}>Add Card +</Text>
         </TouchableOpacity>
         
-        {filteredFlashcards.map((item) => (
+        {filteredFlashcards.map((item, index) => (
           <View key={item.id}>
             <PreviewCard
               term={item.term}
               definition={item.definition}
-              onPress={() => handleCardPress(item.id)}
+              onPress={() => handleCardPress(index)}
             />
-            {selectedCardId === item.id && (
+            {selectedCardId === index && (
               <AddCardModal
                 isVisible={selectedCardId !== null}
                 onAdd={handleAdd}
