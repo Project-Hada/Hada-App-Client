@@ -14,7 +14,7 @@ import React, {
   useState,
 } from "react";
 import { FlashCardType, PlaylistType } from "../types";
-import { User, onAuthStateChanged } from "firebase/auth";
+import { User, onAuthStateChanged, signOut } from "firebase/auth";
 import { auth } from "../firebaseConfig";
 import { addNewCardToDeck, addNewDeck, deleteCardInDeck, getAllDecksByUID, getOneDeckByDID, testFunction, updateCardInDeck } from "../services/decksFunctions";
 
@@ -31,6 +31,7 @@ export interface LibraryState {
  */
 export interface PlaylistContextType {
   user: User | null;
+  handleLogout: () => void;
   currPlaylist: PlaylistType | null;
   setCurrPlaylist: Dispatch<SetStateAction<PlaylistType | null>>;
   library: LibraryState;
@@ -52,6 +53,7 @@ export interface PlaylistContextType {
 // The default state for the PlaylistContext when it is first created.
 const defaultState: PlaylistContextType = {
   user: null,
+  handleLogout: () => {},
   currPlaylist: null, // Since currPlaylist can be null now
   setCurrPlaylist: () => {},
   library: {}, // Initialize library as an empty object
@@ -86,6 +88,17 @@ export const LibraryProvider: React.FC<PropsWithChildren<{}>> = ({
   const [user, setUser] = useState<User | null>(null);
   onAuthStateChanged(auth, (user) => setUser(user) );
   useEffect(() => { refreshLibrary(); }, [user]);
+  const handleLogout = () => {
+    signOut(auth)
+      .then(() => {
+        console.log('User logged out successfully');
+        
+        setUser(null);
+      })
+      .catch((error) => {
+        console.log('Error', error);
+      });
+  };
 
   // Initialize currPlaylist as null because there might not be a current playlist selected
   const [currPlaylist, setCurrPlaylist] = useState<PlaylistType | null>(null);
@@ -247,6 +260,7 @@ export const LibraryProvider: React.FC<PropsWithChildren<{}>> = ({
     <LibraryContext.Provider
       value={{
         user,
+        handleLogout,
         currPlaylist,
         setCurrPlaylist,
         library,

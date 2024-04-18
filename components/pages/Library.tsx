@@ -10,7 +10,8 @@ import {
   ScrollView,
   SafeAreaView,
   TouchableOpacity, 
-  TextInput
+  TextInput,
+  Pressable
 } from "react-native";
 import {
   AntDesign,
@@ -43,7 +44,7 @@ type LibraryScreenProps = {
 export default function LibraryScreen({ navigation, route }: any) {
   // Library Context
   // remove test library
-  const { user, setCurrPlaylist, addPlaylist, library } = useContext(LibraryContext);
+  const { user, handleLogout, setCurrPlaylist, addPlaylist, library } = useContext(LibraryContext);
   // console.log("library: ", library);
 
   const flashcards = flashCards;
@@ -67,6 +68,11 @@ export default function LibraryScreen({ navigation, route }: any) {
       navigation.navigate("DeckPreview");
     }
   };
+
+  const handleUserSignOut = () => {
+    handleLogout();
+    navigation.navigate("LoginScreen");
+  }
 
   const [playlistName, setPlaylistName] = useState("");
 
@@ -296,6 +302,8 @@ export default function LibraryScreen({ navigation, route }: any) {
         </View> 
         {/* TODO: PLEASE DELETE WHEN DONE; THIS IS TO TEST IF A USER IS LOGGED IN */}
         <Text>{user?.email}</Text>
+        <Pressable onPress={handleUserSignOut}><Text>Sign Out</Text></Pressable>
+        {/* TODO: ^^^ DELETE */}
         <View style={libStyles.searchContainer}>
           <AntDesign name="search1" style={libStyles.searchIcon} />
           <TextInput
