@@ -1,15 +1,21 @@
 import { AntDesign } from '@expo/vector-icons';
-import React from 'react';
+import React, { useContext } from 'react';
 import { useState, useEffect } from 'react'
 import { Button, View, ScrollView, StyleSheet, TextInput, Pressable, Text } from 'react-native';
 import { auth } from '../../../utils/firebaseConfig';
 import { signInWithEmailAndPassword } from 'firebase/auth';
+import LibraryContext from '../../../utils/contexts/LibraryContext';
 
 export function LoginScreen({ navigation, route }: any) {
   const [emailInput, setEmailInput] = useState('');
   const [passwordInput, setPasswordInput] = useState('');
 
   const [error, setError] = useState('');
+
+  const { user } = useContext(LibraryContext);
+  useEffect(() => { 
+    if (user) navigation.navigate("LibraryScreen")
+  }, [user]);
 
   const handleSubmitForLogin = async () => {
     try {

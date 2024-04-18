@@ -294,7 +294,8 @@ export default function LibraryScreen({ navigation, route }: any) {
           <GearButton />
         </View>
         </View> 
-     
+        {/* TODO: PLEASE DELETE WHEN DONE; THIS IS TO TEST IF A USER IS LOGGED IN */}
+        <Text>{user?.email}</Text>
         <View style={libStyles.searchContainer}>
           <AntDesign name="search1" style={libStyles.searchIcon} />
           <TextInput
