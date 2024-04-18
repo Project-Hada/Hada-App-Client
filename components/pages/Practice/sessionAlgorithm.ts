@@ -170,7 +170,6 @@ export class Session {
 
   constructor(currPlaylist: PlaylistType | null, updateFlashcard: any, updatePlaylist: any) {
     this.currPlaylist = currPlaylist;
-
     this.updateFlashcard = updateFlashcard;
     this.updatePlaylist = updatePlaylist;
     this.currPlaylistLength = Object.keys(this.currPlaylist!.playlist).length;
@@ -347,7 +346,6 @@ private reinsertNodeInBleedQueue(node: CardNode, positions: number): void {
                 this.hasLooped = true;
                 // console.log(this.toString())
                 this.updateState();
-
             }
         } else {
             // Increment the pass count for the card.
@@ -465,7 +463,6 @@ private reinsertNodeInBleedQueue(node: CardNode, positions: number): void {
         return this.hasLooped;
     }
 
-
     public getCurrPlaylistLength(): number {
         return this.currPlaylistLength;
     }
@@ -487,7 +484,6 @@ private reinsertNodeInBleedQueue(node: CardNode, positions: number): void {
             if (current.card) {
                 current.card.passes = current.passes;
                 current.card.fails = current.fails;
-
                 flashcards.push(current.card); // Add the flashcard to the array
             }
             current = current.next; // Move to the next node
@@ -499,7 +495,6 @@ private reinsertNodeInBleedQueue(node: CardNode, positions: number): void {
             if (current.card) {
                 current.card.passes = current.passes;
                 current.card.fails = current.fails;
-
                 flashcards.push(current.card); // Add the flashcard to the array
             }
             current = current.next; // Move to the next node
@@ -538,6 +533,9 @@ private reinsertNodeInBleedQueue(node: CardNode, positions: number): void {
             }
         });
     }
+    
+    
+    
 
     /**
      * Gets the length of the bleed queue.
@@ -672,6 +670,5 @@ export interface ICardNode {
 // Usage example:
 // const sessionAlg = new SessionAlgorithm();
 // sessionAlg.startSession(5);
-
 
 

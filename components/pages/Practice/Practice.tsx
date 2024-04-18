@@ -2,6 +2,7 @@ import React, { useState, useRef, useEffect, useContext } from "react";
 import {
   StyleSheet,
   View,
+  Text,
   TouchableOpacity,
   Animated,
   SafeAreaView,
@@ -146,11 +147,7 @@ export default function PracticeScreen({ navigation, route }: any) {
         animateCounter();
         animateTextColor();
       }
-      for (
-        let index = 0;
-        index < currentSession.getCurrPlaylistLength();
-        index++
-      ) {
+      for (let index = 0; index < partSize; index++) {
         indicators.push(
           <View
             key={`progress-${index}`}
@@ -177,28 +174,7 @@ export default function PracticeScreen({ navigation, route }: any) {
   };
 
   const handleBackPress = () => {
-    if (currentSession && currPlaylist) {
-      // Assuming currentSession can give us the updated cards and bleedQueue
-      const updatedFlashcards = currentSession.getAllFlashcards();
-      const newBleedQueue = currentSession.getBleedQueue();
-      const newBleedQueueLength = currentSession.getBleedLength();
-
-      updatedFlashcards.forEach((card) => {
-        // Update each card with new passes and fails count
-        updateFlashcard(currPlaylist.id, card.id, {
-          ...card,
-          passes: card.passes,
-          fails: card.fails,
-        });
-      });
-
-      updatePlaylist(currPlaylist.id, {
-        bleedQueue: newBleedQueue,
-        bleedQueueLength: newBleedQueueLength,
-      });
-
-      navigation.goBack();
-    }
+    navigation.goBack();
   };
 
   // Function to handle the card swipe animation
@@ -385,7 +361,6 @@ export default function PracticeScreen({ navigation, route }: any) {
     },
     counterText: {
       fontSize: 16,
-
       fontFamily: theme.typography.fonts.mediumFont,
     },
     navContainer: {
@@ -394,7 +369,6 @@ export default function PracticeScreen({ navigation, route }: any) {
       justifyContent: "space-between",
       width: "100%",
       marginTop: 10
-
     },
     centerControl: {
       flex: 1,
@@ -405,9 +379,7 @@ export default function PracticeScreen({ navigation, route }: any) {
       marginTop: -10
     },
     title: {
-      fontFamily: theme.typography.fonts.boldFont,
       fontSize: 20,
-
       fontFamily: theme.typography.fonts.boldFont,
     },
     separator: {
@@ -451,25 +423,9 @@ export default function PracticeScreen({ navigation, route }: any) {
     inputRange: [0, 1],
     outputRange: [theme.colors.border, "#98FF5D"], // Colors for the animation
   });
-  // Background color animation
-  const counterBackgroundColor = counterColorAnim.interpolate({
-    inputRange: [0, 1],
-    outputRange: [theme.colors.border, "#98FF5D"], // Change colors as needed
-  });
-
-  // Text scale animation
-  const counterTextStyle: Animated.WithAnimatedValue<StyleProp<TextStyle>> = {
-    transform: [{ scale: counterScaleAnim }],
-  };
-
-  const animatedTextColor = textColorAnim.interpolate({
-    inputRange: [0, 1],
-    outputRange: [theme.colors.border, "#98FF5D"], // Colors for the animation
-  });
 
   if (currentSession) {
     // console.log(currentSession.toString());
-
   }
 
   return (
@@ -519,7 +475,6 @@ export default function PracticeScreen({ navigation, route }: any) {
               </View>
             </View>
           
-
           <View style={styles.flashCardContainer}>
             <FlashCard
               term={dynamicHead!.card!.term}
