@@ -20,7 +20,6 @@ const ProfilePicture = () => {
       );
       return;
     }
-
     // Choosing an image from the gallery
     const result = await ImagePicker.launchImageLibraryAsync({
       mediaTypes: ImagePicker.MediaTypeOptions.Images,
@@ -34,7 +33,6 @@ const ProfilePicture = () => {
       setProfileImage(result.assets[0].uri);
     }
   };
-
   return (
     <TouchableOpacity onPress={pickImage}>
       {profileImage ? (

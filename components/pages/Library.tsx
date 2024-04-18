@@ -1,12 +1,17 @@
-import React, { useContext, useState } from "react";
+import React, {
+  useContext,
+  useEffect,
+  useState,
+} from "react";
 import {
   View,
   Text,
   StyleSheet,
   ScrollView,
   SafeAreaView,
-  TouchableOpacity,
+  TouchableOpacity, 
   TextInput,
+  Pressable
 } from "react-native";
 import {
   AntDesign,
@@ -15,15 +20,16 @@ import {
   Octicons,
 } from "@expo/vector-icons";
 import { StackNavigationProp } from "@react-navigation/stack";
-import { FlashCardType } from "../../utils/types";
+import { PlaylistType, FlashCardType } from "../../utils/types";
 import LibraryContext from "../../utils/contexts/LibraryContext";
-import flashCards from "../../Data/fakeData";
+import flashCards from "../../Data/fakeData"; 
 import AddButton from "../AddButton";
 import generateId from "../../utils/idGenerator";
 import { useTheme } from "../../utils/contexts/ThemeContext";
 import { typography } from "../theme/Typography";
 import GearButton from "../GearButton";
 import ProfilePicture from "./ProfilePicture";
+import { addNewDeck, getAllDecksByUID, getOneDeckByDID } from "../../utils/services/decksFunctions";
 
 type PlaylistItemType = {
   name: string;
@@ -37,28 +43,37 @@ type LibraryScreenProps = {
 };
 export default function LibraryScreen({ navigation, route }: any) {
   // Library Context
-  const { library, setCurrPlaylist, addPlaylist } = useContext(LibraryContext);
+  // remove test library
+  const { user, handleLogout, setCurrPlaylist, addPlaylist, library } = useContext(LibraryContext);
+  // console.log("library: ", library);
+
   const flashcards = flashCards;
 
-  const [searchSet, setSearchSet] = useState("");
+  const [searchSet, setSearchSet] = useState('');
+
   const handleSearch = (set: string) => {
     setSearchSet(set);
   };
 
-  const filteredLibrary =
-    searchSet.trim() === ""
-      ? Object.values(library)
-      : Object.values(library).filter((playlist) =>
-          playlist.title.toLowerCase().includes(searchSet.toLowerCase())
-        );
+  const filteredLibrary = searchSet.trim() === ''
+  ? Object.values(library)
+  : Object.values(library).filter((playlist) =>
+      playlist.title.toLowerCase().includes(searchSet.toLowerCase())
+    );
+  // console.log(filteredLibrary)
 
-  const handleNavigation = (playlistId: string) => {
-    const playlist = library[playlistId];
+  
+  const handleNavigation = async (playlist: PlaylistType) => {
     if (playlist) {
       setCurrPlaylist(playlist);
       navigation.navigate("DeckPreview");
     }
   };
+
+  const handleUserSignOut = () => {
+    handleLogout();
+    navigation.navigate("LoginScreen");
+  }
 
   const [playlistName, setPlaylistName] = useState("");
 
@@ -67,36 +82,19 @@ export default function LibraryScreen({ navigation, route }: any) {
   const handleCancel = () => {
     setIsAddingVisible(false);
   };
-  const handleOpenAdd = () => {
-    // Generate a new ID for the playlist
-    const newPlaylistId = generateId();
-
-    // Create a new playlist object with the ID
-    const newPlaylist = {
-      id: newPlaylistId,
-      title: "New Playlist",
-      playlist: [],
-    };
-
+  const handleOpenAdd = async () => {
     // Add the new playlist to the context
-    addPlaylist(newPlaylist);
-
+    const newPlaylist = await addPlaylist();
+    
     // Update the current playlist to the new one
     setCurrPlaylist(newPlaylist);
-
+    
     // Navigate to DeckPreview with the new playlist's ID
-    navigation.navigate("DeckPreview", { playlistId: newPlaylistId });
+    navigation.navigate("DeckPreview", { playlistId: newPlaylist.id });
   };
 
-  const profileColors = [
-    "#D27FEF",
-    "#38DAEF",
-    "#FF454C",
-    "#7F9CEF",
-    "#FD9960",
-    "#F3E565",
-  ];
 
+  const profileColors = ["#D27FEF", "#38DAEF", "#FF454C", "#7F9CEF", "#FD9960", "#F3E565"];
   const { theme } = useTheme();
   const libStyles = StyleSheet.create({
     container: {
@@ -115,7 +113,7 @@ export default function LibraryScreen({ navigation, route }: any) {
       alignItems: "flex-start",
       paddingHorizontal: 15,
       paddingVertical: 30,
-      paddingTop: 30,
+      paddingTop: 30, 
       paddingBottom: 10,
     },
     headerText: {
@@ -150,9 +148,9 @@ export default function LibraryScreen({ navigation, route }: any) {
       // backgroundColor: theme.colors.icons,
       marginHorizontal: theme.spacing.library.iconMarginHorizontal,
       marginLeft: 0,
-      borderTopLeftRadius: 9,
+      borderTopLeftRadius: 9, 
       borderBottomLeftRadius: 6,
-      position: "absolute",
+      position: 'absolute',
       left: 0,
       top: 0,
       bottom: 0,
@@ -260,9 +258,9 @@ export default function LibraryScreen({ navigation, route }: any) {
       paddingLeft: 10,
     },
     buttonGroup: {
-      flexDirection: "row",
-      justifyContent: "flex-end",
-      alignItems: "center",
+      flexDirection: 'row',
+      justifyContent: 'flex-end',
+      alignItems: 'center',
     },
     createPlaylistButton: {
       margin: theme.spacing.library.playlistPadding,
@@ -283,27 +281,30 @@ export default function LibraryScreen({ navigation, route }: any) {
     },
     bottomSection: {
       flex: 1,
-      backgroundColor: theme.colors.listBackground,
+      backgroundColor: theme.colors.listBackground, 
     },
     topSection: {
       backgroundColor: theme.colors.backgroundColor,
-    },
+    }
   });
 
   return (
     <SafeAreaView style={libStyles.container}>
       <View style={libStyles.topSection}>
         <View style={libStyles.headerContainer}>
-          <ProfilePicture />
-          <Text style={libStyles.headerText}>Library</Text>
-          <View style={libStyles.buttonGroup}>
-            <TouchableOpacity onPress={handleOpenAdd}>
-              <AddButton />
-            </TouchableOpacity>
-            <GearButton />
-          </View>
+        <ProfilePicture />
+        <Text style={libStyles.headerText}>Library</Text>
+        <View style={libStyles.buttonGroup}>
+          <TouchableOpacity onPress={handleOpenAdd}>
+            <AddButton />
+          </TouchableOpacity>
+          <GearButton />
         </View>
-
+        </View> 
+        {/* TODO: PLEASE DELETE WHEN DONE; THIS IS TO TEST IF A USER IS LOGGED IN */}
+        <Text>{user?.email}</Text>
+        <Pressable onPress={handleUserSignOut}><Text>Sign Out</Text></Pressable>
+        {/* TODO: ^^^ DELETE */}
         <View style={libStyles.searchContainer}>
           <AntDesign name="search1" style={libStyles.searchIcon} />
           <TextInput
@@ -315,7 +316,6 @@ export default function LibraryScreen({ navigation, route }: any) {
           />
         </View>
       </View>
-
       <ScrollView
         style={libStyles.bottomSection}
         contentContainerStyle={libStyles.scrollView}
@@ -332,20 +332,10 @@ export default function LibraryScreen({ navigation, route }: any) {
             <TouchableOpacity
               key={`playlist-${item.id}`} // use the unique id as key
               style={[libStyles.playlist, theme.shadow.default]}
-              onPress={() => handleNavigation(item.id)} // pass the id to handle navigation
+              onPress={() => handleNavigation(library[item.id])} // pass the id to handle navigation
             >
-              <View
-                style={[
-                  libStyles.iconContainer,
-                  { backgroundColor: itemColor },
-                ]}
-              >
-                {/* <MaterialCommunityIcons
-                  size={44}
-                  name="access-point"
-                  color="black"
-                /> */}
-              </View>
+              <View style={[libStyles.iconContainer, { backgroundColor: itemColor}]}></View>
+
               <View style={libStyles.playlistInfo}>
                 <Text style={libStyles.playlistName}>{item.title}</Text>
                 <Text style={libStyles.playlistWordCount}>
@@ -359,3 +349,4 @@ export default function LibraryScreen({ navigation, route }: any) {
     </SafeAreaView>
   );
 }
+

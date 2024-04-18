@@ -19,9 +19,12 @@ import PreviewCard from "./PreviewCard";
 import { FlashCardType } from "../../../utils/types";
 import { useTheme } from "../../../utils/contexts/ThemeContext";
 
+import Search from "./Search";
+
 // For Korean regex
 import * as Hangul from "hangul-js";
-import Search from "./Search";
+import { addNewCardToDeck } from "../../../utils/services/decksFunctions";
+
 
 type DeckPreviewProps = {
   navigation: any;
@@ -34,7 +37,7 @@ export default function DeckPreview({ navigation, route, withinModal = false }: 
   const flashcards = currPlaylist ? currPlaylist.playlist : [];
 
   // State to track the selected card for editing
-  const [selectedCardId, setSelectedCardId] = useState<string | null>(null);
+  const [selectedCardId, setSelectedCardId] = useState<number | null>(null);
   const [isAddingVisible, setIsAddingVisible] = useState(false);
 
   const handleCancel = () => {
@@ -51,9 +54,12 @@ export default function DeckPreview({ navigation, route, withinModal = false }: 
         id: generateId(), // Generate a unique ID for the new flashcard
         term: koreanWord,
         definition: englishWord,
+        createdAt: -1,  // TODO: give proper time
+        passes: 0,
+        fails: 0
       };
 
-      addFlashcard(currPlaylist.id, newFlashcard);
+      addFlashcard(currPlaylist, newFlashcard);
 
       // Close the modal and reset the form fields
       setIsAddingVisible(false);
@@ -72,11 +78,12 @@ export default function DeckPreview({ navigation, route, withinModal = false }: 
     setSearchTerm(term);
   };
 
-  const flashcardsArray = currPlaylist
-    ? Object.values(currPlaylist.playlist).sort(
+  const flashcardsArray = Object.values(currPlaylist!.playlist)
+    ? Object.values(currPlaylist!.playlist).sort(
         (a, b) => b.createdAt - a.createdAt
       )
     : [];
+  // console.log("flashcardsArray: ", flashcardsArray)
 
   // Filtering Flashcard by korean / english search term
 
@@ -92,6 +99,7 @@ export default function DeckPreview({ navigation, route, withinModal = false }: 
 
   // Use this filtered array for your FlatList:
   const filteredFlashcards = filterFlashcards(flashcardsArray);
+  // console.log("filtered fc: ", filteredFlashcards)
 
   const AddCardButton = () => {
     return (
@@ -109,7 +117,7 @@ export default function DeckPreview({ navigation, route, withinModal = false }: 
   };
 
   // Function to handle card press
-  const handleCardPress = (cardId: string) => {
+  const handleCardPress = (cardId: number) => {
     setSelectedCardId(selectedCardId === cardId ? null : cardId);
     setIsAddingVisible(false);
   };
@@ -310,6 +318,7 @@ export default function DeckPreview({ navigation, route, withinModal = false }: 
       fontFamily: theme.typography.fonts.boldFont,
     },
     addCardText: {
+
       fontFamily: theme.typography.fonts.semiboldFont,
       fontSize: theme.typography.deckPreview.addCardtextSize,
     },
@@ -356,14 +365,14 @@ export default function DeckPreview({ navigation, route, withinModal = false }: 
           <Text style={styles.addCardText}>Add Card +</Text>
         </TouchableOpacity>
         
-        {filteredFlashcards.map((item) => (
+        {filteredFlashcards.map((item, index) => (
           <View key={item.id}>
             <PreviewCard
               term={item.term}
               definition={item.definition}
-              onPress={() => handleCardPress(item.id)}
+              onPress={() => handleCardPress(index)}
             />
-            {selectedCardId === item.id && (
+            {selectedCardId === index && (
               <AddCardModal
                 isVisible={selectedCardId !== null}
                 onAdd={handleAdd}
@@ -421,7 +430,11 @@ export default function DeckPreview({ navigation, route, withinModal = false }: 
       </View>
 
       {/* Search word input */}
-      <Search handleSearchWord={handleSearchWord} searchTerm={searchTerm} />
+      <Search 
+        handleSearchWord={handleSearchWord} 
+        searchTerm={searchTerm} 
+      />
+
 
       {/* Adding new card modal */}
       <AddCardModal
@@ -437,17 +450,21 @@ export default function DeckPreview({ navigation, route, withinModal = false }: 
       <FlatList
         // Filtering word using filter()
         data={filteredFlashcards}
-        renderItem={({ item }) => (
+        renderItem={({ item, index }) => (
           // The modal is now tied to the selectedCardId state.
           // It will open for the card that was last pressed.
           <View>
             <PreviewCard
+              // key={item.id}
+              key={index}
               term={item.term}
               definition={item.definition}
-              onPress={() => handleCardPress(item.id)}
+              // onPress={() => handleCardPress(item.id)}
+              onPress={() => handleCardPress(index)}
             />
 
-            {selectedCardId === item.id && (
+            {/* {selectedCardId === item.id && ( */}
+            {selectedCardId === index && (
               <AddCardModal
                 isVisible={selectedCardId !== null}
                 onAdd={handleAdd} // Used for adding a new card
@@ -458,6 +475,7 @@ export default function DeckPreview({ navigation, route, withinModal = false }: 
                 koreanWordInitial={item.term}
                 englishWordInitial={item.definition}
                 flashcardId={item.id}
+                flashcardIndex={index}
                 isEditMode={true}
               />
             )}

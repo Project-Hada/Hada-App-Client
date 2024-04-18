@@ -238,6 +238,7 @@ const PreviewCard: React.FC<PreviewCardProps> = ({
     <TouchableOpacity onPress={onPress}>
       <View style={[styles.listItem, theme.shadow.default]}>
         <View style={[styles.previewBadge, {backgroundColor: getColorForTerm(term)}]}>
+
           <Text style={styles.previewBadgeText}>{term.slice(0, 1)}</Text>
         </View>
         <View style={styles.termContainer}>

@@ -46,10 +46,10 @@ export default function FlashCard({
       height: "100%",
       borderRadius: spacing.flashcard.borderRadius,
       backgroundColor: theme.colors.container,
-      justifyContent: "center",
-      alignItems: "center",
-      backfaceVisibility: "hidden",
-      shadowColor: "#171717",
+      justifyContent: 'center',
+      alignItems: 'center',
+      backfaceVisibility: 'hidden',
+      shadowColor: '#171717',
     },
     termContainer: {},
     term: {
@@ -124,6 +124,7 @@ export default function FlashCard({
 
   return (
     <Pressable onPress={triggerFlip} style={styles.flashCardPressableContainer}>
+
       <Animated.View
         style={[styles.flashCard, frontAnimatedStyle, theme.shadow.default]}
       >
@@ -143,6 +144,7 @@ export default function FlashCard({
       </Animated.View>
 
       <Animated.View
+
         style={[
           styles.flashCard,
           backAnimatedStyle,
@@ -162,3 +164,4 @@ export default function FlashCard({
     </Pressable>
   );
 }
+

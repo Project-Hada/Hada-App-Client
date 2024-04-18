@@ -2,24 +2,25 @@
 import React, { useContext, useState } from "react";
 import { Pressable, View, Text, TextInput, StyleSheet } from "react-native";
 import { useTheme } from "../../../utils/contexts/ThemeContext";
-import { FlashCardType } from "../../../utils/types";
+import { FlashCardType, PlaylistType } from "../../../utils/types";
 import FlashcardContext from "../../../utils/contexts/LibraryContext";
 
 interface AddCardModalProps {
   isVisible: boolean;
   onAdd: (koreanWord: string, englishWord: string) => void;
   onUpdate?: (
-    playlistId: string,
-    flashcardId: string,
+    playlist: PlaylistType,
+    flashcardId: number,
     updatedFlashcard: FlashCardType
   ) => void;
-  onDelete?: (playlistId: string, flashcardId: string) => void;
+  onDelete?: (playlist: PlaylistType, flashcardId: number) => void;
   onCancel: () => void;
   koreanWordInitial: string;
   englishWordInitial: string;
   isEditMode: boolean;
   flashcardId?: string;
   createdAt?: string;
+  flashcardIndex?:number
 }
 
 const AddCardModal: React.FC<AddCardModalProps> = ({
@@ -33,6 +34,7 @@ const AddCardModal: React.FC<AddCardModalProps> = ({
   isEditMode = false,
   flashcardId,
   createdAt,
+  flashcardIndex
 }) => {
   const { theme } = useTheme(); // this needs to be at the top
 
@@ -42,16 +44,17 @@ const AddCardModal: React.FC<AddCardModalProps> = ({
   const { currPlaylist } = useContext(FlashcardContext);
 
   const handleConfirm = () => {
-    if (isEditMode && flashcardId) {
+    // console.log("ID: ", flashcardId, "Index: ", flashcardIndex);
+    if (isEditMode && flashcardIndex != null) {
       // Construct the updated flashcard object
       const updatedFlashcard: FlashCardType = {
-        id: flashcardId,
+        // id: flashcardId,
         term: koreanWord,
         definition: englishWord,
         createdAt,
       };
       // Assuming the playlist ID is available in this scope as `playlistId`
-      onUpdate!(currPlaylist!.id, flashcardId, updatedFlashcard);
+      onUpdate!(currPlaylist!, flashcardIndex, updatedFlashcard);
     } else {
       onAdd(koreanWord, englishWord);
       setKoreanWord("");
@@ -60,8 +63,8 @@ const AddCardModal: React.FC<AddCardModalProps> = ({
   };
 
   const handleDelete = () => {
-    if (isEditMode && flashcardId) {
-      onDelete?.(currPlaylist!.id, flashcardId);
+    if (isEditMode && flashcardIndex != null) {
+      onDelete!(currPlaylist!, flashcardIndex);
     }
     // Close modal
   };

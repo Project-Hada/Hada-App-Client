@@ -1,7 +1,7 @@
 import { LibraryState } from "../utils/contexts/LibraryContext";
 import { FlashCardType, PlaylistType } from "../utils/types";
 
-const flashCards1: FlashCardType[] = [
+  const flashCards1: FlashCardType[] = [
     {
       "term": "나무",
       "definition": "tree"
@@ -152,7 +152,6 @@ const flashCards1: FlashCardType[] = [
         "definition": "shooting star"
       }
   ]
-
 
   const greetingCards: FlashCardType[] = [
     {
@@ -457,7 +456,8 @@ const flashCards1: FlashCardType[] = [
       "term": "동료",
       "definition": "colleague"
     }
-  ]
+  ];
+
   const workTravelCards: FlashCardType[] = [
     {
         "term": "업무 분담",
@@ -548,9 +548,7 @@ const flashCards1: FlashCardType[] = [
       "definition": "colleague"
     }
   ];
-  
-  
-  
+
   const playlistData: PlaylistType[] = [
     {
         title: "Nature Words 🌱",
@@ -572,7 +570,7 @@ const flashCards1: FlashCardType[] = [
       title: "Small Set 🧛‍♀️",
       playlist: smallSet
     }
-];
+  ];
 
 const generateId = () => Math.random().toString(36).substr(2, 9);
 
