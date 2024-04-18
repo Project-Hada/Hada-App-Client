@@ -38,7 +38,7 @@ export default function DeckPreview({ navigation, route }: any) {
   const flashcards = currPlaylist ? currPlaylist.playlist : [];
 
   // State to track the selected card for editing
-  const [selectedCardId, setSelectedCardId] = useState<string | null>(null);
+  const [selectedCardId, setSelectedCardId] = useState<number | null>(null);
   const [isAddingVisible, setIsAddingVisible] = useState(false);
 
   const handleCancel = () => {
@@ -118,7 +118,7 @@ export default function DeckPreview({ navigation, route }: any) {
   };
 
   // Function to handle card press
-  const handleCardPress = (cardId: string) => {
+  const handleCardPress = (cardId: number) => {
     setSelectedCardId(selectedCardId === cardId ? null : cardId);
     setIsAddingVisible(false);
   };
@@ -379,10 +379,12 @@ export default function DeckPreview({ navigation, route }: any) {
               key={index}
               term={item.term}
               definition={item.definition}
-              onPress={() => handleCardPress(item.id)}
+              // onPress={() => handleCardPress(item.id)}
+              onPress={() => handleCardPress(index)}
             />
 
-            {selectedCardId === item.id && (
+            {/* {selectedCardId === item.id && ( */}
+            {selectedCardId === index && (
               <AddCardModal
                 isVisible={selectedCardId !== null}
                 onAdd={handleAdd} // Used for adding a new card
