@@ -1,4 +1,4 @@
-import React, { useContext, useState } from "react";
+import React, { useContext, useRef, useState } from "react";
 import {
   View,
   Text,
@@ -7,6 +7,7 @@ import {
   SafeAreaView,
   TouchableOpacity,
   TextInput,
+  Animated,
 } from "react-native";
 import {
   AntDesign,
@@ -24,6 +25,9 @@ import { useTheme } from "../../utils/contexts/ThemeContext";
 import { typography } from "../theme/Typography";
 import GearButton from "../GearButton";
 import ProfilePicture from "./ProfilePicture";
+import { Modalize } from "react-native-modalize";
+import GearModal from "../GearModal";
+import { Swipeable } from "react-native-gesture-handler";
 
 type PlaylistItemType = {
   name: string;
@@ -38,7 +42,12 @@ type LibraryScreenProps = {
 export default function LibraryScreen({ navigation, route }: any) {
   // Library Context
   const { library, setCurrPlaylist, addPlaylist } = useContext(LibraryContext);
+  const modalizeRef = useRef<Modalize>(null);
   const flashcards = flashCards;
+
+  const openModal = () => {
+    modalizeRef.current?.open();
+  };
 
   const [searchSet, setSearchSet] = useState("");
   const handleSearch = (set: string) => {
@@ -300,7 +309,7 @@ export default function LibraryScreen({ navigation, route }: any) {
             <TouchableOpacity onPress={handleOpenAdd}>
               <AddButton />
             </TouchableOpacity>
-            <GearButton />
+            <GearButton openModal={openModal}/>
           </View>
         </View>
 
@@ -333,7 +342,7 @@ export default function LibraryScreen({ navigation, route }: any) {
               key={`playlist-${item.id}`} // use the unique id as key
               style={[libStyles.playlist, theme.shadow.default]}
               onPress={() => handleNavigation(item.id)} // pass the id to handle navigation
-            >
+            >       
               <View
                 style={[
                   libStyles.iconContainer,
@@ -356,6 +365,7 @@ export default function LibraryScreen({ navigation, route }: any) {
           );
         })}
       </ScrollView>
+      <GearModal ref={modalizeRef} />
     </SafeAreaView>
   );
 }
