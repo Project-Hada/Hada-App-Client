@@ -389,11 +389,12 @@ export default function LibraryScreen({ navigation, route }: any) {
     <SafeAreaView style={libStyles.container}>
       <View style={libStyles.topSection}>
         <View style={libStyles.headerContainer}>
-          <ProfilePicture />
-
-          <View>
-            <Text style={libStyles.headerTextT}>Your</Text>
-            <Text style={libStyles.headerText}>Library</Text>
+          <View style={{ flexDirection: "row", gap: 4 }}>
+            <ProfilePicture />
+            <View>
+              <Text style={libStyles.headerTextT}>Your</Text>
+              <Text style={libStyles.headerText}>Library</Text>
+            </View>
           </View>
           <View style={libStyles.buttonGroup}>
             <TouchableOpacity onPress={handleOpenAdd}>

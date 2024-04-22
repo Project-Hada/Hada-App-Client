@@ -1,4 +1,4 @@
-import React, { useContext, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import {
   StyleSheet,
   View,
@@ -43,6 +43,27 @@ export default function DeckPreview({
   // State to track the selected card for editing
   const [selectedCardId, setSelectedCardId] = useState<number | null>(null);
   const [isAddingVisible, setIsAddingVisible] = useState(false);
+
+  useEffect(() => {
+    // Ensure that currPlaylist is not null before proceeding
+    if (currPlaylist) {
+      const playlist = currPlaylist.playlist;
+
+      Object.keys(playlist).forEach((flashcardKey) => {
+        const flashcard = playlist[flashcardKey];
+
+        // Check if the flashcard has an empty or undefined id
+        if (!flashcard.id || flashcard.id === "") {
+          // The flashcard doesn't have an ID, generate a new one
+          const newId = generateId();
+          const updatedFlashcard = { ...flashcard, id: newId };
+
+          // Update the flashcard using the provided updateFlashcard function
+          updateFlashcard(currPlaylist, flashcardKey, updatedFlashcard);
+        }
+      });
+    }
+  }, [currPlaylist, updateFlashcard]);
 
   const handleCancel = () => {
     setIsAddingVisible(false);

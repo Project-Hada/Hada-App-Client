@@ -23,6 +23,7 @@ import {
   getAllDecksByUID,
   getOneDeckByDID,
   testFunction,
+  updateBleedQueue,
   updateCardInDeck,
 } from "../services/decksFunctions";
 
@@ -188,7 +189,7 @@ export const LibraryProvider: React.FC<PropsWithChildren<{}>> = ({
    */
   const updateFlashcard = (
     playlist: PlaylistType,
-    flashcardId: number,
+    flashcardId: string,
     updatedFlashcard: FlashCardType
   ) => {
     updateCardInDeck(
@@ -263,6 +264,7 @@ export const LibraryProvider: React.FC<PropsWithChildren<{}>> = ({
     updatedPlaylistData: Partial<PlaylistType>
   ) => {
     const playlistToUpdate = library[playlistId];
+    console.log("3333333333333333333333333:", updatedPlaylistData);
     if (playlistToUpdate) {
       // Create a new playlist object with the updated data
       const updatedPlaylist = {
@@ -270,6 +272,11 @@ export const LibraryProvider: React.FC<PropsWithChildren<{}>> = ({
         ...updatedPlaylistData,
         playlist: { ...playlistToUpdate.playlist }, // Ensure the flashcards remain unchanged
       };
+
+      if (updatedPlaylist.bleedQueue)
+        updateBleedQueue(playlistId, updatedPlaylist.bleedQueue);
+
+      console.log("22222222222222222222222", updatedPlaylist);
 
       // Update the library state with the modified playlist
       setLibrary((prevLibrary) => ({

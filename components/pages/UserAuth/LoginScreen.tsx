@@ -179,9 +179,9 @@ export function LoginScreen({ navigation, route }: any) {
         )}
 
         <View style={loginStyle.loginForgotContainer}>
-          <Pressable>
+          {/* <Pressable>
             <Text style={loginStyle.loginForgotText}>Forgot Password</Text>
-          </Pressable>
+          </Pressable> */}
         </View>
 
         {/* Custom Register */}
