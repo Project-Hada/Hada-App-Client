@@ -5,7 +5,11 @@ import { StyleSheet, TouchableOpacity, View } from 'react-native';
 import { Modalize } from 'react-native-modalize';
 import GearModal from './GearModal';
 
-const GearButton = ({ openModal }) => {
+interface GearButtonProps {
+  openModal: () => void;
+}
+
+const GearButton: React.FC<GearButtonProps> = ({ openModal }) => {
   const { toggleTheme } = useTheme();
   const modalizeRef = useRef<Modalize>(null); 
 

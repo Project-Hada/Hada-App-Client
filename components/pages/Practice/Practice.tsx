@@ -440,7 +440,7 @@ export default function PracticeScreen({ navigation, route }: any) {
               </TouchableOpacity>
               <Text style={styles.headerTitle}>{currPlaylist?.title}</Text>
               <View style={styles.gearButton}>
-                <GearButton />
+                <GearButton openModal={undefined} />
               </View>
             </View>
             
