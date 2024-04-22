@@ -35,13 +35,13 @@ const ProfilePicture = () => {
     }
   };
   return (
-    <TouchableOpacity onPress={pickImage}>
+    <TouchableOpacity onPress={pickImage} style={{ marginTop: -4 }}>
       {profileImage ? (
         <Image
           source={{ uri: profileImage }}
           style={{
-            width: 50,
-            height: 50,
+            width: 60,
+            height: 60,
             borderRadius: 50,
             borderWidth: 1,
             borderColor: theme.colors.listBackground,
@@ -50,7 +50,7 @@ const ProfilePicture = () => {
       ) : (
         <MaterialCommunityIcons
           name="account-circle-outline"
-          size={50}
+          size={60}
           color={theme.colors.text}
         />
       )}

@@ -149,8 +149,8 @@ const SettingsScreen: React.FC<SettingsScreenProps> = ({
     previewImage: {
       width: "100%",
       height: "85%",
-      borderTopLeftRadius: 8.5,
-      borderTopRightRadius: 8.5,
+      borderTopLeftRadius: 8,
+      borderTopRightRadius: 6,
     },
     themeContainer: {},
     themeSelect: {
@@ -208,7 +208,7 @@ const SettingsScreen: React.FC<SettingsScreenProps> = ({
             }}
             onPress={() => navigation.goBack()}
           >
-            <View style={[styles.backArrowContainer, theme.shadow.default]}>
+            <View style={[theme.shadow.default, styles.backArrowContainer]}>
               <AntDesign name="arrowleft" size={26} color="black" />
             </View>
           </TouchableOpacity>

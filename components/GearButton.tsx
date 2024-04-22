@@ -1,7 +1,7 @@
 import React, { useRef } from "react";
 import { useTheme } from "../utils/contexts/ThemeContext";
 import { MaterialCommunityIcons, Octicons } from "@expo/vector-icons";
-import { StyleSheet, TouchableOpacity, View } from "react-native";
+import { StyleSheet, TouchableOpacity, View, Image } from "react-native";
 import { Modalize } from "react-native-modalize";
 import GearModal from "./GearModal";
 
@@ -19,8 +19,8 @@ const GearButton: React.FC<GearButtonProps> = ({ openModal, navigation }) => {
     gearButtonContainer: {
       position: "relative",
       padding: 8,
-      marginLeft: 4,
     },
+    icon: { width: 35, height: 35 },
   });
 
   const onOpen = () => {
@@ -32,7 +32,7 @@ const GearButton: React.FC<GearButtonProps> = ({ openModal, navigation }) => {
     <>
       <View style={styles.gearButtonContainer}>
         <TouchableOpacity onPress={() => navigation.navigate("SettingsScreen")}>
-          <Octicons name="gear" size={28} color={theme.colors.gearButton} />
+          <Image source={require("./settings.png")} style={styles.icon} />
         </TouchableOpacity>
       </View>
       <GearModal ref={modalizeRef} />

@@ -24,6 +24,7 @@ import Search from "./Search";
 // For Korean regex
 import * as Hangul from "hangul-js";
 import { addNewCardToDeck } from "../../../utils/services/decksFunctions";
+import GearButton from "../../GearButton";
 
 type DeckPreviewProps = {
   navigation: any;
@@ -339,6 +340,11 @@ export default function DeckPreview({
       borderColor: theme.colors.border,
       backgroundColor: theme.colors.accent,
     },
+    rightControls: {
+      flexDirection: "row",
+      justifyContent: "center",
+      alignItems: "center",
+    },
   });
 
   // Use in DeckPreviewModal to prevent VirtualizedLists error
@@ -424,9 +430,12 @@ export default function DeckPreview({
             </View>
           </View>
           {/* AddButton container */}
-          <TouchableOpacity onPress={handleOpenAdd}>
-            <AddButton />
-          </TouchableOpacity>
+          <View style={styles.rightControls}>
+            <TouchableOpacity onPress={handleOpenAdd}>
+              <AddButton />
+            </TouchableOpacity>
+            <GearButton navigation={navigation} />
+          </View>
           {/* further discussion needed on adding this with the other add option */}
         </View>
       </View>

@@ -147,10 +147,11 @@ export default function LibraryScreen({ navigation, route }: any) {
     },
     headerText: {
       fontFamily: theme.typography.fonts.boldFont,
-      fontSize: 30,
+      fontSize: 26,
       color: theme.colors.text,
       marginRight: 100,
     },
+    headerTextT: { fontSize: 20, marginBottom: -2 },
     scrollView: {
       width: "100%",
       justifyContent: "center",
@@ -166,9 +167,10 @@ export default function LibraryScreen({ navigation, route }: any) {
       borderRadius: theme.spacing.borderRadius,
       borderColor: theme.colors.border,
       paddingVertical: theme.spacing.library.verticalPadding,
-      paddingLeft: 65,
+      paddingLeft: 76,
       marginBottom: theme.spacing.library.marginBottom,
       marginHorizontal: theme.spacing.library.marginHorizontal,
+      height: 76,
     },
     iconContainer: {
       // justifyContent: "center",
@@ -183,7 +185,7 @@ export default function LibraryScreen({ navigation, route }: any) {
       left: 0,
       top: 0,
       bottom: 0,
-      width: 60,
+      width: 64,
       // height: 60,
     },
     playlistInfo: {
@@ -255,9 +257,10 @@ export default function LibraryScreen({ navigation, route }: any) {
       borderColor: theme.colors.border,
     },
     playlistName: {
-      fontFamily: theme.typography.fonts.boldFont,
+      fontFamily: theme.typography.fonts.semiboldFont,
       fontSize: theme.typography.library.playlistTitleSize,
       color: theme.colors.text,
+      paddingBottom: 2,
     },
     playlistWordCount: {
       fontFamily: theme.typography.fonts.mediumFont,
@@ -387,7 +390,11 @@ export default function LibraryScreen({ navigation, route }: any) {
       <View style={libStyles.topSection}>
         <View style={libStyles.headerContainer}>
           <ProfilePicture />
-          <Text style={libStyles.headerText}>Library</Text>
+
+          <View>
+            <Text style={libStyles.headerTextT}>Your</Text>
+            <Text style={libStyles.headerText}>Library</Text>
+          </View>
           <View style={libStyles.buttonGroup}>
             <TouchableOpacity onPress={handleOpenAdd}>
               <AddButton />

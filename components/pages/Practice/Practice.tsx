@@ -293,7 +293,7 @@ export default function PracticeScreen({ navigation, route }: any) {
       paddingVertical: 28,
       gap: 16,
       justifyContent: "center",
-      marginTop: 5
+      marginTop: 5,
     },
     flashCardAnimated: {
       backgroundColor: "transparent",
@@ -317,7 +317,7 @@ export default function PracticeScreen({ navigation, route }: any) {
       backgroundColor: "transparent",
       width: "100%",
       paddingHorizontal: 36,
-      marginTop: 30
+      marginTop: 30,
     },
     bottomControls: {
       flex: 1.6,
@@ -374,7 +374,7 @@ export default function PracticeScreen({ navigation, route }: any) {
       alignItems: "center",
       justifyContent: "space-between",
       width: "100%",
-      marginTop: 10
+      marginTop: 10,
     },
     centerControl: {
       flex: 1,
@@ -382,7 +382,7 @@ export default function PracticeScreen({ navigation, route }: any) {
       justifyContent: "center",
       alignItems: "center",
       marginBottom: -30,
-      marginTop: -10
+      marginTop: -10,
     },
     title: {
       fontSize: 20,
@@ -397,7 +397,7 @@ export default function PracticeScreen({ navigation, route }: any) {
       fontFamily: theme.typography.fonts.semiboldFont,
       fontSize: theme.typography.deckPreview.deckTitleSize,
       color: theme.colors.text,
-      marginLeft: -100
+      marginLeft: -100,
     },
     gearButton: {
       marginBottom: -20,
@@ -446,41 +446,50 @@ export default function PracticeScreen({ navigation, route }: any) {
               </TouchableOpacity>
               <Text style={styles.headerTitle}>{currPlaylist?.title}</Text>
               <View style={styles.gearButton}>
-                <GearButton openModal={openModal} />
+                <GearButton navigation={navigation} />
               </View>
             </View>
-            
+
             <View style={styles.progress}>{renderProgressIndicators()}</View>
             <Animated.View
+              style={[
+                styles.counter,
+                {
+                  borderColor: theme.colors.subtext,
+                  marginLeft: 303,
+                  marginTop: -10,
+                },
+              ]}
+            >
+              <Animated.Text
                 style={[
-                  styles.counter,
-                  { borderColor: theme.colors.subtext, marginLeft: 303, marginTop: -10 },
+                  styles.counterText,
+                  counterTextStyle,
+                  { color: theme.colors.subtext },
                 ]}
               >
-                <Animated.Text
-                  style={[
-                    styles.counterText,
-                    counterTextStyle,
-                    { color: theme.colors.subtext },
-                  ]}
-                >
-                  {`${numOfLoops}x`}
-                </Animated.Text>
-              </Animated.View>
+                {`${numOfLoops}x`}
+              </Animated.Text>
+            </Animated.View>
 
-              <View style={[{marginTop: -45}]}>
-                {/* Card Icon */}
-                <MaterialCommunityIcons
-                  name="cards-variant"
-                  size={22}
-                  color="#B6B6B6"
-                />
-                <Text style={[styles.wordCount, {marginLeft: 20, marginTop: -20, marginBottom: 10}]}>
-                  {Object.keys(currPlaylist.playlist).length} words
-                </Text>
-              </View>
+            <View style={[{ marginTop: -45 }]}>
+              {/* Card Icon */}
+              <MaterialCommunityIcons
+                name="cards-variant"
+                size={22}
+                color="#B6B6B6"
+              />
+              <Text
+                style={[
+                  styles.wordCount,
+                  { marginLeft: 20, marginTop: -20, marginBottom: 10 },
+                ]}
+              >
+                {Object.keys(currPlaylist.playlist).length} words
+              </Text>
             </View>
-          
+          </View>
+
           <View style={styles.flashCardContainer}>
             <FlashCard
               term={dynamicHead!.card!.term}
@@ -530,7 +539,7 @@ export default function PracticeScreen({ navigation, route }: any) {
               <FontAwesome6 name="circle-check" size={44} color="black" />
             </TouchableOpacity>
           </View>
-          <DeckPreviewModal/>
+          <DeckPreviewModal />
         </>
       )}
     </SafeAreaView>
