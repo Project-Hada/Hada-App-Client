@@ -15,6 +15,8 @@ export function LoginScreen({ navigation, route }: any) {
   const [passwordInput, setPasswordInput] = useState('');
   
   const [error, setError] = useState('');
+  const emailTest = new RegExp(/^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/);
+
   
   const { user } = useContext(LibraryContext);
   useEffect(() => { 
@@ -24,13 +26,22 @@ export function LoginScreen({ navigation, route }: any) {
   
   const handleSubmitForLogin = async () => {
     try {
-      const response = await signInWithEmailAndPassword(auth, emailInput, passwordInput)
-      console.log("sign in as ", response)
-      navigation.navigate("LibraryScreen")
+      if (emailInput === '') 
+        setError("email cannot be empty")
+      else if (!emailTest.test(emailInput)) 
+        setError("email format: abc@xyz.com")
+      else if (passwordInput === '') 
+        setError("password cannot be empty")
+      else if (passwordInput.length < 9) 
+        setError("must be at least 9 characters")
+      else {
+        const response = await signInWithEmailAndPassword(auth, emailInput, passwordInput)
+        console.log("sign in as ", response)
+        navigation.navigate("LibraryScreen")
+      }
     }
     catch (error) {
-      console.log(error)
-      setError("Something went wrong. Try again.")
+      setError("Wrong Email or Password")
     }
   }
 
@@ -114,7 +125,6 @@ export function LoginScreen({ navigation, route }: any) {
       <View style={loginStyle.loginContainer}>
         <Text style={loginStyle.loginTitle}> LOGIN </Text>
 
-        {(error !== "") && <Text>{error}</Text>}
 
         {/* Custom Login */}
         <TextInput
@@ -125,6 +135,12 @@ export function LoginScreen({ navigation, route }: any) {
           value={emailInput}
         />
 
+      {
+        ((error === "email cannot be empty") || 
+        (error === "email format: abc@xyz.com")) &&
+        <Text style={{width: '80%', justifyContent: 'flex-start', color: '#FF454C', marginBottom: -21}}>{error}</Text>
+      }
+
         <TextInput
           secureTextEntry={true}
           style={loginStyle.loginInput}
@@ -132,7 +148,14 @@ export function LoginScreen({ navigation, route }: any) {
           placeholder='Password'
           placeholderTextColor="#D3D3D3" 
           value={passwordInput}
-        />
+          />
+
+        {(
+          (error === "password cannot be empty") ||
+          (error === "must be at least 9 characters") ||
+          (error === "Wrong Email or Password")) &&
+          <Text style={{ width: '80%', justifyContent: 'flex-start',color: '#FF454C'}}>{error}</Text>
+        }
 
         <View style={loginStyle.loginForgotContainer}>
           <Pressable >

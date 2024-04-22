@@ -14,26 +14,34 @@ export function RegisterScreen({ navigation, route }: any) {
   const [confirmPasswordInput, setConfirmPasswordInput] = useState('');
 
   const [error, setError] = useState('');
+  const emailTest = new RegExp(/^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/);
 
   const handleSubmitForRegister = async () => {
     try {
-      if (passwordInput != confirmPasswordInput) throw new Error("password mismatch")
-
-      createUserWithEmailAndPassword(auth, emailInput, passwordInput).then(response => {
-        console.log("register as ", response);
-        addNewUserWithID(response.user.uid, usernameInput);
-      });
-      
-      navigation.navigate("LibraryScreen")
+      if (usernameInput === '') 
+        setError("name cannot be empty")
+      else if (emailInput === '') 
+        setError("email cannot be empty")
+      else if (!emailTest.test(emailInput)) 
+        setError("email format: abc@xyz.com")
+      else if (passwordInput === ''|| confirmPasswordInput === '') 
+        setError("password cannot be empty")
+      else if (passwordInput != confirmPasswordInput) 
+        setError("password mismatch")
+      else if (passwordInput.length < 9 || confirmPasswordInput.length < 9) 
+        setError("must be at least 9 characters")
+      else
+      {
+        createUserWithEmailAndPassword(auth, emailInput, passwordInput).then(response => {
+          console.log("register as ", response);
+          addNewUserWithID(response.user.uid, usernameInput);
+        });
+        
+        navigation.navigate("LibraryScreen")
+      }
     }
     catch (error) {
       console.log(error)
-      if (error instanceof Error) {
-        setError("Passwords are mismatched. Try again.")
-      }
-      else {
-        setError("Something went wrong. Try again.")
-      }
     }
   }
 
@@ -117,10 +125,8 @@ export function RegisterScreen({ navigation, route }: any) {
       <View style={registerStyle.loginContainer}>
         <Text style={registerStyle.loginTitle}>Sign Up</Text>
 
-        {(error !== "") && <Text>{error}</Text>}
-
-        {/* Custom Login */}
-        <TextInput
+      {/* Custom Login */}
+      <TextInput
         style={registerStyle.loginInput}
         onChangeText={setUsernameInput}
         placeholder='Name'
@@ -128,15 +134,23 @@ export function RegisterScreen({ navigation, route }: any) {
         value={usernameInput}
       />
 
+      {(error === "name cannot be empty") && <Text style={{width: '80%', justifyContent: 'flex-start', color: '#FF454C', marginBottom: -21}}>{error}</Text>}
+
       <TextInput
         style={registerStyle.loginInput}
         onChangeText={setEmailInput}
         placeholder='Username'
         placeholderTextColor="#D3D3D3" 
         value={emailInput}
-      />
+        />
 
-     <TextInput
+      {
+        ((error === "email cannot be empty") || 
+        (error === "email format: abc@xyz.com")) &&
+        <Text style={{width: '80%', justifyContent: 'flex-start', color: '#FF454C', marginBottom: -21}}>{error}</Text>
+      }
+
+      <TextInput
         secureTextEntry={true}
         style={registerStyle.loginInput}
         onChangeText={setPasswordInput}
@@ -144,6 +158,14 @@ export function RegisterScreen({ navigation, route }: any) {
         placeholderTextColor="#D3D3D3" 
         value={passwordInput}
       />
+
+      {(
+        (error === "password mismatch") ||
+        (error === "password cannot be empty") ||
+        (error === "must be at least 9 characters")) &&
+        <Text style={{width: '80%', justifyContent: 'flex-start', color: '#FF454C', marginBottom: -21}}>{error}</Text>
+      }
+
       <TextInput
         secureTextEntry={true}
         style={registerStyle.loginInput}
@@ -152,6 +174,13 @@ export function RegisterScreen({ navigation, route }: any) {
         placeholderTextColor="#D3D3D3" 
         value={confirmPasswordInput}
       />
+
+      {(
+        (error === "password mismatch") ||
+        (error === "password cannot be empty") ||
+        (error === "must be at least 8 characters")) &&
+        <Text style={{width: '80%', justifyContent: 'flex-start', color: '#FF454C'}}>{error}</Text>
+      }
 
       <View style={registerStyle.loginForgotContainer}>
         <Pressable >
