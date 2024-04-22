@@ -21,6 +21,7 @@ import { useTheme } from "../../../utils/contexts/ThemeContext";
 import { CardNode, Session } from "./sessionAlgorithm";
 import DeckPreviewModal from "../DeckPreview/DeckPreviewModal";
 import GearButton from "../../GearButton";
+import { Modalize } from "react-native-modalize";
 
 type PracticeScreenProps = {
   navigation: any;
@@ -48,6 +49,11 @@ export default function PracticeScreen({ navigation, route }: any) {
   const counterScaleAnim = useRef(new Animated.Value(1)).current;
   const textColorAnim = useRef(new Animated.Value(0)).current; // Initial value for text color animation
   const [indicatorIndex, setIndicatorIndex] = useState(-1);
+  const modalizeRef = useRef<Modalize>(null);
+
+  const openModal = () => {
+    modalizeRef.current?.open();
+  };
 
   useEffect(() => {
     if (currPlaylist) {
@@ -440,7 +446,7 @@ export default function PracticeScreen({ navigation, route }: any) {
               </TouchableOpacity>
               <Text style={styles.headerTitle}>{currPlaylist?.title}</Text>
               <View style={styles.gearButton}>
-                <GearButton />
+                <GearButton openModal={openModal} />
               </View>
             </View>
             

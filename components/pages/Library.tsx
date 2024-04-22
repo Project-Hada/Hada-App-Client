@@ -1,6 +1,7 @@
 import React, {
   useContext,
   useEffect,
+  useRef,
   useState,
 } from "react";
 import {
@@ -11,7 +12,8 @@ import {
   SafeAreaView,
   TouchableOpacity, 
   TextInput,
-  Pressable
+  Pressable,
+  Animated
 } from "react-native";
 import {
   AntDesign,
@@ -30,6 +32,10 @@ import { typography } from "../theme/Typography";
 import GearButton from "../GearButton";
 import ProfilePicture from "./ProfilePicture";
 import { addNewDeck, getAllDecksByUID, getOneDeckByDID } from "../../utils/services/decksFunctions";
+import { Modalize } from "react-native-modalize";
+import PlaylistRenameModal from "./PlaylistNameModal";
+import { Swipeable } from "react-native-gesture-handler";
+import GearModal from "../GearModal";
 
 type PlaylistItemType = {
   name: string;
@@ -44,8 +50,16 @@ type LibraryScreenProps = {
 export default function LibraryScreen({ navigation, route }: any) {
   // Library Context
   // remove test library
-  const { user, handleLogout, setCurrPlaylist, addPlaylist, library } = useContext(LibraryContext);
+  const { user, handleLogout, setCurrPlaylist, addPlaylist, library, deletePlaylist, updatePlaylist} = useContext(LibraryContext);
   // console.log("library: ", library);
+  const [newPlaylistName, setNewPlaylistName] = useState("");
+  const [modalVisible, setModalVisible] = useState(false);
+  const [selectedPlaylistId, setSelectedPlaylistId] = useState<string | null>(null);
+  const modalizeRef = useRef<Modalize>(null);
+
+  const openModal = () => {
+    modalizeRef.current?.open();
+  };
 
   const flashcards = flashCards;
 
@@ -62,7 +76,6 @@ export default function LibraryScreen({ navigation, route }: any) {
     );
   // console.log(filteredLibrary)
 
-  
   const handleNavigation = async (playlist: PlaylistType) => {
     if (playlist) {
       setCurrPlaylist(playlist);
@@ -285,8 +298,72 @@ export default function LibraryScreen({ navigation, route }: any) {
     },
     topSection: {
       backgroundColor: theme.colors.backgroundColor,
-    }
+    },
+    deleteContainer: {
+      backgroundColor: theme.colors.redButton,
+      borderColor: theme.colors.border,
+      justifyContent: 'center',
+      
+    },
+    deleteText: {
+      color: theme.colors.text,
+      fontFamily: theme.typography.fonts.boldFont,
+      padding: 20,
+    },   
+    leftSwipe: {
+      flex: 1,
+      marginBottom: 15,
+      marginRight: 10,
+      marginLeft: -5,
+      justifyContent: 'center',
+      alignItems: 'center',
+      borderRadius: 10,
+      borderColor: theme.colors.border,
+      borderWidth: 1,
+      borderBottomWidth: 4,
+      borderRightWidth: 4,
+      backgroundColor: theme.colors.redButton,
+    }, 
   });
+
+  // Delete Playlist
+  const handleDelete = (playlistId: string) => {
+    deletePlaylist(playlistId)
+  };
+  
+  const renderSwipe = (progress: any, item: PlaylistType) => {
+    const translateX = progress.interpolate({
+      inputRange: [0, 1],
+      outputRange: [100, 0],
+    });
+  
+    return (
+      <Animated.View style={{ transform: [{ translateX }] }}>
+        <TouchableOpacity onPress={() => handleDelete(item.id)} style={libStyles.leftSwipe}>
+            <Text style={libStyles.deleteText}>DELETE</Text>
+        </TouchableOpacity>
+      </Animated.View>
+    );
+  };  
+
+  // Long press for playlist name change
+  const handleLongPress = (playlistId: string) => {
+    const currentPlaylistName = library[playlistId]?.title;
+    setSelectedPlaylistId(playlistId);
+    setNewPlaylistName(currentPlaylistName);
+    setModalVisible(true);
+  };
+
+  const handleNameChange = (newName: string) => {
+    if (selectedPlaylistId && newName.trim()) {
+      updatePlaylist(selectedPlaylistId, { title: newName });
+      setNewPlaylistName(newName); 
+      setModalVisible(false); 
+    } 
+    else {
+      alert("Name cannot be empty.");
+    }
+  };
 
   return (
     <SafeAreaView style={libStyles.container}>
@@ -298,7 +375,7 @@ export default function LibraryScreen({ navigation, route }: any) {
           <TouchableOpacity onPress={handleOpenAdd}>
             <AddButton />
           </TouchableOpacity>
-          <GearButton />
+          <GearButton openModal={openModal}/>
         </View>
         </View> 
         {/* TODO: PLEASE DELETE WHEN DONE; THIS IS TO TEST IF A USER IS LOGGED IN */}
@@ -314,8 +391,17 @@ export default function LibraryScreen({ navigation, route }: any) {
             placeholder="Search"
             keyboardType="default"
           />
+     
         </View>
       </View>
+
+      <PlaylistRenameModal // Pop up for renaming playlist
+        isVisible={modalVisible}
+        onClose={() => setModalVisible(false)}
+        currentName={newPlaylistName}
+        onSave={(newName: string) => handleNameChange(newName)}
+      />
+    
       <ScrollView
         style={libStyles.bottomSection}
         contentContainerStyle={libStyles.scrollView}
@@ -329,10 +415,15 @@ export default function LibraryScreen({ navigation, route }: any) {
         {filteredLibrary.map((item, index) => {
           const itemColor = profileColors[index % profileColors.length];
           return (
+            <Swipeable // Swipe to delete
+              key={`playlist-${item.id}`}
+              renderRightActions={(progress) => renderSwipe(progress, item)}
+            >
             <TouchableOpacity
               key={`playlist-${item.id}`} // use the unique id as key
               style={[libStyles.playlist, theme.shadow.default]}
               onPress={() => handleNavigation(library[item.id])} // pass the id to handle navigation
+              onLongPress={() => handleLongPress(item.id)} // long press for pop-up to appear
             >
               <View style={[libStyles.iconContainer, { backgroundColor: itemColor}]}></View>
 
@@ -343,9 +434,11 @@ export default function LibraryScreen({ navigation, route }: any) {
                 </Text>
               </View>
             </TouchableOpacity>
+            </Swipeable>
           );
         })}
       </ScrollView>
+      <GearModal ref={modalizeRef} />
     </SafeAreaView>
   );
 }

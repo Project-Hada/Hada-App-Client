@@ -48,6 +48,7 @@ export interface PlaylistContextType {
     updatedPlaylistData: Partial<PlaylistType>
   ) => void;
   deleteFlashcard: (playlist: PlaylistType, flashcardId: number) => void;
+  deletePlaylist: (playlistId: string) => void;
 }
 
 // The default state for the PlaylistContext when it is first created.
@@ -63,6 +64,7 @@ const defaultState: PlaylistContextType = {
   updatePlaylist: () => {},
   updateFlashcard: () => {},
   deleteFlashcard: () => {},
+  deletePlaylist: () => {},
 };
 
 // Create the context with the default state.
@@ -257,6 +259,19 @@ export const LibraryProvider: React.FC<PropsWithChildren<{}>> = ({
     }
   };
 
+  const deletePlaylist = (playlistId: string) => {
+    setLibrary((prevLibrary) => {
+      const updatedLibrary = { ...prevLibrary };
+      delete updatedLibrary[playlistId]; // Remove the playlist by ID
+      return updatedLibrary;
+    });
+  
+    // Update the currPlaylist if it was the one deleted
+    setCurrPlaylist((current) => {
+      return current?.id === playlistId ? null : current;
+    });
+  };
+
   return (
     <LibraryContext.Provider
       value={{
@@ -271,6 +286,7 @@ export const LibraryProvider: React.FC<PropsWithChildren<{}>> = ({
         updatePlaylist,
         updateFlashcard,
         deleteFlashcard,
+        deletePlaylist,
       }}
     >
       {children}
