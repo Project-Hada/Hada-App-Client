@@ -1,12 +1,13 @@
-import React, { useState } from "react";
+import React, { useContext, useState } from "react";
 import { TouchableOpacity, Image, Alert } from "react-native";
 import * as ImagePicker from "expo-image-picker";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { useTheme } from "../../utils/contexts/ThemeContext";
+import LibraryContext from "../../utils/contexts/LibraryContext";
 
 const ProfilePicture = () => {
   const { theme } = useTheme();
-  const [profileImage, setProfileImage] = useState<string | null>(null);
+  const { profileImage, setProfileImage } = useContext(LibraryContext);
 
   const pickImage = async () => {
     let mediaLibraryPermissionResponse;
@@ -34,13 +35,13 @@ const ProfilePicture = () => {
     }
   };
   return (
-    <TouchableOpacity onPress={pickImage}>
+    <TouchableOpacity onPress={pickImage} style={{ marginTop: -4 }}>
       {profileImage ? (
         <Image
           source={{ uri: profileImage }}
           style={{
-            width: 50,
-            height: 50,
+            width: 60,
+            height: 60,
             borderRadius: 50,
             borderWidth: 1,
             borderColor: theme.colors.listBackground,
@@ -49,7 +50,7 @@ const ProfilePicture = () => {
       ) : (
         <MaterialCommunityIcons
           name="account-circle-outline"
-          size={50}
+          size={60}
           color={theme.colors.text}
         />
       )}

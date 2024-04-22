@@ -232,6 +232,8 @@ export class Session {
     
         // Iterate over the playlist to find and add new cards, considering null or undefined as 0.
         const playlistEntries = Object.entries(this.currPlaylist!.playlist);
+        console.log("GEEEEEEEEEEEEKED",this.currPlaylist!.playlist)
+
         for (let [key, flashcard] of playlistEntries) {
             // Check if we've added the designated number of new cards.
             if (newCardsAdded < this.numNewCardsPartition) {
@@ -480,8 +482,10 @@ private reinsertNodeInBleedQueue(node: CardNode, positions: number): void {
     
         // Traverse the partition linked list
         let current = this.partitionHead.next; // Start after the dummy head
+     
         while (current) {
             if (current.card) {
+                console.log("111111111111", current.card)
                 current.card.passes = current.passes;
                 current.card.fails = current.fails;
                 flashcards.push(current.card); // Add the flashcard to the array
@@ -508,6 +512,15 @@ private reinsertNodeInBleedQueue(node: CardNode, positions: number): void {
         let current = this.bleedQueue.next; // Start from the first actual node in the bleedQueue
         while (current !== null) {
             array.push(current.card!.id); // Add the current node to the array
+            current = current.next; // Move to the next node
+        }
+        return array;
+    }
+    public bleedQueueToTermArray(): Array<String> {
+        let array = [];
+        let current = this.bleedQueue.next; // Start from the first actual node in the bleedQueue
+        while (current !== null) {
+            array.push(current.card!.term); // Add the current node to the array
             current = current.next; // Move to the next node
         }
         return array;
@@ -557,25 +570,27 @@ private reinsertNodeInBleedQueue(node: CardNode, positions: number): void {
 
         if (this.currPlaylist) {
             // Assuming currentSession can give us the updated cards and bleedQueue
+            console.log("0000000000000000000000000000000000000000000000000")
             const updatedFlashcards = this.getAllFlashcards();
+            console.log(updatedFlashcards)
       
             updatedFlashcards.forEach((card) => {
               // Update each card with new passes and fails count
-              //   console.log(card);
+                console.log(card);
               this.updateFlashcard(this.currPlaylist!.id, card!.id, {
                 ...card,
                 passes: card.passes,
                 fails: card.fails,
               });
             });
-            // console.log("000000000000000000!", this.bleedQueueToIDArray());
-            // console.log("000000000000000000!", this.bleedLength);
-            // console.log("9999999999999999!", this.toString());
+            console.log("000000000000000000!", this.bleedQueueToIDArray());
+            console.log("000000000000000000!", this.bleedLength);
+            console.log("9999999999999999!", this.toString());
             this.updatePlaylist(this.currPlaylist.id, {
-              bleedQueue: this.bleedQueueToIDArray(),
+              bleedQueue: this.bleedQueueToTermArray(),
             });
       
-            // console.log("AHHHHHHHHHHHHHHHHHHHHH",this.currPlaylist);
+            console.log("AHHHHHHHHHHHHHHHHHHHHH",this.currPlaylist);
         }
     
     }

@@ -1,4 +1,4 @@
-import React, { useContext, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import {
   StyleSheet,
   View,
@@ -24,13 +24,17 @@ import Search from "./Search";
 // For Korean regex
 import * as Hangul from "hangul-js";
 import { addNewCardToDeck } from "../../../utils/services/decksFunctions";
-
+import GearButton from "../../GearButton";
 
 type DeckPreviewProps = {
   navigation: any;
 };
 
-export default function DeckPreview({ navigation, route, withinModal = false }: any) {
+export default function DeckPreview({
+  navigation,
+  route,
+  withinModal = false,
+}: any) {
   const { currPlaylist, addFlashcard, updateFlashcard, deleteFlashcard } =
     useContext(FlashcardContext);
 
@@ -39,6 +43,27 @@ export default function DeckPreview({ navigation, route, withinModal = false }: 
   // State to track the selected card for editing
   const [selectedCardId, setSelectedCardId] = useState<number | null>(null);
   const [isAddingVisible, setIsAddingVisible] = useState(false);
+
+  useEffect(() => {
+    // Ensure that currPlaylist is not null before proceeding
+    if (currPlaylist) {
+      const playlist = currPlaylist.playlist;
+
+      Object.keys(playlist).forEach((flashcardKey) => {
+        const flashcard = playlist[flashcardKey];
+
+        // Check if the flashcard has an empty or undefined id
+        if (!flashcard.id || flashcard.id === "") {
+          // The flashcard doesn't have an ID, generate a new one
+          const newId = generateId();
+          const updatedFlashcard = { ...flashcard, id: newId };
+
+          // Update the flashcard using the provided updateFlashcard function
+          updateFlashcard(currPlaylist, flashcardKey, updatedFlashcard);
+        }
+      });
+    }
+  }, [currPlaylist, updateFlashcard]);
 
   const handleCancel = () => {
     setIsAddingVisible(false);
@@ -54,9 +79,9 @@ export default function DeckPreview({ navigation, route, withinModal = false }: 
         id: generateId(), // Generate a unique ID for the new flashcard
         term: koreanWord,
         definition: englishWord,
-        createdAt: -1,  // TODO: give proper time
+        createdAt: -1, // TODO: give proper time
         passes: 0,
-        fails: 0
+        fails: 0,
       };
 
       addFlashcard(currPlaylist, newFlashcard);
@@ -318,7 +343,6 @@ export default function DeckPreview({ navigation, route, withinModal = false }: 
       fontFamily: theme.typography.fonts.boldFont,
     },
     addCardText: {
-
       fontFamily: theme.typography.fonts.semiboldFont,
       fontSize: theme.typography.deckPreview.addCardtextSize,
     },
@@ -337,60 +361,65 @@ export default function DeckPreview({ navigation, route, withinModal = false }: 
       borderColor: theme.colors.border,
       backgroundColor: theme.colors.accent,
     },
+    rightControls: {
+      flexDirection: "row",
+      justifyContent: "center",
+      alignItems: "center",
+    },
   });
 
   // Use in DeckPreviewModal to prevent VirtualizedLists error
-  if (withinModal==true) {
+  if (withinModal == true) {
     return (
       <SafeAreaView style={styles.modalContainer}>
-      {/* Search word input */}
-      <Search handleSearchWord={handleSearchWord} searchTerm={searchTerm} />
+        {/* Search word input */}
+        <Search handleSearchWord={handleSearchWord} searchTerm={searchTerm} />
 
-      {/* Adding new card modal */}
-      <AddCardModal
-        isVisible={isAddingVisible}
-        onAdd={handleAdd}
-        onCancel={handleCancel}
-        koreanWordInitial={""}
-        englishWordInitial={""}
-        isEditMode={false}
-      />
+        {/* Adding new card modal */}
+        <AddCardModal
+          isVisible={isAddingVisible}
+          onAdd={handleAdd}
+          onCancel={handleCancel}
+          koreanWordInitial={""}
+          englishWordInitial={""}
+          isEditMode={false}
+        />
 
-      {/* List of cards display in ScrollView instead of Flatlist */}
-      <ScrollView>
-        <TouchableOpacity
-          onPress={handleOpenAdd}
-          style={styles.createAddCardButton}
-        >
-          <Text style={styles.addCardText}>Add Card +</Text>
-        </TouchableOpacity>
-        
-        {filteredFlashcards.map((item, index) => (
-          <View key={item.id}>
-            <PreviewCard
-              term={item.term}
-              definition={item.definition}
-              onPress={() => handleCardPress(index)}
-            />
-            {selectedCardId === index && (
-              <AddCardModal
-                isVisible={selectedCardId !== null}
-                onAdd={handleAdd}
-                onUpdate={updateFlashcard}
-                onDelete={deleteFlashcard}
-                onCancel={handleCancel}
-                createdAt={item.createdAt}
-                koreanWordInitial={item.term}
-                englishWordInitial={item.definition}
-                flashcardId={item.id}
-                isEditMode={true}
+        {/* List of cards display in ScrollView instead of Flatlist */}
+        <ScrollView>
+          <TouchableOpacity
+            onPress={handleOpenAdd}
+            style={styles.createAddCardButton}
+          >
+            <Text style={styles.addCardText}>Add Card +</Text>
+          </TouchableOpacity>
+
+          {filteredFlashcards.map((item, index) => (
+            <View key={item.id}>
+              <PreviewCard
+                term={item.term}
+                definition={item.definition}
+                onPress={() => handleCardPress(index)}
               />
-            )}
-          </View>
-        ))}
-      </ScrollView>
-    </SafeAreaView>
-    )
+              {selectedCardId === index && (
+                <AddCardModal
+                  isVisible={selectedCardId !== null}
+                  onAdd={handleAdd}
+                  onUpdate={updateFlashcard}
+                  onDelete={deleteFlashcard}
+                  onCancel={handleCancel}
+                  createdAt={item.createdAt}
+                  koreanWordInitial={item.term}
+                  englishWordInitial={item.definition}
+                  flashcardId={item.id}
+                  isEditMode={true}
+                />
+              )}
+            </View>
+          ))}
+        </ScrollView>
+      </SafeAreaView>
+    );
   }
 
   return (
@@ -422,19 +451,18 @@ export default function DeckPreview({ navigation, route, withinModal = false }: 
             </View>
           </View>
           {/* AddButton container */}
-          <TouchableOpacity onPress={handleOpenAdd}>
-            <AddButton />
-          </TouchableOpacity>
+          <View style={styles.rightControls}>
+            <TouchableOpacity onPress={handleOpenAdd}>
+              <AddButton />
+            </TouchableOpacity>
+            <GearButton navigation={navigation} />
+          </View>
           {/* further discussion needed on adding this with the other add option */}
         </View>
       </View>
 
       {/* Search word input */}
-      <Search 
-        handleSearchWord={handleSearchWord} 
-        searchTerm={searchTerm} 
-      />
-
+      <Search handleSearchWord={handleSearchWord} searchTerm={searchTerm} />
 
       {/* Adding new card modal */}
       <AddCardModal
@@ -453,6 +481,7 @@ export default function DeckPreview({ navigation, route, withinModal = false }: 
         renderItem={({ item, index }) => (
           // The modal is now tied to the selectedCardId state.
           // It will open for the card that was last pressed.
+
           <View>
             <PreviewCard
               // key={item.id}
@@ -481,25 +510,25 @@ export default function DeckPreview({ navigation, route, withinModal = false }: 
             )}
           </View>
         )}
-        keyExtractor={(item) => item.id}
+        keyExtractor={(item, index) => `key-${index}`}
         ListHeaderComponent={AddCardButton}
         extraData={selectedCardId} // Ensure FlatList re-renders when selectedCardId changes
       />
 
       {/* Practice Button */}
-      <View style={styles.practiceButtonContainer}> 
-      <TouchableOpacity
-        onPress={() => {
-          if (Object.keys(flashcards).length > 0) {
-            navigation.navigate("PracticeScreen");
-          } else {
-            handleOpenAdd();
-          }
-        }}
-        style={[styles.practiceButton, theme.shadow.default]}
-      >
-        <Text style={styles.practiceButtonText}>Practice</Text>
-      </TouchableOpacity>
+      <View style={styles.practiceButtonContainer}>
+        <TouchableOpacity
+          onPress={() => {
+            if (Object.keys(flashcards).length > 0) {
+              navigation.navigate("PracticeScreen");
+            } else {
+              handleOpenAdd();
+            }
+          }}
+          style={[styles.practiceButton, theme.shadow.default]}
+        >
+          <Text style={styles.practiceButtonText}>Practice</Text>
+        </TouchableOpacity>
       </View>
     </SafeAreaView>
   );

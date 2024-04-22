@@ -1,5 +1,5 @@
 // _layout.tsx
-import React from "react";
+import React, { useState } from "react";
 import { createStackNavigator } from "@react-navigation/stack";
 import { Text, StyleSheet, SafeAreaView, Platform } from "react-native";
 import LibraryScreen from "./pages/Library";
@@ -9,6 +9,7 @@ import { NavigationContainer } from "@react-navigation/native";
 import { useTheme } from "../utils/contexts/ThemeContext";
 import { LoginScreen } from "./pages/UserAuth/LoginScreen";
 import { RegisterScreen } from "./pages/UserAuth/RegisterScreen";
+import SettingsScreen from "./pages/Settings";
 
 const { Navigator, Screen } = createStackNavigator();
 
@@ -19,6 +20,8 @@ const AppStack = () => {
       Platform.OS === "ios" ? ("card" as const) : ("modal" as const),
   };
 
+  const [profileImage, setProfileImage] = useState<string | null>(null);
+
   return (
     <SafeAreaView style={styles.droidSafeArea}>
       <Navigator
@@ -27,10 +30,14 @@ const AppStack = () => {
         }}
         initialRouteName="LoginScreen"
       >
-
         <Screen
           name="LoginScreen"
           component={LoginScreen}
+          options={{ headerShown: false }}
+        />
+        <Screen
+          name="SettingsScreen"
+          component={SettingsScreen}
           options={{ headerShown: false }}
         />
         <Screen

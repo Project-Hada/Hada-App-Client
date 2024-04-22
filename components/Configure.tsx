@@ -10,9 +10,10 @@ import Router from "./Router";
 import { useFonts } from "expo-font";
 import { FontAwesome } from "@expo/vector-icons";
 import LibraryContext from "../utils/contexts/LibraryContext";
-import libraryData from "../Data/fakeData";
+// import libraryData from "../Data/fakeData";
 import { Audio } from "expo-av";
 import { useTheme } from "../utils/contexts/ThemeContext";
+import { addIdsToFlashcards } from "../utils/services/decksFunctions";
 
 export default function Configure() {
   /**
@@ -44,7 +45,7 @@ export default function Configure() {
 
   useEffect(() => {
     // This will set the library data when the component mounts
-    setLibrary(libraryData);
+    // setLibrary(libraryData);
   }, [setLibrary]); // Empty dependency array ensures this effect only runs once
 
   //Fixing sound bug if IOS has silent mode on

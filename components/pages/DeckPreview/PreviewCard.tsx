@@ -13,27 +13,28 @@ interface PreviewCardProps {
 const handleAudio = (text: string, language: string) => {
   speak(text, language);
 };
- 
+
 const PreviewCard: React.FC<PreviewCardProps> = ({
   term,
   definition,
   onPress,
 }) => {
   const { theme } = useTheme();
-  
-  const previewColors = [ // TBD
-      "#90CF8E",
-      "#A7DCA5",
-      "#C6EDC3",
-      "#E4FDE1",
-      "#EFFDEE",
-    ];
-    
-    // This is just for some different colors for each icon (Future: icons should correspond to how well the user knows the word)
-    const getColorForTerm = (term: string) => {
-      const index = term.charCodeAt(0)
-      return previewColors[index % previewColors.length];
-    };
+
+  const previewColors = [
+    // TBD
+    "#90CF8E",
+    "#A7DCA5",
+    "#C6EDC3",
+    "#E4FDE1",
+    "#EFFDEE",
+  ];
+
+  // This is just for some different colors for each icon (Future: icons should correspond to how well the user knows the word)
+  const getColorForTerm = (term: string) => {
+    const index = term.charCodeAt(0);
+    return previewColors[index % previewColors.length];
+  };
 
   const styles = StyleSheet.create({
     playButtonContainer: {
@@ -201,13 +202,13 @@ const PreviewCard: React.FC<PreviewCardProps> = ({
       top: 0,
       bottom: 0,
       width: 60,
-      backgroundColor: theme.colors.icons
+      backgroundColor: theme.colors.icons,
     },
     previewBadgeText: {
       paddingTop: 4,
       fontFamily: theme.typography.fonts.boldFont,
       fontSize: theme.typography.deckPreview.previewTextSize,
-      color: theme.colors.text,
+      color: "black",
     },
     practiceButton: {
       margin: 20,
@@ -232,13 +233,15 @@ const PreviewCard: React.FC<PreviewCardProps> = ({
     },
   });
 
-  
-
   return (
     <TouchableOpacity onPress={onPress}>
       <View style={[styles.listItem, theme.shadow.default]}>
-        <View style={[styles.previewBadge, {backgroundColor: getColorForTerm(term)}]}>
-
+        <View
+          style={[
+            styles.previewBadge,
+            { backgroundColor: getColorForTerm(term) },
+          ]}
+        >
           <Text style={styles.previewBadgeText}>{term.slice(0, 1)}</Text>
         </View>
         <View style={styles.termContainer}>

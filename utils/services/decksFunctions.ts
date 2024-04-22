@@ -100,6 +100,39 @@ export const updateCardInDeck = async (did: String, cardIndex: number,
   }
 }
 
+/**
+ * Updates the bleed queue of the current playlist.
+ * @param {string} playlistId - The ID of the playlist to update.
+ * @param {string[]} newBleedQueue - The new bleed queue array.
+ */
+export const updateBleedQueue = async (playlistId: string, newBleedQueue: string) => {
+  // Ensure the playlist ID and the new bleed queue are valid
+  if (!playlistId || !newBleedQueue) {
+    throw new Error('Invalid playlist ID or bleed queue');
+  }
+
+  try {
+    // Fetch the current state of the playlist
+    const currentPlaylist = await getOneDeckByDID(playlistId);
+
+    // If the playlist exists, update the bleed queue
+    if (currentPlaylist) {
+      const updatedData = { ...currentPlaylist, bleedQueue: newBleedQueue };
+      await updateDeckByDID(playlistId, updatedData);
+
+      // You may want to return the updated playlist or just a success message
+      console.log(`Bleed queue updated for playlist ${playlistId}`);
+      return updatedData; // Or just return true;
+    } else {
+      throw new Error(`Playlist with ID ${playlistId} not found`);
+    }
+  } catch (error) {
+    console.error('Failed to update bleed queue:', error);
+    throw error; // Re-throw the error to handle it in the calling function
+  }
+};
+
+
 /* DELETE Operations */
 export const deleteDeckByDID = async (did: String) => {
   await deleteDoc(doc(db, "/decks/" + did));
@@ -113,3 +146,4 @@ export const deleteCardInDeck = async (did: String, cardIndex: number) => {
     updateDeckByDID(did, {playlist: currDeck.playlist})
   }
 }
+
