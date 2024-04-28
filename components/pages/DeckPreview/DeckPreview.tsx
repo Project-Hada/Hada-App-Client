@@ -17,7 +17,7 @@ import AddButton from "../../AddButton";
 import generateId from "../../../utils/idGenerator";
 import AddCardModal from "./AddCardModal";
 import PreviewCard from "./PreviewCard";
-import { FlashCardType } from "../../../utils/types";
+import { FlashCardType, PlaylistType } from "../../../utils/types";
 import { useTheme } from "../../../utils/contexts/ThemeContext";
 
 import Search from "./Search";
@@ -94,11 +94,25 @@ export default function DeckPreview({
     setSelectedCardId(null);
   };
 
+  const handleUpdateFlashcard = (
+    playlist: PlaylistType,
+    flashcardIndex: number,
+    updatedFlashcard: FlashCardType
+  ) => {
+    updateFlashcard(currPlaylist!, flashcardIndex, updatedFlashcard);
+    setIsAddingVisible(false);
+    setSelectedCardId(null);
+  }
+
+  const handleDeleteFlashcard = (playlist: PlaylistType, flashcardIndex: number) => {
+    deleteFlashcard(currPlaylist!, flashcardIndex);
+    setIsAddingVisible(false);
+    setSelectedCardId(null);
+  }
+
     // TODO: FIX THIS WITH PROPER NAME
     const handleUpdateTitle = async () => {
-      console.log("HIT")
       updatePlaylistTitle(currPlaylist!, "cool, fancy name");
-      
     }
 
   // Storing the search term
@@ -509,8 +523,10 @@ export default function DeckPreview({
               <AddCardModal
                 isVisible={selectedCardId !== null}
                 onAdd={handleAdd} // Used for adding a new card
-                onUpdate={updateFlashcard}
-                onDelete={deleteFlashcard}
+                // onUpdate={updateFlashcard}
+                // onDelete={deleteFlashcard}
+                onUpdate={handleUpdateFlashcard}
+                onDelete={handleDeleteFlashcard}
                 onCancel={handleCancel}
                 createdAt={item.createdAt}
                 koreanWordInitial={item.term}
