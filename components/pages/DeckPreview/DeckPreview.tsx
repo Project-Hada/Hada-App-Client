@@ -25,7 +25,6 @@ import Search from "./Search";
 import * as Hangul from "hangul-js";
 import { addNewCardToDeck } from "../../../utils/services/decksFunctions";
 import GearButton from "../../GearButton";
-import LibraryScreen from "../Library";
 
 type DeckPreviewProps = {
   navigation: any;

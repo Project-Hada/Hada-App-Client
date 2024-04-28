@@ -35,7 +35,6 @@ import { Modalize } from "react-native-modalize";
 import PlaylistRenameModal from "./PlaylistNameModal";
 import { Swipeable } from "react-native-gesture-handler";
 import GearModal from "../GearModal";
-import { useIsFocused } from "@react-navigation/native";
 
 type PlaylistItemType = {
   name: string;
@@ -58,16 +57,8 @@ export default function LibraryScreen({ navigation, route }: any) {
     library,
     deletePlaylist,
     updatePlaylist,
-    refreshLibrary,
   } = useContext(LibraryContext);
-  
-  const isFocused = useIsFocused();
-  useEffect(() => {
-    isFocused && refreshLibrary()
-    
-  }, [isFocused]);
-  console.log("(inLS) library: ", library);
-
+  // console.log("library: ", library);
   const [newPlaylistName, setNewPlaylistName] = useState("");
   const [modalVisible, setModalVisible] = useState(false);
   const [selectedPlaylistId, setSelectedPlaylistId] = useState<string | null>(

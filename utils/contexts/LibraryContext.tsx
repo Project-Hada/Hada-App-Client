@@ -61,7 +61,6 @@ export interface PlaylistContextType {
   deletePlaylist: (playlistId: string) => void;
   profileImage: string | null;
   setProfileImage: Dispatch<SetStateAction<string | null>>;
-  refreshLibrary: () => Promise<void>
 }
 
 // The default state for the PlaylistContext when it is first created.
@@ -80,7 +79,6 @@ const defaultState: PlaylistContextType = {
   updateFlashcard: () => {},
   deleteFlashcard: () => {},
   deletePlaylist: () => {},
-  refreshLibrary: () => {throw new Error("failed to refreshLibrary")}
 };
 
 // Create the context with the default state.
@@ -98,8 +96,8 @@ export const LibraryProvider: React.FC<PropsWithChildren<{}>> = ({
   const refreshLibrary = async () => {
     if (user && user.uid) {
       const data = await getAllDecksByUID(user.uid);
+      // console.log("Test", JSON.stringify(await testFunction(user.uid), null, 4))
       setLibrary(data);
-      console.log("refreshed", data)
     }
   };
 
@@ -108,7 +106,6 @@ export const LibraryProvider: React.FC<PropsWithChildren<{}>> = ({
   useEffect(() => {
     refreshLibrary();
   }, [user]);
-
   const handleLogout = () => {
     signOut(auth)
       .then(() => {
@@ -126,8 +123,7 @@ export const LibraryProvider: React.FC<PropsWithChildren<{}>> = ({
 
   // Initialize the library as an empty object
   const [library, setLibrary] = useState<LibraryState>({});
-  
-
+  // console.log("library: ", JSON.stringify(library, null, 4));
 
   /**
    * Adds a new playlist to the library state.
@@ -136,6 +132,7 @@ export const LibraryProvider: React.FC<PropsWithChildren<{}>> = ({
   const addPlaylist = async () => {
     const newDeckId = await addNewDeck(user!.uid, "New Playlist");
     const newDeck = (await getOneDeckByDID(newDeckId)) as PlaylistType;
+    refreshLibrary();
     return newDeck;
   };
 
@@ -171,7 +168,8 @@ export const LibraryProvider: React.FC<PropsWithChildren<{}>> = ({
         newFlashcardWithTimestamp.term,
         newFlashcardWithTimestamp.definition
       );
-      // Update the library with the new playlist that includes the new flashcard
+      refreshLibrary();
+      // // Update the library with the new playlist that includes the new flashcard
       // setLibrary((prevLibrary) => ({
       //   ...prevLibrary,
       //   [playlist.id]: updatedPlaylist,
@@ -195,6 +193,9 @@ export const LibraryProvider: React.FC<PropsWithChildren<{}>> = ({
     flashcardId: number,
     updatedFlashcard: FlashCardType
   ) => {
+    console.log("inLC: ", updatedFlashcard.term)
+    console.log("inLC: ", updatedFlashcard.definition)
+    
     updateCardInDeck(
       playlist.id,
       flashcardId,
@@ -328,7 +329,6 @@ export const LibraryProvider: React.FC<PropsWithChildren<{}>> = ({
         deletePlaylist,
         profileImage,
         setProfileImage,
-        refreshLibrary,
       }}
     >
       {children}
