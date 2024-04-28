@@ -25,6 +25,7 @@ export interface PlaylistType {
   createdAt?: number;
   lastSession?: number;
   bleedQueue: Array<string>;
+  bleedQueueLength: number
 }
 
 // this sets up id's for PlaylistType to be accessed in O(1) in LibraryContext.tsx
