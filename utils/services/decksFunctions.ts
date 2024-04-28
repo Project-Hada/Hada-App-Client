@@ -23,11 +23,10 @@ export const addNewDeck = async (uid: String, titleInput: String) => {
 }
 
 export const addNewCardToDeck = async (did: String, cardFront: String, cardBack: String) => {
-  const currDeck = await getOneDeckByDID(did);
-  const newRef = doc(decksCollectionRef).id;
+  const currDeck = await getOneDeckByDID(did)
   
   if (currDeck) {
-    currDeck.playlist.push({id: newRef, term: cardFront, definition: cardBack})
+    currDeck.playlist.push({term: cardFront, definition: cardBack})
     updateDeckByDID(did, {playlist: currDeck.playlist})
   }
 }
@@ -94,16 +93,11 @@ export const updateDeckByDID = async (did: String, newData: {}) => {
 
 export const updateCardInDeck = async (did: String, cardIndex: number, 
                                       newTerm: String, newDefinition: String) => {
-  const currDeck = await getOneDeckByDID(did);
+  const currDeck = await getOneDeckByDID(did)
   if (currDeck) {
-    console.log({term: newTerm, definition: newDefinition, ...currDeck.playlist[cardIndex]})
-    
-    currDeck.playlist[cardIndex] = {term: newTerm, definition: newDefinition, ...currDeck.playlist[cardIndex]};
+    currDeck.playlist[cardIndex] = {term: newTerm, definition: newDefinition};
     updateDeckByDID(did, {playlist: currDeck.playlist})
-    console.log("updated card successfully")
   }
-
-  
 }
 
 /**
@@ -137,6 +131,7 @@ export const updateBleedQueue = async (playlistId: string, newBleedQueue: string
     throw error; // Re-throw the error to handle it in the calling function
   }
 };
+
 
 /* DELETE Operations */
 export const deleteDeckByDID = async (did: String) => {

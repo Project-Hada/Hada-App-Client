@@ -20,7 +20,6 @@ import {
   addNewCardToDeck,
   addNewDeck,
   deleteCardInDeck,
-  deleteDeckByDID,
   getAllDecksByUID,
   getOneDeckByDID,
   testFunction,
@@ -190,12 +189,9 @@ export const LibraryProvider: React.FC<PropsWithChildren<{}>> = ({
    */
   const updateFlashcard = (
     playlist: PlaylistType,
-    flashcardId: number,
+    flashcardId: string,
     updatedFlashcard: FlashCardType
   ) => {
-    console.log("inLC: ", updatedFlashcard.term)
-    console.log("inLC: ", updatedFlashcard.definition)
-    
     updateCardInDeck(
       playlist.id,
       flashcardId,
@@ -296,8 +292,6 @@ export const LibraryProvider: React.FC<PropsWithChildren<{}>> = ({
   };
 
   const deletePlaylist = (playlistId: string) => {
-    deleteDeckByDID(playlistId);
-    
     setLibrary((prevLibrary) => {
       const updatedLibrary = { ...prevLibrary };
       delete updatedLibrary[playlistId]; // Remove the playlist by ID
