@@ -2,10 +2,10 @@ import { CardNode } from "../components/pages/Practice/sessionAlgorithm";
 
 //types for a flashcard
 export interface FlashCardType {
-  createdAt: any;
   id: string;
   term: string;
   definition: string;
+  createdAt?: any;
   passes: number;
   fails: number;
 }

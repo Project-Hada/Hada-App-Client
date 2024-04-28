@@ -25,6 +25,7 @@ import {
   getOneDeckByDID,
   updateBleedQueue,
   updateCardInDeck,
+  updateDeckTitle,
 } from "../services/decksFunctions";
 
 /**
@@ -56,6 +57,7 @@ export interface PlaylistContextType {
     playlistId: string,
     updatedPlaylistData: Partial<PlaylistType>
   ) => void;
+  updatePlaylistTitle: (playlist: PlaylistType, newTitle: string) => void;
   deleteFlashcard: (playlist: PlaylistType, flashcardId: number) => void;
   deletePlaylist: (playlistId: string) => void;
   profileImage: string | null;
@@ -76,6 +78,7 @@ const defaultState: PlaylistContextType = {
   },
   addFlashcard: () => {},
   updatePlaylist: () => {},
+  updatePlaylistTitle: () => {},
   updateFlashcard: () => {},
   deleteFlashcard: () => {},
   deletePlaylist: () => {},
@@ -182,6 +185,20 @@ export const LibraryProvider: React.FC<PropsWithChildren<{}>> = ({
       }
     }
   };
+
+  const updatePlaylistTitle = (playlist: PlaylistType, newTitle: string) => {
+    updateDeckTitle(playlist.id, newTitle);
+
+    const updatedPlaylist = {
+      ...playlist,
+      title: newTitle
+    }
+
+    if (currPlaylist && currPlaylist.id === playlist.id) {
+      setCurrPlaylist(updatedPlaylist);
+    }
+  }
+
 
   /**
    * Updates a flashcard in the specified playlist with new data.
@@ -320,6 +337,7 @@ export const LibraryProvider: React.FC<PropsWithChildren<{}>> = ({
         library,
         setLibrary,
         addPlaylist,
+        updatePlaylistTitle,
         addFlashcard,
         updatePlaylist,
         updateFlashcard,
