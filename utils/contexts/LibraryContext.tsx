@@ -23,7 +23,6 @@ import {
   deleteDeckByDID,
   getAllDecksByUID,
   getOneDeckByDID,
-  testFunction,
   updateBleedQueue,
   updateCardInDeck,
 } from "../services/decksFunctions";
