@@ -14,7 +14,8 @@ export const addNewDeck = async (uid: String, titleInput: String) => {
     author: doc(db, "/users/" + uid),
     title: titleInput,
     playlist: [],
-    bleedQueue: []
+    // bleedQueue: CardNode,
+    // bleedQueueLength: 0
   }
   );
   console.log("New Deck added with ID: ", docRef.id);
@@ -62,8 +63,21 @@ export const getAllDecksByUID = async (uid : string) => {
   return res;
 }
 
+export const testFunction = async (uid : string) => {
+  const q = await query(decksCollectionRef, where("author", "==", doc(db, "/users/", uid)));
+  const querySnapshot = await getDocs(q);
+  let res = querySnapshot.docs.map((doc) => ({
+    id: doc.id,
+    title: doc.data().title,
+    playlist: doc.data().playlist
+  }));
+  
+  return res;
+}
+
+
 export const getOneDeckByDID = async (did: String) => {
-  const newDoc = await getDoc(doc(db, "/decks/" + did));
+  const newDoc = await getDoc(doc(db, "/decks/" + did))
   if (newDoc) {
     return {
       id: newDoc.id,
@@ -86,6 +100,8 @@ export const updateCardInDeck = async (did: String, cardIndex: number,
     updateDeckByDID(did, {playlist: currDeck.playlist})
     console.log("updated card successfully")
   }
+
+  
 }
 
 /**
