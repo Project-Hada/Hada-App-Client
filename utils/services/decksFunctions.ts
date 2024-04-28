@@ -96,9 +96,7 @@ export const updateCardInDeck = async (did: String, cardIndex: number,
                                       newTerm: String, newDefinition: String) => {
   const currDeck = await getOneDeckByDID(did);
   if (currDeck) {
-    console.log({term: newTerm, definition: newDefinition, ...currDeck.playlist[cardIndex]})
-    
-    currDeck.playlist[cardIndex] = {term: newTerm, definition: newDefinition, ...currDeck.playlist[cardIndex]};
+    currDeck.playlist[cardIndex] = {...currDeck.playlist[cardIndex], term: newTerm, definition: newDefinition};
     updateDeckByDID(did, {playlist: currDeck.playlist})
     console.log("updated card successfully")
   }
