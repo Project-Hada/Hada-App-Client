@@ -7,7 +7,6 @@ import {
   TouchableOpacity,
   SafeAreaView,
   ScrollView,
-  Pressable,
 } from "react-native";
 
 import { MaterialCommunityIcons, MaterialIcons } from "@expo/vector-icons";
@@ -24,6 +23,7 @@ import Search from "./Search";
 
 // For Korean regex
 import * as Hangul from "hangul-js";
+import { addNewCardToDeck } from "../../../utils/services/decksFunctions";
 import GearButton from "../../GearButton";
 import LibraryScreen from "../Library";
 
@@ -36,7 +36,7 @@ export default function DeckPreview({
   route,
   withinModal = false,
 }: any) {
-  const { currPlaylist, addFlashcard, updatePlaylistTitle, updateFlashcard, deleteFlashcard } =
+  const { currPlaylist, addFlashcard, updateFlashcard, deleteFlashcard } =
     useContext(FlashcardContext);
 
   const flashcards = currPlaylist ? currPlaylist.playlist : [];
@@ -70,18 +70,17 @@ export default function DeckPreview({
     setIsAddingVisible(false);
     setSelectedCardId(null);
   };
-
   const handleOpenAdd = () => {
     setIsAddingVisible(true);
     setSelectedCardId(null);
   };
-
   const handleAdd = (koreanWord: string, englishWord: string) => {
     if (currPlaylist && currPlaylist.id) {
       const newFlashcard = {
         id: generateId(), // Generate a unique ID for the new flashcard
         term: koreanWord,
         definition: englishWord,
+        createdAt: -1, // TODO: give proper time
         passes: 0,
         fails: 0,
       };
@@ -93,13 +92,6 @@ export default function DeckPreview({
     }
     setSelectedCardId(null);
   };
-
-    // TODO: FIX THIS WITH PROPER NAME
-    const handleUpdateTitle = async () => {
-      console.log("HIT")
-      updatePlaylistTitle(currPlaylist!, "cool, fancy name");
-      
-    }
 
   // Storing the search term
   const [searchTerm, setSearchTerm] = useState("");
@@ -117,7 +109,7 @@ export default function DeckPreview({
         (a, b) => b.createdAt - a.createdAt
       )
     : [];
-  console.log("flashcardsArray: ", flashcardsArray)
+  // console.log("flashcardsArray: ", flashcardsArray)
 
   // Filtering Flashcard by korean / english search term
 
@@ -431,8 +423,6 @@ export default function DeckPreview({
     );
   }
 
-
-
   return (
     <SafeAreaView style={styles.container}>
       <View style={styles.header}>
@@ -448,7 +438,6 @@ export default function DeckPreview({
           <View style={styles.headerInfo}>
             {/* Playlist Name */}
             <Text style={styles.headerTitle}>{currPlaylist?.title}</Text>
-            <Pressable onPress={handleUpdateTitle}><Text>change</Text></Pressable>
             {/* Playlist Info container */}
             <View style={styles.subHeader}>
               {/* Card Icon */}

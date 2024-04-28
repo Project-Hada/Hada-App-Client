@@ -78,10 +78,6 @@ export const updateDeckByDID = async (did: String, newData: {}) => {
   await updateDoc(doc(db, "/decks/" + did), newData)
 }
 
-export const updateDeckTitle = async (did: String, newTitle: String) => {
-  updateDeckByDID(did, {title: newTitle})
-}
-
 export const updateCardInDeck = async (did: String, cardIndex: number, 
                                       newTerm: String, newDefinition: String) => {
   const currDeck = await getOneDeckByDID(did);
