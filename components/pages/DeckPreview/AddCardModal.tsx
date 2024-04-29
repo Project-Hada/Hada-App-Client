@@ -67,7 +67,6 @@ const AddCardModal: React.FC<AddCardModalProps> = ({
       onDelete!(currPlaylist!, flashcardIndex);
     }
     // Close modal
-    // isVisible = false
   };
 
   if (!isVisible) {

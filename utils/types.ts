@@ -19,9 +19,7 @@ export interface FlashCardType {
 export interface PlaylistType {
   id: string;
   title: string;
-  playlist: {
-    [key: string]: FlashCardType;
-  };
+  playlist: FlashCardType[]
   createdAt?: number;
   lastSession?: number;
   bleedQueue: Array<string>;

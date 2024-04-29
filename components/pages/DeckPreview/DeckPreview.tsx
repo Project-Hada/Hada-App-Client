@@ -126,12 +126,12 @@ export default function DeckPreview({
     setSearchTerm(term);
   };
 
-  const flashcardsArray = Object.values(currPlaylist!.playlist)
-    ? Object.values(currPlaylist!.playlist).sort(
-        (a, b) => b.createdAt - a.createdAt
-      )
-    : [];
-  console.log("flashcardsArray: ", flashcardsArray)
+  const flashcardsArray = Object.values(currPlaylist!.playlist);
+    // ? Object.values(currPlaylist!.playlist).sort(
+    //     (a, b) => b.createdAt - a.createdAt
+    //   )
+    // : [];
+  // console.log("flashcardsArray: ", flashcardsArray)
 
   // Filtering Flashcard by korean / english search term
 

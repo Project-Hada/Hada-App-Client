@@ -101,7 +101,7 @@ export const LibraryProvider: React.FC<PropsWithChildren<{}>> = ({
     if (user && user.uid) {
       const data = await getAllDecksByUID(user.uid);
       setLibrary(data);
-      console.log("refreshed", data)
+      console.log("refreshed", data);
     }
   };
 
@@ -150,38 +150,26 @@ export const LibraryProvider: React.FC<PropsWithChildren<{}>> = ({
     playlist: PlaylistType,
     newFlashcard: FlashCardType
   ) => {
-    // Access the playlist directly by ID
-    const newFlashcardWithTimestamp = {
-      ...newFlashcard,
-      createdAt: Date.now(), // Ensure every new flashcard has a current timestamp
-    };
-
     const playlistToUpdate = playlist;
 
     if (playlistToUpdate) {
-      // Correctly use newFlashcardWithTimestamp when adding the flashcard
-      const updatedPlaylist = {
-        ...playlistToUpdate,
-        playlist: {
-          [newFlashcardWithTimestamp.id]: newFlashcardWithTimestamp, // Use the flashcard with timestamp
-          ...playlistToUpdate.playlist,
-        },
-      };
+      playlistToUpdate.playlist.push(newFlashcard);
 
       addNewCardToDeck(
         playlist.id,
-        newFlashcardWithTimestamp.term,
-        newFlashcardWithTimestamp.definition
+        newFlashcard.term,
+        newFlashcard.definition
       );
+
       // Update the library with the new playlist that includes the new flashcard
-      // setLibrary((prevLibrary) => ({
-      //   ...prevLibrary,
-      //   [playlist.id]: updatedPlaylist,
-      // }));
+      setLibrary((prevLibrary) => ({
+        ...prevLibrary,
+        [playlist.id]: playlistToUpdate,
+      }));
 
       // Update currPlaylist if it's the one being modified
       if (currPlaylist && currPlaylist.id === playlist.id) {
-        setCurrPlaylist(updatedPlaylist);
+        setCurrPlaylist(playlistToUpdate);
       }
     }
   };
@@ -222,8 +210,6 @@ export const LibraryProvider: React.FC<PropsWithChildren<{}>> = ({
     if (playlistToUpdate && playlistToUpdate.playlist[flashcardId]) {
       // Preserve the existing flashcard properties, except those that are updated
       const flashcardToUpdate = playlistToUpdate.playlist[flashcardId];
-      // console.log("111111111111111111111", flashcardToUpdate);
-      // console.log("222222222222222222222", updatedFlashcard);
       const flashcardWithUpdates = {
         ...flashcardToUpdate,
         ...updatedFlashcard,
@@ -245,7 +231,6 @@ export const LibraryProvider: React.FC<PropsWithChildren<{}>> = ({
       if (currPlaylist?.id === playlist.id) {
         setCurrPlaylist(updatedPlaylist);
       }
-      // console.log("333333333333333333333333333333333", currPlaylist);
     }
   };
 
@@ -256,26 +241,28 @@ export const LibraryProvider: React.FC<PropsWithChildren<{}>> = ({
    * This function updates the state to reflect the removal of the flashcard from the playlist.
    */
   const deleteFlashcard = (playlist: PlaylistType, flashcardId: number) => {
-    deleteCardInDeck(playlist.id, flashcardId);
-
     const playlistToUpdate = library[playlist.id];
+    console.log("PTU: ", playlistToUpdate, "FCID: ", flashcardId);
     if (playlistToUpdate && playlistToUpdate.playlist[flashcardId]) {
-      const { [flashcardId]: _, ...restOfFlashcards } =
-        playlistToUpdate.playlist;
+      playlistToUpdate.playlist.splice(flashcardId, 1);
+      console.log(playlistToUpdate)
+
       const updatedPlaylist = {
         ...playlistToUpdate,
-        playlist: restOfFlashcards,
+        playlist: playlistToUpdate.playlist,
       };
 
-      setLibrary({
-        ...library,
+      setLibrary((prevLibrary) => ({
+        ...prevLibrary,
         [playlist.id]: updatedPlaylist,
-      });
+      }));
 
       if (currPlaylist?.id === playlist.id) {
         setCurrPlaylist(updatedPlaylist);
       }
     }
+
+    deleteCardInDeck(playlist.id, flashcardId);
   };
 
   const updatePlaylist = (
