@@ -151,7 +151,6 @@ export const LibraryProvider: React.FC<PropsWithChildren<{}>> = ({
     newFlashcard: FlashCardType
   ) => {
     const playlistToUpdate = playlist;
-
     if (playlistToUpdate) {
       playlistToUpdate.playlist.push(newFlashcard);
 
@@ -210,26 +209,20 @@ export const LibraryProvider: React.FC<PropsWithChildren<{}>> = ({
     if (playlistToUpdate && playlistToUpdate.playlist[flashcardId]) {
       // Preserve the existing flashcard properties, except those that are updated
       const flashcardToUpdate = playlistToUpdate.playlist[flashcardId];
-      const flashcardWithUpdates = {
-        ...flashcardToUpdate,
-        ...updatedFlashcard,
+      playlistToUpdate.playlist[flashcardId] = {
+        ...flashcardToUpdate, 
+        term: updatedFlashcard.term, 
+        definition: updatedFlashcard.definition
       };
-
-      const updatedPlaylist = {
-        ...playlistToUpdate,
-        playlist: {
-          ...playlistToUpdate.playlist,
-          [flashcardId]: flashcardWithUpdates,
-        },
-      };
+      console.log("uP ", playlistToUpdate)
 
       setLibrary((prevLibrary) => ({
         ...prevLibrary,
-        [playlist.id]: updatedPlaylist,
+        [playlist.id]: playlistToUpdate,
       }));
 
       if (currPlaylist?.id === playlist.id) {
-        setCurrPlaylist(updatedPlaylist);
+        setCurrPlaylist(playlistToUpdate);
       }
     }
   };
