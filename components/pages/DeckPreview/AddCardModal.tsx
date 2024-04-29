@@ -44,7 +44,7 @@ const AddCardModal: React.FC<AddCardModalProps> = ({
   const { currPlaylist } = useContext(FlashcardContext);
 
   const handleConfirm = () => {
-    console.log("ID: ", flashcardId, "Index: ", flashcardIndex, koreanWord, englishWord);
+    // console.log("ID: ", flashcardId, "Index: ", flashcardIndex);
     if (isEditMode && flashcardIndex != null) {
       // Construct the updated flashcard object
       const updatedFlashcard: FlashCardType = {

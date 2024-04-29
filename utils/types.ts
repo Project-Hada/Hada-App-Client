@@ -2,10 +2,10 @@ import { CardNode } from "../components/pages/Practice/sessionAlgorithm";
 
 //types for a flashcard
 export interface FlashCardType {
+  createdAt: any;
   id: string;
   term: string;
   definition: string;
-  createdAt?: any;
   passes: number;
   fails: number;
 }
@@ -23,7 +23,6 @@ export interface PlaylistType {
   createdAt?: number;
   lastSession?: number;
   bleedQueue: Array<string>;
-  bleedQueueLength: number
 }
 
 // this sets up id's for PlaylistType to be accessed in O(1) in LibraryContext.tsx
