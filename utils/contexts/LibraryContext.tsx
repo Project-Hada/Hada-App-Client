@@ -20,11 +20,12 @@ import {
   addNewCardToDeck,
   addNewDeck,
   deleteCardInDeck,
+  deleteDeckByDID,
   getAllDecksByUID,
   getOneDeckByDID,
-  testFunction,
   updateBleedQueue,
   updateCardInDeck,
+  updateDeckTitle,
 } from "../services/decksFunctions";
 
 /**
@@ -56,10 +57,12 @@ export interface PlaylistContextType {
     playlistId: string,
     updatedPlaylistData: Partial<PlaylistType>
   ) => void;
+  updatePlaylistTitle: (playlist: PlaylistType, newTitle: string) => void;
   deleteFlashcard: (playlist: PlaylistType, flashcardId: number) => void;
   deletePlaylist: (playlistId: string) => void;
   profileImage: string | null;
   setProfileImage: Dispatch<SetStateAction<string | null>>;
+  refreshLibrary: () => Promise<void>
 }
 
 // The default state for the PlaylistContext when it is first created.
@@ -75,9 +78,11 @@ const defaultState: PlaylistContextType = {
   },
   addFlashcard: () => {},
   updatePlaylist: () => {},
+  updatePlaylistTitle: () => {},
   updateFlashcard: () => {},
   deleteFlashcard: () => {},
   deletePlaylist: () => {},
+  refreshLibrary: () => {throw new Error("failed to refreshLibrary")}
 };
 
 // Create the context with the default state.
@@ -95,8 +100,8 @@ export const LibraryProvider: React.FC<PropsWithChildren<{}>> = ({
   const refreshLibrary = async () => {
     if (user && user.uid) {
       const data = await getAllDecksByUID(user.uid);
-      // console.log("Test", JSON.stringify(await testFunction(user.uid), null, 4))
       setLibrary(data);
+      console.log("refreshed", data);
     }
   };
 
@@ -105,6 +110,7 @@ export const LibraryProvider: React.FC<PropsWithChildren<{}>> = ({
   useEffect(() => {
     refreshLibrary();
   }, [user]);
+
   const handleLogout = () => {
     signOut(auth)
       .then(() => {
@@ -122,7 +128,8 @@ export const LibraryProvider: React.FC<PropsWithChildren<{}>> = ({
 
   // Initialize the library as an empty object
   const [library, setLibrary] = useState<LibraryState>({});
-  // console.log("library: ", JSON.stringify(library, null, 4));
+  
+
 
   /**
    * Adds a new playlist to the library state.
@@ -131,7 +138,6 @@ export const LibraryProvider: React.FC<PropsWithChildren<{}>> = ({
   const addPlaylist = async () => {
     const newDeckId = await addNewDeck(user!.uid, "New Playlist");
     const newDeck = (await getOneDeckByDID(newDeckId)) as PlaylistType;
-    refreshLibrary();
     return newDeck;
   };
 
@@ -144,42 +150,42 @@ export const LibraryProvider: React.FC<PropsWithChildren<{}>> = ({
     playlist: PlaylistType,
     newFlashcard: FlashCardType
   ) => {
-    // Access the playlist directly by ID
-    const newFlashcardWithTimestamp = {
-      ...newFlashcard,
-      createdAt: Date.now(), // Ensure every new flashcard has a current timestamp
-    };
-
     const playlistToUpdate = playlist;
-
     if (playlistToUpdate) {
-      // Correctly use newFlashcardWithTimestamp when adding the flashcard
-      const updatedPlaylist = {
-        ...playlistToUpdate,
-        playlist: {
-          [newFlashcardWithTimestamp.id]: newFlashcardWithTimestamp, // Use the flashcard with timestamp
-          ...playlistToUpdate.playlist,
-        },
-      };
+      playlistToUpdate.playlist.push(newFlashcard);
 
       addNewCardToDeck(
         playlist.id,
-        newFlashcardWithTimestamp.term,
-        newFlashcardWithTimestamp.definition
+        newFlashcard.term,
+        newFlashcard.definition
       );
-      refreshLibrary();
-      // // Update the library with the new playlist that includes the new flashcard
-      // setLibrary((prevLibrary) => ({
-      //   ...prevLibrary,
-      //   [playlist.id]: updatedPlaylist,
-      // }));
+
+      // Update the library with the new playlist that includes the new flashcard
+      setLibrary((prevLibrary) => ({
+        ...prevLibrary,
+        [playlist.id]: playlistToUpdate,
+      }));
 
       // Update currPlaylist if it's the one being modified
       if (currPlaylist && currPlaylist.id === playlist.id) {
-        setCurrPlaylist(updatedPlaylist);
+        setCurrPlaylist(playlistToUpdate);
       }
     }
   };
+
+  const updatePlaylistTitle = (playlist: PlaylistType, newTitle: string) => {
+    updateDeckTitle(playlist.id, newTitle);
+
+    const updatedPlaylist = {
+      ...playlist,
+      title: newTitle
+    }
+
+    if (currPlaylist && currPlaylist.id === playlist.id) {
+      setCurrPlaylist(updatedPlaylist);
+    }
+  }
+
 
   /**
    * Updates a flashcard in the specified playlist with new data.
@@ -189,7 +195,7 @@ export const LibraryProvider: React.FC<PropsWithChildren<{}>> = ({
    */
   const updateFlashcard = (
     playlist: PlaylistType,
-    flashcardId: string,
+    flashcardId: number,
     updatedFlashcard: FlashCardType
   ) => {
     updateCardInDeck(
@@ -203,30 +209,21 @@ export const LibraryProvider: React.FC<PropsWithChildren<{}>> = ({
     if (playlistToUpdate && playlistToUpdate.playlist[flashcardId]) {
       // Preserve the existing flashcard properties, except those that are updated
       const flashcardToUpdate = playlistToUpdate.playlist[flashcardId];
-      // console.log("111111111111111111111", flashcardToUpdate);
-      // console.log("222222222222222222222", updatedFlashcard);
-      const flashcardWithUpdates = {
-        ...flashcardToUpdate,
-        ...updatedFlashcard,
+      playlistToUpdate.playlist[flashcardId] = {
+        ...flashcardToUpdate, 
+        term: updatedFlashcard.term, 
+        definition: updatedFlashcard.definition
       };
-
-      const updatedPlaylist = {
-        ...playlistToUpdate,
-        playlist: {
-          ...playlistToUpdate.playlist,
-          [flashcardId]: flashcardWithUpdates,
-        },
-      };
+      console.log("uP ", playlistToUpdate)
 
       setLibrary((prevLibrary) => ({
         ...prevLibrary,
-        [playlist.id]: updatedPlaylist,
+        [playlist.id]: playlistToUpdate,
       }));
 
       if (currPlaylist?.id === playlist.id) {
-        setCurrPlaylist(updatedPlaylist);
+        setCurrPlaylist(playlistToUpdate);
       }
-      // console.log("333333333333333333333333333333333", currPlaylist);
     }
   };
 
@@ -237,26 +234,28 @@ export const LibraryProvider: React.FC<PropsWithChildren<{}>> = ({
    * This function updates the state to reflect the removal of the flashcard from the playlist.
    */
   const deleteFlashcard = (playlist: PlaylistType, flashcardId: number) => {
-    deleteCardInDeck(playlist.id, flashcardId);
-
     const playlistToUpdate = library[playlist.id];
+    console.log("PTU: ", playlistToUpdate, "FCID: ", flashcardId);
     if (playlistToUpdate && playlistToUpdate.playlist[flashcardId]) {
-      const { [flashcardId]: _, ...restOfFlashcards } =
-        playlistToUpdate.playlist;
+      playlistToUpdate.playlist.splice(flashcardId, 1);
+      console.log(playlistToUpdate)
+
       const updatedPlaylist = {
         ...playlistToUpdate,
-        playlist: restOfFlashcards,
+        playlist: playlistToUpdate.playlist,
       };
 
-      setLibrary({
-        ...library,
+      setLibrary((prevLibrary) => ({
+        ...prevLibrary,
         [playlist.id]: updatedPlaylist,
-      });
+      }));
 
       if (currPlaylist?.id === playlist.id) {
         setCurrPlaylist(updatedPlaylist);
       }
     }
+
+    deleteCardInDeck(playlist.id, flashcardId);
   };
 
   const updatePlaylist = (
@@ -292,6 +291,8 @@ export const LibraryProvider: React.FC<PropsWithChildren<{}>> = ({
   };
 
   const deletePlaylist = (playlistId: string) => {
+    deleteDeckByDID(playlistId);
+    
     setLibrary((prevLibrary) => {
       const updatedLibrary = { ...prevLibrary };
       delete updatedLibrary[playlistId]; // Remove the playlist by ID
@@ -316,6 +317,7 @@ export const LibraryProvider: React.FC<PropsWithChildren<{}>> = ({
         library,
         setLibrary,
         addPlaylist,
+        updatePlaylistTitle,
         addFlashcard,
         updatePlaylist,
         updateFlashcard,
@@ -323,6 +325,7 @@ export const LibraryProvider: React.FC<PropsWithChildren<{}>> = ({
         deletePlaylist,
         profileImage,
         setProfileImage,
+        refreshLibrary,
       }}
     >
       {children}
