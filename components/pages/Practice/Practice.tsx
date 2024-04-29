@@ -358,16 +358,25 @@ export default function PracticeScreen({ navigation, route }: any) {
       borderColor: theme.colors.border,
     },
     counter: {
+      flexDirection: 'row',
       justifyContent: "center",
       alignItems: "center",
       width: 30,
       height: 30,
       borderWidth: 2.25,
       borderRadius: 100,
+      borderColor: theme.colors.subtext,
+      marginTop: -10,
     },
     counterText: {
       fontSize: 16,
       fontFamily: theme.typography.fonts.mediumFont,
+    },
+    progressInfo: {
+      flexDirection: 'row',
+      justifyContent: 'space-between',
+      alignItems: 'center',
+      width: "100%",
     },
     navContainer: {
       flexDirection: "row",
@@ -406,6 +415,12 @@ export default function PracticeScreen({ navigation, route }: any) {
     subHeader: {
       flexDirection: "row",
       alignItems: "center",
+    },
+    wordCountContainer: {
+      flexDirection: 'row',
+      justifyContent: 'center',
+      alignItems: 'center',
+      marginTop: -10
     },
     wordCount: {
       fontFamily: theme.typography.fonts.regularFont,
@@ -451,42 +466,38 @@ export default function PracticeScreen({ navigation, route }: any) {
             </View>
 
             <View style={styles.progress}>{renderProgressIndicators()}</View>
-            <Animated.View
-              style={[
-                styles.counter,
-                {
-                  borderColor: theme.colors.subtext,
-                  marginLeft: 303,
-                  marginTop: -10,
-                },
-              ]}
-            >
-              <Animated.Text
+            <View style={styles.progressInfo}>
+              <View style={styles.wordCountContainer}>
+                {/* Card Icon */}
+                <MaterialCommunityIcons
+                  name="cards-variant"
+                  size={22}
+                  color="#B6B6B6"
+                />
+                <Text
+                  style={[
+                    styles.wordCount,
+                  ]}
+                >
+                  {Object.keys(currPlaylist.playlist).length} words
+                </Text>
+              </View>
+              <Animated.View
                 style={[
-                  styles.counterText,
-                  counterTextStyle,
-                  { color: theme.colors.subtext },
+                  styles.counter
                 ]}
               >
-                {`${numOfLoops}x`}
-              </Animated.Text>
-            </Animated.View>
+                <Animated.Text
+                  style={[
+                    styles.counterText,
+                    counterTextStyle,
+                    { color: theme.colors.subtext },
+                  ]}
+                >
+                  {`${numOfLoops}x`}
+                </Animated.Text>
+              </Animated.View>
 
-            <View style={[{ marginTop: -45 }]}>
-              {/* Card Icon */}
-              <MaterialCommunityIcons
-                name="cards-variant"
-                size={22}
-                color="#B6B6B6"
-              />
-              <Text
-                style={[
-                  styles.wordCount,
-                  { marginLeft: 20, marginTop: -20, marginBottom: 10 },
-                ]}
-              >
-                {Object.keys(currPlaylist.playlist).length} words
-              </Text>
             </View>
           </View>
 
