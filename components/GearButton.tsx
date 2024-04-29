@@ -6,11 +6,10 @@ import { Modalize } from "react-native-modalize";
 import GearModal from "./GearModal";
 
 interface GearButtonProps {
-  openModal: () => void;
   navigation: any;
 }
 
-const GearButton: React.FC<GearButtonProps> = ({ openModal, navigation }) => {
+const GearButton: React.FC<GearButtonProps> = ({ navigation }) => {
   const { toggleTheme } = useTheme();
   const modalizeRef = useRef<Modalize>(null);
 

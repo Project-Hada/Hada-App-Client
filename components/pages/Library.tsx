@@ -66,10 +66,6 @@ export default function LibraryScreen({ navigation, route }: any) {
   );
   const modalizeRef = useRef<Modalize>(null);
 
-  const openModal = () => {
-    modalizeRef.current?.open();
-  };
-
   const flashcards = flashCards;
 
   const [searchSet, setSearchSet] = useState("");
@@ -463,7 +459,7 @@ export default function LibraryScreen({ navigation, route }: any) {
           );
         })}
       </ScrollView>
-      <GearModal ref={modalizeRef} />
+      {/* <GearModal ref={modalizeRef} /> */}
     </SafeAreaView>
   );
 }
