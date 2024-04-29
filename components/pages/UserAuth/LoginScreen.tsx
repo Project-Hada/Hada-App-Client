@@ -32,7 +32,7 @@ export function LoginScreen({ navigation, route }: any) {
         setError("email format: abc@xyz.com")
       else if (passwordInput === '') 
         setError("password cannot be empty")
-      else if (passwordInput.length < 9) 
+      else if (passwordInput.length < 1) 
         setError("must be at least 9 characters")
       else {
         const response = await signInWithEmailAndPassword(auth, emailInput, passwordInput)
