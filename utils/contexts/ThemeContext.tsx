@@ -60,7 +60,7 @@ export const ThemeProvider = ({ children }: { children: ReactNode }) => {
   return (
     <ThemeContext.Provider value={{ theme, themeMode, toggleTheme }}>
       {children}
-      <SafeAreaView style={{ flex: 0, padding: 20, backgroundColor: theme.colors.listBackground }} />
+      <SafeAreaView style={{ flex: 0, backgroundColor: theme.colors.listBackground }} />
     </ThemeContext.Provider>
   );
 };

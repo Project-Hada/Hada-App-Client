@@ -344,7 +344,7 @@ export default function DeckPreview({
     practiceButtonContainer: {
       backgroundColor: theme.colors.listBackground,
       marginHorizontal: -5,
-      marginBottom: -20,
+      // marginBottom: 20,
       borderTopColor: theme.colors.border,
       borderTopWidth: 1,
     },
@@ -481,7 +481,9 @@ export default function DeckPreview({
             <TouchableOpacity onPress={handleOpenAdd}>
               <AddButton />
             </TouchableOpacity>
-            <GearButton navigation={navigation} />
+            <GearButton navigation={navigation} openModal={function (): void {
+              throw new Error("Function not implemented.");
+            } } />
           </View>
           {/* further discussion needed on adding this with the other add option */}
         </View>
