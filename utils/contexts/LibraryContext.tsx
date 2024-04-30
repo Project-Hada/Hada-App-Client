@@ -214,7 +214,8 @@ export const LibraryProvider: React.FC<PropsWithChildren<{}>> = ({
         term: updatedFlashcard.term, 
         definition: updatedFlashcard.definition
       };
-      console.log("uP ", playlistToUpdate)
+      console.log("uP oP ", playlistToUpdate)
+      console.log("uP nF ", updatedFlashcard)
 
       setLibrary((prevLibrary) => ({
         ...prevLibrary,

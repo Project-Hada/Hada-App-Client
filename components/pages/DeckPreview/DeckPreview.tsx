@@ -64,7 +64,7 @@ export default function DeckPreview({
         }
       });
     }
-  }, [currPlaylist, updateFlashcard]);
+  }, [currPlaylist]);
 
   const handleCancel = () => {
     setIsAddingVisible(false);
@@ -428,8 +428,8 @@ export default function DeckPreview({
                 <AddCardModal
                   isVisible={selectedCardId !== null}
                   onAdd={handleAdd}
-                  onUpdate={updateFlashcard}
-                  onDelete={deleteFlashcard}
+                  onUpdate={handleUpdateFlashcard}
+                  onDelete={handleDeleteFlashcard}
                   onCancel={handleCancel}
                   createdAt={item.createdAt}
                   koreanWordInitial={item.term}
@@ -523,8 +523,6 @@ export default function DeckPreview({
               <AddCardModal
                 isVisible={selectedCardId !== null}
                 onAdd={handleAdd} // Used for adding a new card
-                // onUpdate={updateFlashcard}
-                // onDelete={deleteFlashcard}
                 onUpdate={handleUpdateFlashcard}
                 onDelete={handleDeleteFlashcard}
                 onCancel={handleCancel}

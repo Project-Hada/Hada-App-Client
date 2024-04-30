@@ -485,7 +485,7 @@ export default function PracticeScreen({ navigation, route }: any) {
                   { marginLeft: 20, marginTop: -20, marginBottom: 10 },
                 ]}
               >
-                {Object.keys(currPlaylist.playlist).length} words
+                {Object.keys(currPlaylist!.playlist).length} words
               </Text>
             </View>
           </View>
