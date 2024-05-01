@@ -27,7 +27,7 @@ const DeckPreviewModal = () => {
       <Modalize
         ref={modalizeRef}
         modalHeight={450}
-        alwaysOpen={21}
+        alwaysOpen={35}
         handlePosition="inside"
         handleStyle={styles.handle}
         panGestureEnabled={true}
