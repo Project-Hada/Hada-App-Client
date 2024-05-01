@@ -4,10 +4,11 @@ import * as ImagePicker from "expo-image-picker";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { useTheme } from "../../utils/contexts/ThemeContext";
 import LibraryContext from "../../utils/contexts/LibraryContext";
+import { upload } from "../../utils/firebaseConfig";
 
 const ProfilePicture = () => {
   const { theme } = useTheme();
-  const { profileImage, setProfileImage } = useContext(LibraryContext);
+  const { user, profileImage, setProfileImage } = useContext(LibraryContext);
 
   const pickImage = async () => {
     let mediaLibraryPermissionResponse;
@@ -32,8 +33,11 @@ const ProfilePicture = () => {
     // If the operation is not canceled and an image is picked
     if (!result.canceled && result.assets) {
       setProfileImage(result.assets[0].uri);
+      console.log(result.assets[0].uri)
+      upload(user!, result.assets[0]); // TODO: check
     }
   };
+
   return (
     <TouchableOpacity onPress={pickImage} style={{ marginTop: -4 }}>
       {profileImage ? (

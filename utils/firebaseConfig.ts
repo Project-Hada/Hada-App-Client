@@ -1,10 +1,11 @@
 import { initializeApp } from "firebase/app";
-import { initializeAuth, getAuth, getReactNativePersistence, Auth } from 'firebase/auth';
+import { initializeAuth, getAuth, getReactNativePersistence, Auth, User, updateProfile } from 'firebase/auth';
 import ReactNativeAsyncStorage from '@react-native-async-storage/async-storage';
 import { getAnalytics, isSupported } from "firebase/analytics";
 import { getFirestore } from 'firebase/firestore';
 import { Platform } from "react-native";
-// import getReactNativePersistence from 'react-native';
+import * as ImagePicker from "expo-image-picker";
+import { getDownloadURL, getStorage, ref, uploadBytes } from 'firebase/storage'
 
 const firebaseConfig = {
   apiKey: process.env.EXPO_PUBLIC_FIREBASE_API_KEY,
@@ -21,6 +22,29 @@ export const app = initializeApp(firebaseConfig);
 
 // Initialize Firestore
 export const db = getFirestore(app);
+
+// Initialize Storage
+export const storage = getStorage();
+
+export async function upload(user: User, file: ImagePicker.ImagePickerAsset) {
+  const blob : Blob = await new Promise((resolve, reject) => {
+    const xhr = new XMLHttpRequest();
+    xhr.onload = function () {
+      resolve(xhr.response);
+    };
+    xhr.onerror = function (e) {
+      reject(new TypeError("Network request failed"));
+    };
+    xhr.responseType = "blob";
+    xhr.open("GET", file.uri, true);
+    xhr.send(null);
+  });
+
+  const fileRef = ref(storage, user.uid + "_" + file.fileName);
+  const snapshot = await uploadBytes(fileRef, blob);
+  const photoURL = await getDownloadURL(fileRef);
+  updateProfile(user, {photoURL: photoURL})
+}
 
 // Initialize Firebase Auth with AsyncStorage persistence
 export let auth : Auth;

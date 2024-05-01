@@ -5,6 +5,7 @@ import { useTheme } from "../../utils/contexts/ThemeContext";
 import { AntDesign } from "@expo/vector-icons";
 import LibraryContext from "../../utils/contexts/LibraryContext";
 import * as ImagePicker from "expo-image-picker";
+import { upload } from "../../utils/firebaseConfig";
 
 interface SettingsScreenProps {
   openModal: () => void;
@@ -40,6 +41,7 @@ const SettingsScreen: React.FC<SettingsScreenProps> = ({
       );
       return;
     }
+
     // Choosing an image from the gallery
     const result = await ImagePicker.launchImageLibraryAsync({
       mediaTypes: ImagePicker.MediaTypeOptions.Images,
@@ -51,6 +53,7 @@ const SettingsScreen: React.FC<SettingsScreenProps> = ({
     // If the operation is not canceled and an image is picked
     if (!result.canceled && result.assets) {
       setProfileImage(result.assets[0].uri);
+      upload(user!, result.assets[0]); // TODO: check
     }
   };
 

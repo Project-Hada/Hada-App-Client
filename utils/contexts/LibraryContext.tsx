@@ -82,6 +82,8 @@ const defaultState: PlaylistContextType = {
   updateFlashcard: () => {},
   deleteFlashcard: () => {},
   deletePlaylist: () => {},
+  profileImage: null,
+  setProfileImage: () => {},
   refreshLibrary: () => {throw new Error("failed to refreshLibrary")}
 };
 
@@ -105,12 +107,16 @@ export const LibraryProvider: React.FC<PropsWithChildren<{}>> = ({
     }
   };
 
+  const [profileImage, setProfileImage] = useState<string | null>(null);
   const [user, setUser] = useState<User | null>(null);
   onAuthStateChanged(auth, (user) => setUser(user));
+
   useEffect(() => {
     refreshLibrary();
+    if (user?.photoURL) setProfileImage(user.photoURL);
   }, [user]);
 
+  
   const handleLogout = () => {
     signOut(auth)
       .then(() => {
@@ -129,7 +135,6 @@ export const LibraryProvider: React.FC<PropsWithChildren<{}>> = ({
   // Initialize the library as an empty object
   const [library, setLibrary] = useState<LibraryState>({});
   
-
 
   /**
    * Adds a new playlist to the library state.
@@ -306,7 +311,6 @@ export const LibraryProvider: React.FC<PropsWithChildren<{}>> = ({
     });
   };
 
-  const [profileImage, setProfileImage] = useState<string | null>(null);
 
   return (
     <LibraryContext.Provider
