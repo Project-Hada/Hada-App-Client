@@ -164,6 +164,7 @@ const SettingsScreen: React.FC<SettingsScreenProps> = ({
       borderWidth: 1,
       paddingVertical: 10,
       alignItems: "center",
+      marginBottom: 20
     },
     signoutText: {
       fontFamily: theme.typography.fonts.semiboldFont,

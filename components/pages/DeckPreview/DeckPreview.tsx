@@ -7,6 +7,7 @@ import {
   TouchableOpacity,
   SafeAreaView,
   ScrollView,
+  Pressable,
 } from "react-native";
 
 import { AntDesign, MaterialCommunityIcons, MaterialIcons } from "@expo/vector-icons";
@@ -16,14 +17,13 @@ import AddButton from "../../AddButton";
 import generateId from "../../../utils/idGenerator";
 import AddCardModal from "./AddCardModal";
 import PreviewCard from "./PreviewCard";
-import { FlashCardType } from "../../../utils/types";
+import { FlashCardType, PlaylistType } from "../../../utils/types";
 import { useTheme } from "../../../utils/contexts/ThemeContext";
 
 import Search from "./Search";
 
 // For Korean regex
 import * as Hangul from "hangul-js";
-import { addNewCardToDeck } from "../../../utils/services/decksFunctions";
 import GearButton from "../../GearButton";
 import PlaylistRenameModal from "../PlaylistNameModal";
 import LibraryContext from "../../../utils/contexts/LibraryContext";
@@ -37,7 +37,7 @@ export default function DeckPreview({
   route,
   withinModal = false,
 }: any) {
-  const { currPlaylist, addFlashcard, updateFlashcard, deleteFlashcard } =
+  const { currPlaylist, addFlashcard, updatePlaylistTitle, updateFlashcard, deleteFlashcard } =
     useContext(FlashcardContext);
   
   const {  updatePlaylist, library } = useContext(LibraryContext);
@@ -96,17 +96,18 @@ export default function DeckPreview({
     setIsAddingVisible(false);
     setSelectedCardId(null);
   };
+
   const handleOpenAdd = () => {
     setIsAddingVisible(true);
     setSelectedCardId(null);
   };
+
   const handleAdd = (koreanWord: string, englishWord: string) => {
     if (currPlaylist && currPlaylist.id) {
       const newFlashcard = {
         id: generateId(), // Generate a unique ID for the new flashcard
         term: koreanWord,
         definition: englishWord,
-        createdAt: -1, // TODO: give proper time
         passes: 0,
         fails: 0,
       };
@@ -119,6 +120,27 @@ export default function DeckPreview({
     setSelectedCardId(null);
   };
 
+  const handleUpdateFlashcard = (
+    playlist: PlaylistType,
+    flashcardIndex: number,
+    updatedFlashcard: FlashCardType
+  ) => {
+    updateFlashcard(currPlaylist!, flashcardIndex, updatedFlashcard);
+    setIsAddingVisible(false);
+    setSelectedCardId(null);
+  }
+
+  const handleDeleteFlashcard = (playlist: PlaylistType, flashcardIndex: number) => {
+    deleteFlashcard(currPlaylist!, flashcardIndex);
+    setIsAddingVisible(false);
+    setSelectedCardId(null);
+  }
+
+    // TODO: FIX THIS WITH PROPER NAME
+    const handleUpdateTitle = async () => {
+      updatePlaylistTitle(currPlaylist!, "cool, fancy name");
+    }
+
   // Storing the search term
   const [searchTerm, setSearchTerm] = useState("");
 
@@ -130,11 +152,11 @@ export default function DeckPreview({
     setSearchTerm(term);
   };
 
-  const flashcardsArray = Object.values(currPlaylist!.playlist)
-    ? Object.values(currPlaylist!.playlist).sort(
-        (a, b) => b.createdAt - a.createdAt
-      )
-    : [];
+  const flashcardsArray = Object.values(currPlaylist!.playlist);
+    // ? Object.values(currPlaylist!.playlist).sort(
+    //     (a, b) => b.createdAt - a.createdAt
+    //   )
+    // : [];
   // console.log("flashcardsArray: ", flashcardsArray)
 
   // Filtering Flashcard by korean / english search term
@@ -348,7 +370,7 @@ export default function DeckPreview({
     practiceButtonContainer: {
       backgroundColor: theme.colors.listBackground,
       marginHorizontal: -5,
-      marginBottom: -20,
+      // marginBottom: 20,
       borderTopColor: theme.colors.border,
       borderTopWidth: 1,
     },
@@ -449,6 +471,8 @@ export default function DeckPreview({
     );
   }
 
+
+
   return (
     <SafeAreaView style={styles.container}>
       <View style={styles.header}>
@@ -476,7 +500,6 @@ export default function DeckPreview({
                 <AntDesign name="edit" size={16} color={theme.colors.subtext} />
               </TouchableOpacity>
             </Text>
-           
             {/* Playlist Info container */}
             <View style={styles.subHeader}>
               {/* Card Icon */}
@@ -495,7 +518,9 @@ export default function DeckPreview({
             <TouchableOpacity onPress={handleOpenAdd}>
               <AddButton />
             </TouchableOpacity>
-            <GearButton navigation={navigation} />
+            <GearButton navigation={navigation} openModal={function (): void {
+              throw new Error("Function not implemented.");
+            } } />
           </View>
           {/* further discussion needed on adding this with the other add option */}
         </View>
@@ -537,8 +562,10 @@ export default function DeckPreview({
               <AddCardModal
                 isVisible={selectedCardId !== null}
                 onAdd={handleAdd} // Used for adding a new card
-                onUpdate={updateFlashcard}
-                onDelete={deleteFlashcard}
+                // onUpdate={updateFlashcard}
+                // onDelete={deleteFlashcard}
+                onUpdate={handleUpdateFlashcard}
+                onDelete={handleDeleteFlashcard}
                 onCancel={handleCancel}
                 createdAt={item.createdAt}
                 koreanWordInitial={item.term}

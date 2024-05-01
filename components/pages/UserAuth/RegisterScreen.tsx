@@ -1,7 +1,7 @@
 import { AntDesign } from "@expo/vector-icons";
 import React from "react";
 import { useState, useEffect } from "react";
-import { View, StyleSheet, TextInput, Pressable, Text } from "react-native";
+import { View, StyleSheet, TextInput, Pressable, Text, ImageBackground } from "react-native";
 import { auth } from "../../../utils/firebaseConfig";
 import { createUserWithEmailAndPassword } from "firebase/auth";
 import { addNewUserWithID } from "../../../utils/services/usersFunctions";
@@ -121,7 +121,7 @@ export function RegisterScreen({ navigation, route }: any) {
   });
 
   return (
-    <View style={registerStyle.mainContainer}>
+    <ImageBackground source={require('./background.png')} style={registerStyle.mainContainer}>
       <View style={registerStyle.loginContainer}>
         <Text style={registerStyle.loginTitle}>Sign Up</Text>
 
@@ -150,7 +150,7 @@ export function RegisterScreen({ navigation, route }: any) {
         <TextInput
           style={registerStyle.loginInput}
           onChangeText={setEmailInput}
-          placeholder="Username"
+          placeholder="Email"
           placeholderTextColor="#D3D3D3"
           value={emailInput}
         />
@@ -237,6 +237,6 @@ export function RegisterScreen({ navigation, route }: any) {
           <Text style={registerStyle.loginSignInBtn}>Register</Text>
         </Pressable>
       </View>
-    </View>
+    </ImageBackground>
   );
 }
