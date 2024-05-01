@@ -487,6 +487,10 @@ export default function PracticeScreen({ navigation, route }: any) {
                   styles.counter
                 ]}
               >
+
+                {Object.keys(currPlaylist!.playlist).length} words
+              </Text>
+
                 <Animated.Text
                   style={[
                     styles.counterText,
@@ -497,6 +501,7 @@ export default function PracticeScreen({ navigation, route }: any) {
                   {`${numOfLoops}x`}
                 </Animated.Text>
               </Animated.View>
+
 
             </View>
           </View>

@@ -97,7 +97,7 @@ export const updateCardInDeck = async (did: String, cardIndex: number,
  * @param {string} playlistId - The ID of the playlist to update.
  * @param {string[]} newBleedQueue - The new bleed queue array.
  */
-export const updateBleedQueue = async (playlistId: string, newBleedQueue: string) => {
+export const updateBleedQueue = async (playlistId: string, newBleedQueue: string[]) => {
   // Ensure the playlist ID and the new bleed queue are valid
   if (!playlistId || !newBleedQueue) {
     throw new Error('Invalid playlist ID or bleed queue');

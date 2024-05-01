@@ -13,7 +13,6 @@ import LibraryContext from "../utils/contexts/LibraryContext";
 // import libraryData from "../Data/fakeData";
 import { Audio } from "expo-av";
 import { useTheme } from "../utils/contexts/ThemeContext";
-import { addIdsToFlashcards } from "../utils/services/decksFunctions";
 
 export default function Configure() {
   /**
