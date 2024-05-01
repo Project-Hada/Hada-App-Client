@@ -479,7 +479,7 @@ export default function PracticeScreen({ navigation, route }: any) {
                     styles.wordCount,
                   ]}
                 >
-                  {Object.keys(currPlaylist.playlist).length} words
+                  {Object.keys(currPlaylist!.playlist).length} words
                 </Text>
               </View>
               <Animated.View
@@ -487,9 +487,6 @@ export default function PracticeScreen({ navigation, route }: any) {
                   styles.counter
                 ]}
               >
-
-                {Object.keys(currPlaylist!.playlist).length} words
-              </Text>
 
                 <Animated.Text
                   style={[
