@@ -1,6 +1,6 @@
 import React, { useContext, useRef, useState } from "react";
 import { MaterialCommunityIcons, Octicons } from "@expo/vector-icons";
-import { StyleSheet, TouchableOpacity, View, Text, Image } from "react-native";
+import { StyleSheet, TouchableOpacity, View, Text, Image, Alert} from "react-native";
 import { useTheme } from "../../utils/contexts/ThemeContext";
 import { AntDesign } from "@expo/vector-icons";
 import LibraryContext from "../../utils/contexts/LibraryContext";
@@ -63,7 +63,6 @@ const SettingsScreen: React.FC<SettingsScreenProps> = ({
     container: {
       flex: 1,
       backgroundColor: theme.colors.backgroundColor,
-      paddingHorizontal: 16,
       justifyContent: "space-between",
     },
     header: {
@@ -80,6 +79,7 @@ const SettingsScreen: React.FC<SettingsScreenProps> = ({
       justifyContent: "center",
       height: 25,
       fontSize: 20,
+      color: theme.colors.text,
     },
     backArrowContainer: {
       justifyContent: "center",
@@ -105,6 +105,7 @@ const SettingsScreen: React.FC<SettingsScreenProps> = ({
     credTitle: {
       fontFamily: theme.typography.fonts.boldFont,
       fontSize: 14,
+      color: theme.colors.text,
     },
     credTextContainer: {
       backgroundColor: "white",
@@ -190,8 +191,18 @@ const SettingsScreen: React.FC<SettingsScreenProps> = ({
       fontFamily: theme.typography.fonts.boldFont,
       fontSize: 16,
       marginBottom: 12,
+      color: theme.colors.text,
     },
-    top: {},
+    top: {
+      paddingHorizontal: 16,
+    },
+    signoutContainer: {
+      backgroundColor: theme.colors.listBackground,
+      paddingTop: 10,
+      borderTopColor: theme.colors.border,
+      paddingHorizontal: 16,
+      borderTopWidth: 1,
+    }
   });
   //navigation.goBack();
   // Return the button element
@@ -259,7 +270,7 @@ const SettingsScreen: React.FC<SettingsScreenProps> = ({
           <View style={styles.credContainer}>
             <Text style={styles.credTitle}>Password</Text>
             <View style={[styles.credTextContainer, theme.shadow.default]}>
-              <Text style={styles.credText}>****</Text>
+              <Text style={styles.credText}>*********</Text>
             </View>
           </View>
         </View>
@@ -300,12 +311,14 @@ const SettingsScreen: React.FC<SettingsScreenProps> = ({
         </View>
       </View>
 
-      <TouchableOpacity
-        style={[styles.signout, theme.shadow.default]}
-        onPress={handleUserSignOut}
-      >
-        <Text style={styles.signoutText}>Sign Out</Text>
-      </TouchableOpacity>
+      <View style={styles.signoutContainer}>
+        <TouchableOpacity
+          style={[styles.signout, theme.shadow.default]}
+          onPress={handleUserSignOut}
+        >
+          <Text style={styles.signoutText}>Sign Out</Text>
+        </TouchableOpacity>
+      </View>
     </View>
   );
 };

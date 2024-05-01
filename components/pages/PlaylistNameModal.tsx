@@ -44,7 +44,7 @@ const PlaylistRenameModal: React.FC<PlaylistRenameModalProps> = ({
     },
     modalContainer: {
       margin: 20,
-      backgroundColor: "white",
+      backgroundColor: theme.colors.container,
       borderColor: theme.colors.border,
       borderRadius: 10,
       borderWidth: 1,
@@ -147,7 +147,7 @@ const PlaylistRenameModal: React.FC<PlaylistRenameModalProps> = ({
                 Previous Name
               </Text>
               <View style={styles.prevCont}>
-                <Text> {currentName}</Text>
+                <Text style={({color: theme.colors.text})}> {currentName}</Text>
               </View>
             </View>
             <View style={styles.newPlaylist}>

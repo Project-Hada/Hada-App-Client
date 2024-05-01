@@ -10,7 +10,7 @@ import {
   Pressable,
 } from "react-native";
 
-import { MaterialCommunityIcons, MaterialIcons } from "@expo/vector-icons";
+import { AntDesign, MaterialCommunityIcons, MaterialIcons } from "@expo/vector-icons";
 
 import FlashcardContext from "../../../utils/contexts/LibraryContext";
 import AddButton from "../../AddButton";
@@ -25,7 +25,8 @@ import Search from "./Search";
 // For Korean regex
 import * as Hangul from "hangul-js";
 import GearButton from "../../GearButton";
-import LibraryScreen from "../Library";
+import PlaylistRenameModal from "../PlaylistNameModal";
+import LibraryContext from "../../../utils/contexts/LibraryContext";
 
 type DeckPreviewProps = {
   navigation: any;
@@ -38,12 +39,37 @@ export default function DeckPreview({
 }: any) {
   const { currPlaylist, addFlashcard, updatePlaylistTitle, updateFlashcard, deleteFlashcard } =
     useContext(FlashcardContext);
-
+  
+  const {  updatePlaylist, library } = useContext(LibraryContext);
   const flashcards = currPlaylist ? currPlaylist.playlist : [];
 
   // State to track the selected card for editing
   const [selectedCardId, setSelectedCardId] = useState<number | null>(null);
   const [isAddingVisible, setIsAddingVisible] = useState(false);
+  
+  const [newPlaylistName, setNewPlaylistName] = useState("");
+  const [modalVisible, setModalVisible] = useState(false);
+  const [selectedPlaylistId, setSelectedPlaylistId] = useState<string | null>(
+    null
+  );
+
+  const handleNameChange = (newName: string) => {
+    if (selectedPlaylistId && newName.trim()) {
+      updatePlaylist(selectedPlaylistId, { title: newName });
+      setNewPlaylistName(newName);
+      setModalVisible(false);
+    } else {
+      alert("Name cannot be empty.");
+    }
+  };
+
+  const renamePlaylist = () => {
+    const playlistId = currPlaylist?.id || ""; 
+    const currentPlaylistName = currPlaylist?.title || "";
+    setSelectedPlaylistId(playlistId); // Store the playlistId in state
+    setNewPlaylistName(currentPlaylistName); // Update name
+    setModalVisible(true); 
+  };
 
   useEffect(() => {
     // Ensure that currPlaylist is not null before proceeding
@@ -457,12 +483,23 @@ export default function DeckPreview({
         >
           <MaterialIcons name="arrow-back-ios" size={28} color="black" />
         </TouchableOpacity>
+        
+        <PlaylistRenameModal 
+        isVisible={modalVisible}
+        onClose={() => setModalVisible(false)}
+        currentName={newPlaylistName}
+        onSave={(newName: string) => handleNameChange(newName)}
+        />
+
         {/* Header */}
         <View style={styles.headerContent}>
           <View style={styles.headerInfo}>
             {/* Playlist Name */}
-            <Text style={styles.headerTitle}>{currPlaylist?.title}</Text>
-            <Pressable onPress={handleUpdateTitle}><Text>change</Text></Pressable>
+            <Text style={styles.headerTitle}>{currPlaylist?.title}  
+              <TouchableOpacity style={({paddingLeft: 5})} onPress={renamePlaylist}>
+                <AntDesign name="edit" size={16} color={theme.colors.subtext} />
+              </TouchableOpacity>
+            </Text>
             {/* Playlist Info container */}
             <View style={styles.subHeader}>
               {/* Card Icon */}
