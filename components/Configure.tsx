@@ -5,6 +5,7 @@ import {
   SafeAreaView,
   StatusBar,
   Platform,
+  LogBox,
 } from "react-native";
 import Router from "./Router";
 import { useFonts } from "expo-font";
@@ -15,12 +16,18 @@ import { Audio } from "expo-av";
 import { useTheme } from "../utils/contexts/ThemeContext";
 
 export default function Configure() {
+  //ignoring warnings for demo
+  // Ignore log notification by message
+  LogBox.ignoreLogs(["Warning: ..."]);
+
+  //Ignore all log notifications
+  LogBox.ignoreAllLogs();
+
   /**
    * VVV Always call useState at the top level VVV
    * If you get a re-render issue make sure it correctly order your useStates
    * Here it's important that setLibrary is called top level to avoid rerenders
    */
-
   // Calling Dummy data
   const { setLibrary } = useContext(LibraryContext);
 

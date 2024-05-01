@@ -358,7 +358,7 @@ export default function PracticeScreen({ navigation, route }: any) {
       borderColor: theme.colors.border,
     },
     counter: {
-      flexDirection: 'row',
+      flexDirection: "row",
       justifyContent: "center",
       alignItems: "center",
       width: 30,
@@ -373,9 +373,9 @@ export default function PracticeScreen({ navigation, route }: any) {
       fontFamily: theme.typography.fonts.mediumFont,
     },
     progressInfo: {
-      flexDirection: 'row',
-      justifyContent: 'space-between',
-      alignItems: 'center',
+      flexDirection: "row",
+      justifyContent: "space-between",
+      alignItems: "center",
       width: "100%",
     },
     navContainer: {
@@ -417,10 +417,10 @@ export default function PracticeScreen({ navigation, route }: any) {
       alignItems: "center",
     },
     wordCountContainer: {
-      flexDirection: 'row',
-      justifyContent: 'center',
-      alignItems: 'center',
-      marginTop: -10
+      flexDirection: "row",
+      justifyContent: "center",
+      alignItems: "center",
+      marginTop: -10,
     },
     wordCount: {
       fontFamily: theme.typography.fonts.regularFont,
@@ -474,23 +474,11 @@ export default function PracticeScreen({ navigation, route }: any) {
                   size={22}
                   color="#B6B6B6"
                 />
-                <Text
-                  style={[
-                    styles.wordCount,
-                  ]}
-                >
+                <Text style={[styles.wordCount]}>
                   {Object.keys(currPlaylist.playlist).length} words
                 </Text>
               </View>
-              <Animated.View
-                style={[
-                  styles.counter
-                ]}
-              >
-
-                {Object.keys(currPlaylist!.playlist).length} words
-              </Text>
-
+              <Animated.View style={[styles.counter]}>
                 <Animated.Text
                   style={[
                     styles.counterText,
@@ -501,8 +489,6 @@ export default function PracticeScreen({ navigation, route }: any) {
                   {`${numOfLoops}x`}
                 </Animated.Text>
               </Animated.View>
-
-
             </View>
           </View>
 
@@ -555,7 +541,7 @@ export default function PracticeScreen({ navigation, route }: any) {
               <FontAwesome6 name="circle-check" size={44} color="black" />
             </TouchableOpacity>
           </View>
-          <DeckPreviewModal />
+          {/* <DeckPreviewModal /> */}
         </>
       )}
     </SafeAreaView>

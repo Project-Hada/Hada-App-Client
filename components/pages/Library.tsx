@@ -30,6 +30,7 @@ import {
   addNewDeck,
   getAllDecksByUID,
   getOneDeckByDID,
+  updateDeckTitle,
 } from "../../utils/services/decksFunctions";
 import { Modalize } from "react-native-modalize";
 import PlaylistRenameModal from "./PlaylistNameModal";
@@ -60,11 +61,10 @@ export default function LibraryScreen({ navigation, route }: any) {
     updatePlaylist,
     refreshLibrary,
   } = useContext(LibraryContext);
-  
+
   const isFocused = useIsFocused();
   useEffect(() => {
-    isFocused && refreshLibrary()
-    
+    isFocused && refreshLibrary();
   }, [isFocused]);
   console.log("(inLS) library: ", library);
 
@@ -385,6 +385,8 @@ export default function LibraryScreen({ navigation, route }: any) {
       updatePlaylist(selectedPlaylistId, { title: newName });
       setNewPlaylistName(newName);
       setModalVisible(false);
+      console.log(selectedPlaylistId);
+      updateDeckTitle(selectedPlaylistId, newName);
     } else {
       alert("Name cannot be empty.");
     }

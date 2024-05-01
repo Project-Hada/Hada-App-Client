@@ -10,7 +10,11 @@ import {
   Pressable,
 } from "react-native";
 
-import { AntDesign, MaterialCommunityIcons, MaterialIcons } from "@expo/vector-icons";
+import {
+  AntDesign,
+  MaterialCommunityIcons,
+  MaterialIcons,
+} from "@expo/vector-icons";
 
 import FlashcardContext from "../../../utils/contexts/LibraryContext";
 import AddButton from "../../AddButton";
@@ -27,6 +31,7 @@ import * as Hangul from "hangul-js";
 import GearButton from "../../GearButton";
 import PlaylistRenameModal from "../PlaylistNameModal";
 import LibraryContext from "../../../utils/contexts/LibraryContext";
+import { updateDeckTitle } from "../../../utils/services/decksFunctions";
 
 type DeckPreviewProps = {
   navigation: any;
@@ -37,16 +42,21 @@ export default function DeckPreview({
   route,
   withinModal = false,
 }: any) {
-  const { currPlaylist, addFlashcard, updatePlaylistTitle, updateFlashcard, deleteFlashcard } =
-    useContext(FlashcardContext);
-  
-  const {  updatePlaylist, library } = useContext(LibraryContext);
+  const {
+    currPlaylist,
+    addFlashcard,
+    updatePlaylistTitle,
+    updateFlashcard,
+    deleteFlashcard,
+  } = useContext(FlashcardContext);
+
+  const { updatePlaylist, library } = useContext(LibraryContext);
   const flashcards = currPlaylist ? currPlaylist.playlist : [];
 
   // State to track the selected card for editing
   const [selectedCardId, setSelectedCardId] = useState<number | null>(null);
   const [isAddingVisible, setIsAddingVisible] = useState(false);
-  
+
   const [newPlaylistName, setNewPlaylistName] = useState("");
   const [modalVisible, setModalVisible] = useState(false);
   const [selectedPlaylistId, setSelectedPlaylistId] = useState<string | null>(
@@ -58,17 +68,19 @@ export default function DeckPreview({
       updatePlaylist(selectedPlaylistId, { title: newName });
       setNewPlaylistName(newName);
       setModalVisible(false);
+
+      updateDeckTitle(selectedPlaylistId, newName);
     } else {
       alert("Name cannot be empty.");
     }
   };
 
   const renamePlaylist = () => {
-    const playlistId = currPlaylist?.id || ""; 
+    const playlistId = currPlaylist?.id || "";
     const currentPlaylistName = currPlaylist?.title || "";
     setSelectedPlaylistId(playlistId); // Store the playlistId in state
     setNewPlaylistName(currentPlaylistName); // Update name
-    setModalVisible(true); 
+    setModalVisible(true);
   };
 
   useEffect(() => {
@@ -128,18 +140,21 @@ export default function DeckPreview({
     updateFlashcard(currPlaylist!, flashcardIndex, updatedFlashcard);
     setIsAddingVisible(false);
     setSelectedCardId(null);
-  }
+  };
 
-  const handleDeleteFlashcard = (playlist: PlaylistType, flashcardIndex: number) => {
+  const handleDeleteFlashcard = (
+    playlist: PlaylistType,
+    flashcardIndex: number
+  ) => {
     deleteFlashcard(currPlaylist!, flashcardIndex);
     setIsAddingVisible(false);
     setSelectedCardId(null);
-  }
+  };
 
-    // TODO: FIX THIS WITH PROPER NAME
-    const handleUpdateTitle = async () => {
-      updatePlaylistTitle(currPlaylist!, "cool, fancy name");
-    }
+  // TODO: FIX THIS WITH PROPER NAME
+  const handleUpdateTitle = async () => {
+    updatePlaylistTitle(currPlaylist!, "cool, fancy name");
+  };
 
   // Storing the search term
   const [searchTerm, setSearchTerm] = useState("");
@@ -153,10 +168,10 @@ export default function DeckPreview({
   };
 
   const flashcardsArray = Object.values(currPlaylist!.playlist);
-    // ? Object.values(currPlaylist!.playlist).sort(
-    //     (a, b) => b.createdAt - a.createdAt
-    //   )
-    // : [];
+  // ? Object.values(currPlaylist!.playlist).sort(
+  //     (a, b) => b.createdAt - a.createdAt
+  //   )
+  // : [];
   // console.log("flashcardsArray: ", flashcardsArray)
 
   // Filtering Flashcard by korean / english search term
@@ -471,8 +486,6 @@ export default function DeckPreview({
     );
   }
 
-
-
   return (
     <SafeAreaView style={styles.container}>
       <View style={styles.header}>
@@ -483,20 +496,24 @@ export default function DeckPreview({
         >
           <MaterialIcons name="arrow-back-ios" size={28} color="black" />
         </TouchableOpacity>
-        
-        <PlaylistRenameModal 
-        isVisible={modalVisible}
-        onClose={() => setModalVisible(false)}
-        currentName={newPlaylistName}
-        onSave={(newName: string) => handleNameChange(newName)}
+
+        <PlaylistRenameModal
+          isVisible={modalVisible}
+          onClose={() => setModalVisible(false)}
+          currentName={newPlaylistName}
+          onSave={(newName: string) => handleNameChange(newName)}
         />
 
         {/* Header */}
         <View style={styles.headerContent}>
           <View style={styles.headerInfo}>
             {/* Playlist Name */}
-            <Text style={styles.headerTitle}>{currPlaylist?.title}  
-              <TouchableOpacity style={({paddingLeft: 5})} onPress={renamePlaylist}>
+            <Text style={styles.headerTitle}>
+              {currPlaylist?.title}
+              <TouchableOpacity
+                style={{ paddingLeft: 5 }}
+                onPress={renamePlaylist}
+              >
                 <AntDesign name="edit" size={16} color={theme.colors.subtext} />
               </TouchableOpacity>
             </Text>
@@ -518,9 +535,12 @@ export default function DeckPreview({
             <TouchableOpacity onPress={handleOpenAdd}>
               <AddButton />
             </TouchableOpacity>
-            <GearButton navigation={navigation} openModal={function (): void {
-              throw new Error("Function not implemented.");
-            } } />
+            <GearButton
+              navigation={navigation}
+              openModal={function (): void {
+                throw new Error("Function not implemented.");
+              }}
+            />
           </View>
           {/* further discussion needed on adding this with the other add option */}
         </View>
