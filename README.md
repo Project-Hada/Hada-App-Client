@@ -1,6 +1,9 @@
 # Hada - Korean Flashcard Learning App
 View Releases Here **(All you need is your phone)**:  https://github.com/Project-Hada/Hada-App-Client/releases 
 
+# Demo
+
+https://github.com/user-attachments/assets/4fa2e885-5ecc-4fb2-93de-3f9f7f3d0ca6
 
 ## Introduction
 
