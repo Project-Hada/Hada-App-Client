@@ -1,5 +1,8 @@
 
-![hadacard 2](https://github.com/user-attachments/assets/33bf8c70-49dc-461a-8d1a-3d7e54c421aa)
+
+
+![Banner(1)](https://github.com/user-attachments/assets/772bca93-63d5-44c3-a1ee-31e8bf3ea636)
+
 
 # Hada - Korean Flashcard Learning App!
 
