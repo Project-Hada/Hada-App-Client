@@ -5,6 +5,8 @@ View Releases Here **(All you need is your phone)**:  https://github.com/Project
 
 https://github.com/user-attachments/assets/4fa2e885-5ecc-4fb2-93de-3f9f7f3d0ca6
 
+**Figma Link:** https://www.figma.com/design/aQeNaf3BR2pi1mg6sQ86yb/HADA?node-id=0-1&t=zwnLo8qlf3gSWKtX-1
+
 ## Introduction
 
 Hada is a Korean flashcard learning app that leverages the power of spaced repetition to optimize the learning process. Spaced repetition is a learning technique where review intervals for each flashcard are systematically increased to embed knowledge more deeply. Unlike other platforms, Hada is designed to streamline your learning experience, making it simpler, more efficient, and tailored to your needs.
