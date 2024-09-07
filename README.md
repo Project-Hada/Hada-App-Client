@@ -1,5 +1,5 @@
 
-[hadacard 1](https://github.com/user-attachments/assets/544c2cda-d34b-4883-9b19-d0e2498d7185)
+![hadacard 1](https://github.com/user-attachments/assets/544c2cda-d34b-4883-9b19-d0e2498d7185)
 # Hada - Korean Flashcard Learning App!
 
 View Releases Here **(All you need is your phone)**:  https://github.com/Project-Hada/Hada-App-Client/releases 
